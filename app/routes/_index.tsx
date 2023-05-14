@@ -50,6 +50,8 @@ export default function Index() {
         <img
           src={softwareHeadshot}
           alt="Kellen Busby software engineer"
+          width={192}
+          height={192}
           className={classNames(
             'absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s]rotate-90 transition duration-1000 motion-reduce:duration-[0s]',
             profile === 'outdoors' && 'md:-rotate-90 md:opacity-0',
@@ -60,6 +62,8 @@ export default function Index() {
         <img
           src={outdoorsHeadshot}
           alt="Kellen Busby outdoors person"
+          width={192}
+          height={192}
           className={classNames(
             'hidden md:block absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s]rotate-90 transition duration-1000 motion-reduce:duration-[0s]',
             profile === 'software' && 'rotate-90 opacity-0',
