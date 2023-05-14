@@ -26,7 +26,12 @@ export const meta: V2_MetaFunction = () => {
     {
       name: 'description',
       content:
-        "Full stack software engineer specializing in web app development for startups, small businesses, and unique projects. I'm also a lover of the outdoors and mountain sports.",
+        'Full stack software engineer specializing in web app development for startups, small businesses, and unique projects.',
+    },
+    {
+      tagName: 'link',
+      rel: 'canonical',
+      href: 'https://www.kellenbusby.com/',
     },
   ]
 }
@@ -65,6 +70,7 @@ export default function Index() {
             profile === 'software' && 'md:rotate-0 md:opacity-100'
           )}
           style={{ transformOrigin: '50% 300px' }}
+          loading="eager"
         />
         <img
           src={outdoorsHeadshot}
@@ -77,6 +83,7 @@ export default function Index() {
             profile === 'outdoors' && 'rotate-0 opacity-100'
           )}
           style={{ transformOrigin: '50% 300px' }}
+          loading="lazy"
         />
       </figure>
       <div className="flex flex-col md:min-w-[800px] md:flex-row md:items-center md:gap-8">
@@ -122,7 +129,7 @@ export default function Index() {
         </a>
       </div>
       <div className="flex flex-col gap-2">
-        <h3 className="text-xs uppercase">Profiles</h3>
+        <h2 className="text-xs uppercase">Profiles</h2>
         <div className="flex gap-2">
           <ProfileContainer
             href="https://www.contra.com/kellenbusby"
