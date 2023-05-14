@@ -8,16 +8,28 @@
   font-weight: 1 999;
 }
 
-@layer components {
-  .slide-in-background-from-right::before {
-    @apply bg-theme-blue-default absolute inset-0 rounded-md translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
-    content: '';
-    z-index: -1;
+@layer base {
+  html {
+    @apply min-h-screen w-screen overflow-x-hidden;
   }
 
-  .slide-in-background-from-left::before {
-    @apply bg-theme-blue-default absolute inset-0 rounded-md -translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
-    content: '';
-    z-index: -1;
+  body {
+    margin: 0 auto;
+  }
+}
+
+@layer components {
+  @media screen(md) {
+    .slide-in-background-from-right::before {
+      @apply bg-theme-blue-default absolute inset-0 rounded-md translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
+      content: '';
+      z-index: -1;
+    }
+
+    .slide-in-background-from-left::before {
+      @apply bg-theme-blue-default absolute inset-0 rounded-md -translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
+      content: '';
+      z-index: -1;
+    }
   }
 }

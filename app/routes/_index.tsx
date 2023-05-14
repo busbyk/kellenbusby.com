@@ -6,6 +6,12 @@ import instagram from '../images/instagram-circle.svg'
 import twitter from '../images/twitter-circle.svg'
 import youtube from '../images/youtube-circle.svg'
 import CaretRightIcon from '~/components/icons/CaretRightIcon'
+import softwareHeadshot from '../images/software-headshot.webp'
+import outdoorsHeadshot from '../images/outdoors-headshot.webp'
+import { ProfileContainer } from '../components/ProfileContainer'
+import { useEffect, useState } from 'react'
+import classNames from 'classnames'
+import { useHover } from '~/hooks/useHover'
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -19,15 +25,54 @@ export const meta: V2_MetaFunction = () => {
 }
 
 export default function Index() {
+  const [profile, setProfile] = useState<'software' | 'outdoors'>('software')
+
+  const [softwareLinkRef, softwareHovered] = useHover<HTMLAnchorElement>()
+  const [outdoorsLinkRef, outdoorsHovered] = useHover<HTMLAnchorElement>()
+
+  useEffect(() => {
+    if (softwareHovered) {
+      setProfile('software')
+    }
+  }, [softwareHovered])
+  useEffect(() => {
+    if (outdoorsHovered) {
+      setProfile('outdoors')
+    }
+  }, [outdoorsHovered])
+
   return (
-    <div className="flex flex-col gap-8 flex-grow w-full justify-center items-center">
+    <div className="flex flex-col gap-2 md:gap-8 flex-grow w-full justify-center items-center p-2 md:p-5">
       <h1 className="text-5xl md:text-7xl font-extrabold text-center">
         Kellen Busby
       </h1>
-      <div className="flex flex-col md:min-w-[800px] md:flex-row md:items-center gap-4 md:gap-8">
+      <figure className="relative h-36 md:h-56 w-full -mb-4 overflow-hidden">
+        <img
+          src={softwareHeadshot}
+          alt="Kellen Busby software engineer"
+          className={classNames(
+            'absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s]rotate-90 transition duration-1000 motion-reduce:duration-[0s]',
+            profile === 'outdoors' && 'md:-rotate-90 md:opacity-0',
+            profile === 'software' && 'md:rotate-0 md:opacity-100'
+          )}
+          style={{ transformOrigin: '50% 300px' }}
+        />
+        <img
+          src={outdoorsHeadshot}
+          alt="Kellen Busby outdoors person"
+          className={classNames(
+            'hidden md:block absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s]rotate-90 transition duration-1000 motion-reduce:duration-[0s]',
+            profile === 'software' && 'rotate-90 opacity-0',
+            profile === 'outdoors' && 'rotate-0 opacity-100'
+          )}
+          style={{ transformOrigin: '50% 300px' }}
+        />
+      </figure>
+      <div className="flex flex-col md:min-w-[800px] md:flex-row md:items-center md:gap-8">
         <a
           href="https://www.contra.com/kellenbusby"
           className="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-end rounded-md md:h-48 p-4"
+          ref={softwareLinkRef}
         >
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
             Software Engineer
@@ -46,6 +91,7 @@ export default function Index() {
         <a
           href="https://www.instagram.com/kellenbusby"
           className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-48 p-4"
+          ref={outdoorsLinkRef}
         >
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
             Skier
@@ -106,27 +152,5 @@ export default function Index() {
         </div>
       </div>
     </div>
-  )
-}
-
-function ProfileContainer({
-  href,
-  children,
-  tooltip,
-}: {
-  href: string
-  children: React.ReactNode
-  tooltip: string
-}) {
-  return (
-    <a
-      href={href}
-      className="relative rounded-full h-10 w-10 md:h-12 md:w-12 flex justify-center items-center"
-    >
-      <div className="peer">{children}</div>
-      <div className="absolute bottom-0 peer-hover:translate-y-[115%] opacity-0 peer-hover:opacity-100 transition-all duration-200 pointer-events-none">
-        <span className="whitespace-nowrap text-xs">{tooltip}</span>
-      </div>
-    </a>
   )
 }
