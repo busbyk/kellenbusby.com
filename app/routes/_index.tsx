@@ -13,6 +13,13 @@ import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { useHover } from '~/hooks/useHover'
 
+export function headers() {
+  return {
+    'cache-control':
+      'max-age=1, s-maxage=604800, stale-while-revalidate=31536000',
+  }
+}
+
 export const meta: V2_MetaFunction = () => {
   return [
     { title: 'Kellen Busby' },
