@@ -23,15 +23,15 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <script
-          type="text/javascript"
-          src="http://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=c1e670aa50272d0fb69a8a3941c938cb36b9fd3a"
-        ></script>
       </head>
       <body className="flex min-h-screen w-screen flex-col overflow-x-hidden bg-theme-gray-default text-theme-white">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
+        <script
+          type="text/javascript"
+          src="http://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=c1e670aa50272d0fb69a8a3941c938cb36b9fd3a"
+        ></script>
         <LiveReload />
       </body>
     </html>
