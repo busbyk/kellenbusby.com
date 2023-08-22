@@ -23,12 +23,12 @@ export default function App() {
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
+        <script type="text/javascript" src="/avantlink" />
       </head>
       <body className="flex min-h-screen w-screen flex-col overflow-x-hidden bg-theme-gray-default text-theme-white">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <script type="text/javascript" src="/avantlink" />
         <LiveReload />
       </body>
     </html>
