@@ -6,6 +6,7 @@ export default function Blog() {
     script.src = 'https://www.cardonomics.com/embed.js'
     script.async = true
     script.crossOrigin = 'anonymous'
+    script.referrerPolicy = 'origin'
 
     document.body.appendChild(script)
 
