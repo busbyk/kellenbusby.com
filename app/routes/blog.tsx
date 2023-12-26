@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 export default function Blog() {
   useEffect(() => {
     const script = document.createElement('script')
-    script.src = 'https://www.cardonomics.com/embed.js'
+    script.src = 'https://www.cardonomics.com/embed.js/'
     script.async = true
     script.crossOrigin = 'anonymous'
 
