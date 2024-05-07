@@ -22,7 +22,7 @@ export default function Blog() {
           Credit Cards
         </h1>
         <a
-          href="https://www.cardonomics.com/i/kellenbusby"
+          href="https://www.cardonomics.com/i/kellenbusby?utm_source=kellenbusby.com"
           target="_blank"
           rel="noopener noreferrer"
           className="text-center max-w-max mx-auto"

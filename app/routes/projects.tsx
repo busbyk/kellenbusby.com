@@ -11,7 +11,7 @@ export default function Projects() {
           <p className="">
             For client projects, check out my{' '}
             <a
-              href="https://www.contra.com/kellenbusby"
+              href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
               className="ml-1 hover:underline"
             >
               Contra portfolio
@@ -22,7 +22,7 @@ export default function Projects() {
       </div>
       <div className="flex flex-col gap-6">
         <a
-          href="https://www.myfirstinstapost.com/"
+          href="https://www.myfirstinstapost.com/?utm_source=kellenbusby.com"
           className="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center items-center rounded-md p-4"
         >
           <h2 className="text-xl font-bold">MyFirstInstaPost</h2>
@@ -41,7 +41,7 @@ export default function Projects() {
       </div>
       <div className="flex flex-col gap-6">
         <a
-          href="https://www.backcountrychecklist.com/"
+          href="https://www.backcountrychecklist.com/?utm_source=kellenbusby.com"
           className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center items-center rounded-md p-4"
         >
           <h2 className="text-xl font-bold">BackcountryChecklist</h2>
