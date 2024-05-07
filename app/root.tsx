@@ -1,5 +1,6 @@
 import type { LinksFunction } from '@remix-run/node'
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -36,6 +37,19 @@ export default function App() {
         <Links />
       </head>
       <body className="flex min-h-screen w-screen flex-col overflow-x-hidden bg-theme-gray-default text-theme-white">
+        <header className="w-full flex justify-between items-center px-4 pt-2">
+          <Link to="/" className="font-extrabold">
+            KB
+          </Link>
+          <div className="flex flex-col text-xs">
+            <Link to="/cards" className="hover:underline">
+              Cards
+            </Link>
+            <Link to="/projects" className="hover:underline">
+              Projects
+            </Link>
+          </div>
+        </header>
         <Outlet />
         <ScrollRestoration />
         <script

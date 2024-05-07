@@ -54,7 +54,7 @@ export default function Index() {
   }, [outdoorsHovered])
 
   return (
-    <div className="flex flex-col gap-2 md:gap-8 flex-grow w-full justify-center items-center p-2 md:p-5">
+    <div className="flex flex-col gap-2 md:gap-8 flex-grow w-full justify-center items-center px-2 pb-2 md:px-5 md:pb-5">
       <h1 className="text-5xl md:text-7xl font-extrabold text-center">
         Kellen Busby
       </h1>
