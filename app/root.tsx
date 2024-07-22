@@ -11,9 +11,11 @@ import {
 } from '@remix-run/react'
 import styles from './tailwind.css'
 import favicons from './data/favicons'
+import mapboxStyles from 'mapbox-gl/dist/mapbox-gl.css'
 
 export const links: LinksFunction = () => [
   { rel: 'stylesheet', href: styles },
+  { rel: 'stylesheet', href: mapboxStyles },
   ...favicons,
 ]
 
@@ -21,6 +23,7 @@ export function loader() {
   return {
     ENV: {
       NODE_ENV: process.env.NODE_ENV,
+      MAPBOX_TOKEN: process.env.MAPBOX_TOKEN,
     },
   }
 }
@@ -36,7 +39,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="flex min-h-screen w-screen flex-col overflow-x-hidden bg-theme-gray-default text-theme-white">
+      <body className="flex min-h-screen w-screen flex-col overflow-x-clip bg-theme-gray-default text-theme-white">
         <header className="w-full flex justify-between items-center px-4 pt-2">
           <Link to="/" className="font-extrabold">
             KB
