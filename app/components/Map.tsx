@@ -1,6 +1,7 @@
 import mapboxgl from 'mapbox-gl'
 import type {
   LayerSpecification,
+  LngLatBounds,
   LngLatLike,
   PaddingOptions,
   SourceSpecification,
@@ -29,6 +30,7 @@ type MapProps = {
   layers?: LayerSpecification[]
   terrainSource?: string
   children?: React.ReactNode
+  initialBounds?: LngLatBounds
 }
 
 export default function Map({
@@ -46,6 +48,7 @@ export default function Map({
   easeToDuration = 500,
   zoom = 14,
   basemap = 'mapbox://styles/mapbox/streets-v11',
+  initialBounds,
 }: MapProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
 
@@ -105,6 +108,15 @@ export default function Map({
       }
     },
     [map, center, pitch, bearing, zoom, easeToDuration, padding]
+  )
+
+  useEffect(
+    function updateBounds() {
+      if (map && initialBounds) {
+        map.fitBounds(initialBounds, { padding: 100 })
+      }
+    },
+    [map, initialBounds]
   )
 
   useEffect(
