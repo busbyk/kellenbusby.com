@@ -1,4 +1,4 @@
-import type { V2_MetaFunction } from '@remix-run/node'
+import type { MetaFunction } from '@remix-run/node'
 import contra from '../images/contra-circle.svg'
 import github from '../images/github-circle.svg'
 import linkedin from '../images/linkedin-circle.svg'
@@ -20,7 +20,7 @@ export function headers() {
   }
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     { title: 'Kellen Busby' },
     {

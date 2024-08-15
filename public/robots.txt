@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /pocs/
+Allow: /
+
+Host: https://kellenbusby.com
