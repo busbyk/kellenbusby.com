@@ -563,6 +563,7 @@
       "type": "Feature",
       "properties": {
         "title": "Day 1",
+        "key": "day-1__0",
         "description": "hoh river trail"
       }
     },
@@ -815,6 +816,7 @@
       "type": "Feature",
       "properties": {
         "title": "Day 1",
+        "key": "day-1__1",
         "description": "hoh lake trail"
       }
     },
@@ -1111,6 +1113,7 @@
       "type": "Feature",
       "properties": {
         "title": "Day 1",
+        "key": "day-1__2",
         "description": "high divide to camp"
       }
     }

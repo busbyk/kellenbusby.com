@@ -7,7 +7,14 @@ import type {
   SourceSpecification,
   Map as TMap,
 } from 'mapbox-gl'
-import { useEffect, useRef, useState } from 'react'
+import type { Ref } from 'react'
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react'
 
 type ControlsEnum = 'navigation' | 'scale' | 'geolocate' | 'fullscreen'
 
@@ -33,26 +40,30 @@ type MapProps = {
   initialBounds?: LngLatBounds
 }
 
-export default function Map({
-  height,
-  width,
-  center,
-  pitch,
-  padding,
-  bearing,
-  controls,
-  sources,
-  layers,
-  terrainSource,
-  children,
-  easeToDuration = 500,
-  zoom = 14,
-  basemap = 'mapbox://styles/mapbox/streets-v11',
-  initialBounds,
-}: MapProps) {
+const Map = forwardRef(function Map(
+  {
+    height,
+    width,
+    center,
+    pitch,
+    padding,
+    bearing,
+    controls,
+    sources,
+    layers,
+    terrainSource,
+    children,
+    easeToDuration = 500,
+    zoom = 14,
+    basemap = 'mapbox://styles/mapbox/streets-v11',
+    initialBounds,
+  }: MapProps,
+  ref: Ref<{ getMap: () => TMap | undefined }>
+) {
   const mapContainer = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<TMap>()
 
-  const [map, setMap] = useState<TMap | null>(null)
+  const [map, setMap] = useState<TMap>()
 
   useEffect(function initMapbox() {
     if (window.ENV?.MAPBOX_TOKEN && mapContainer.current) {
@@ -87,12 +98,23 @@ export default function Map({
 
       map.on('load', () => {
         setMap(map)
+        mapRef.current = map
       })
 
       return () => map.remove()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      getMap: () => {
+        return map
+      },
+    }),
+    [map]
+  )
 
   useEffect(
     function updateCamera() {
@@ -159,4 +181,6 @@ export default function Map({
       {children}
     </div>
   )
-}
+})
+
+export default Map
