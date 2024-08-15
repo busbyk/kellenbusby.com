@@ -3,7 +3,6 @@ import type { LngLatBounds, PaddingOptions, Map as TMap } from 'mapbox-gl'
 import { type LngLatLike } from 'mapbox-gl'
 import type { RefObject } from 'react'
 import { createRef, useEffect, useMemo, useRef, useState } from 'react'
-import { useIntersection } from 'react-use'
 import Map from '~/components/Map'
 
 import day1geojson from '~/data/day1.json'

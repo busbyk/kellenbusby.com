@@ -1,37 +1,42 @@
 {
+  "name": "kellenbusby.com",
   "private": true,
   "sideEffects": false,
+  "type": "module",
   "scripts": {
-    "build": "remix build",
-    "dev": "remix dev",
+    "build": "remix vite:build",
+    "dev": "remix vite:dev",
+    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
+    "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@remix-run/css-bundle": "^1.16.0",
-    "@remix-run/node": "^1.16.0",
-    "@remix-run/react": "^1.16.0",
-    "@remix-run/vercel": "^1.16.0",
+    "@remix-run/node": "^2.11.1",
+    "@remix-run/react": "^2.11.1",
+    "@remix-run/serve": "^2.11.1",
     "@turf/turf": "^7.0.0",
-    "@vercel/node": "^2.10.3",
+    "@vercel/remix": "^2.11.1",
     "classnames": "^2.3.2",
     "isbot": "^3.6.8",
     "mapbox-gl": "^3.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-use": "^17.5.0",
-    "remix-utils": "^6.3.0"
+    "remix-utils": "^7.6.0"
   },
   "devDependencies": {
-    "@remix-run/dev": "^1.16.0",
-    "@remix-run/eslint-config": "^1.16.0",
-    "@remix-run/serve": "^1.16.0",
-    "@types/react": "^18.0.35",
-    "@types/react-dom": "^18.0.11",
+    "@remix-run/dev": "^2.11.1",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
     "eslint": "^8.38.0",
-    "tailwindcss": "^3.3.2",
-    "typescript": "^5.0.4"
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.5.4",
+    "vite-tsconfig-paths": "^5.0.1"
   },
   "engines": {
     "node": ">=18"
+  },
+  "author": {
+    "name": "Kellen Busby"
   }
 }

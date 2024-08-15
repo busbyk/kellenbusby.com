@@ -1,5 +1,6 @@
 import type { LinksFunction } from '@remix-run/node'
 import {
+  json,
   Link,
   Links,
   LiveReload,
@@ -9,27 +10,23 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from '@remix-run/react'
-import styles from './tailwind.css'
-import favicons from './data/favicons'
-import mapboxStyles from 'mapbox-gl/dist/mapbox-gl.css'
+import favicons from '~/data/favicons'
+import '~/tailwind.css'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
-export const links: LinksFunction = () => [
-  { rel: 'stylesheet', href: styles },
-  { rel: 'stylesheet', href: mapboxStyles },
-  ...favicons,
-]
+export const links: LinksFunction = () => [...favicons]
 
 export function loader() {
-  return {
+  return json({
     ENV: {
       NODE_ENV: process.env.NODE_ENV,
       MAPBOX_TOKEN: process.env.MAPBOX_TOKEN,
     },
-  }
+  })
 }
 
 export default function App() {
-  const loaderData = useLoaderData()
+  const loaderData = useLoaderData<typeof loader>()
 
   return (
     <html lang="en">
