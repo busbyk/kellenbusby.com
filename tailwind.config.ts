@@ -3,7 +3,7 @@ import type { Config } from 'tailwindcss'
 import defaultTheme from 'tailwindcss/defaultTheme'
 
 export default {
-  content: ["./app/**/*.{js,jsx,ts,tsx}"],
+  content: ['./app/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       fontFamily: {
@@ -13,7 +13,7 @@ export default {
         'theme-gray': {
           default: '#344A53',
           mid: '#647B84',
-          light: '#7C7484'
+          light: '#7C7484',
         },
         'theme-blue': {
           default: '#1481A0',
@@ -27,9 +27,9 @@ export default {
           default: '#E4634A',
           light: '#F59432',
         },
-        'theme-white': '#FCF8FF'
-      }
+        'theme-white': '#FCF8FF',
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 } satisfies Config

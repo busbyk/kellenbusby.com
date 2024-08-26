@@ -1,0 +1,39 @@
+---
+title: Figuring out MDX with Remix and Vite
+description: How does this whole MDX thing work?
+published: 2024-08-19
+---
+
+# {frontmatter.title}
+
+There's a lot I don't know about MDX. I've been aware of it for a long time and generally understand what it is but I've never set it up before. Let's figure it out.
+
+## OK here's what I want to know:
+
+- What's the difference between MDX transformed at build time vs. transformed at run time (and is transformed the right term here)?
+- How to get appropriate syntax highlighting in mdx files including handling component imports? Can I get tsconfig paths (i.e. ~/components style imports) to work? What are those called again?
+- How can I get hot module reloading to work on my mdx files? run time transformation but how do I do that and what are the tradeoffs?
+- Where does the mdx-bundler package come in? I read that it doesn't work in serverless environments.
+- What is a Unified pipeline? I'm gathering that it is the customized pipeline of transforming markdown into html but I need to know more.
+  [unified](https://unifiedjs.com/explore/package/unified/) -- lets you inspect and transform content with plugins
+  unified.js seems to be the underlying engine. It's an interface for turning content into structured data which can be converted to other formats. Seems heavily plugin focused.
+- What is rehype and remark [Plugins]?
+  rehype is an ecosystem of plugins (related to unified.js, I think made by them) that works with transforming HTML specifically
+  remark is the same thing but for markdown specifically
+
+## The solution I want:
+
+- Essentially what I get with [remix-blog-mdx](https://github.com/pcattori/remix-blog-mdx/tree/main) but with HMR
+- Syntax highlighting
+- Intellisense importing of components in mdx files
+- Dope VS Code plugins that will make writing markdown in .mdx files really nice
+
+## What I've learned so far:
+
+Using `@mdx-js/rollup` is great right out of the box and I think I may just stick with this in the short term. The only thing I really don't like about it is the lack of HMR which honestly kind of feels like a bug. If I could figure that out I'd probably stop right there.
+
+The issue with this approach is that the mdx is compiled to html at build time which would end up being a scaling problem eventually. I don't personally think I'm going to run into that with kellenbusby.com but I like to consider these things so that if I want to re-use code for a larger project/client project I can and not have to worry about scaling. This is partly a learning experience after all.
+
+The `vite-plugin-markdown` approach that https://bradgarropy.com/ took is pretty sweet in that it gives more control over transformation of the markdown and I think it at least partially resolves the scaling issues. It gets HMR. But it doesn't allow for MDX (no components in markdown content). I want MDX.
+
+The last step is to use mdx-bundler to take a similar approach to https://bradgarropy.com/ but get to use MDX. The big issues I foresee here is that there are a couple GH issues indicating that `mdx-bundler` doesn't work in serverles environments and I deploy to Vercel. So I need to figure out if that's going to be an issue.

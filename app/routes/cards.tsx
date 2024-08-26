@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 
-export default function Blog() {
+export default function Cards() {
   useEffect(() => {
     const script = document.createElement('script')
     script.src = 'https://www.cardonomics.com/embed.js'

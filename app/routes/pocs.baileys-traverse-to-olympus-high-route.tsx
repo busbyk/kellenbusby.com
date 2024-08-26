@@ -262,7 +262,7 @@ export default function BaileysTraverseToOlympusHighRoute() {
   )
 
   return (
-    <div className="flex w-screen flex-col overflow-x-clip">
+    <div className="flex w-full flex-col">
       <pre className="fixed top-20 text-black right-0 p-3 bg-white text-sm z-50">
         <p>Visible section: {visibleSection?.id}</p>
       </pre>

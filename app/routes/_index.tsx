@@ -54,7 +54,7 @@ export default function Index() {
   }, [outdoorsHovered])
 
   return (
-    <div className="flex flex-col gap-2 md:gap-8 flex-grow w-full justify-center items-center px-2 pb-2 md:px-5 md:pb-5">
+    <div className="flex flex-col gap-2 md:gap-8 flex-grow w-full justify-center items-center h-full">
       <h1 className="text-5xl md:text-7xl font-extrabold text-center">
         Kellen Busby
       </h1>
@@ -118,7 +118,7 @@ export default function Index() {
             Climber
           </h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Mtn Biker
+            Mountain Biker
           </h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
             Mountain Lover
