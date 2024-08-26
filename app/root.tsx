@@ -32,6 +32,30 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta property="og:url" content="https://www.kellenbusby.com" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Kellen Busby" />
+        <meta
+          property="og:description"
+          content="Full stack software engineer specializing in web app development for startups, small businesses, and unique projects."
+        />
+        <meta
+          property="og:image"
+          content="https://www.kellenbusby.com/kellenbusby-opengraph.png"
+        />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="twitter:domain" content="kellenbusby.com" />
+        <meta property="twitter:url" content="https://www.kellenbusby.com" />
+        <meta name="twitter:title" content="Kellen Busby" />
+        <meta
+          name="twitter:description"
+          content="Full stack software engineer specializing in web app development for startups, small businesses, and unique projects."
+        />
+        <meta
+          name="twitter:image"
+          content="https://www.kellenbusby.com/kellenbusby-opengraph.png"
+        />
         <Meta />
         <Links />
       </head>
