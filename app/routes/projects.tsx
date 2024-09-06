@@ -22,25 +22,6 @@ export default function Projects() {
       </div>
       <div className="flex flex-col gap-6">
         <a
-          href="https://www.myfirstinstapost.com/?utm_source=kellenbusby.com"
-          className="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center items-center rounded-md p-4"
-        >
-          <h2 className="text-xl font-bold">MyFirstInstaPost</h2>
-          <div className="flex flex-col items-center text-center">
-            <p>A silly website that shows you your first Instagram post.</p>
-            <p>It's a fun stroll down memory lane.</p>
-          </div>
-          <img
-            src={myfirstinstapost}
-            alt="myfirstinstapost screenshot"
-            className="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
-            width={400}
-          />
-          <p className="text-sm">https://www.myfirstinstapost.com</p>
-        </a>
-      </div>
-      <div className="flex flex-col gap-6">
-        <a
           href="https://www.backcountrychecklist.com/?utm_source=kellenbusby.com"
           className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center items-center rounded-md p-4"
         >
@@ -58,6 +39,25 @@ export default function Projects() {
             width={150}
           />
           <p className="text-sm">https://www.backcountrychecklist.com</p>
+        </a>
+      </div>
+      <div className="flex flex-col gap-6">
+        <a
+          href="https://www.myfirstinstapost.com/?utm_source=kellenbusby.com"
+          className="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center items-center rounded-md p-4"
+        >
+          <h2 className="text-xl font-bold">MyFirstInstaPost</h2>
+          <div className="flex flex-col items-center text-center">
+            <p>A silly website that shows you your first Instagram post.</p>
+            <p>It's a fun stroll down memory lane.</p>
+          </div>
+          <img
+            src={myfirstinstapost}
+            alt="myfirstinstapost screenshot"
+            className="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
+            width={400}
+          />
+          <p className="text-sm">https://www.myfirstinstapost.com</p>
         </a>
       </div>
     </div>

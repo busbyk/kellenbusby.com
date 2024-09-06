@@ -99,7 +99,10 @@ export default function Index() {
             Web App Dev
           </h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Lover of Remix
+            JS|TS|React Dev
+          </h2>
+          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
+            Remix.run Dev
           </h2>
           <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-theme-white flex items-center gap-1">
             Software <CaretRightIcon />
