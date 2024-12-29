@@ -1,0 +1,13 @@
+---
+title: Using Remix Auth with Strapi Providers
+description: How to use Google as an Oauth provider via Strapi in Remix using Remix Auth
+published: null
+---
+
+# {frontmatter.title}
+
+This was a bit of a pain in the ass because the Strapi Google provider currently has a bug in the latest version of v4.
+
+```javascript
+  await strapi.plugin('users-permissions').services.auth.connect = async function replacement() {}
+```
