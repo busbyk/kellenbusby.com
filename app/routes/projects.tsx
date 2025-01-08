@@ -1,5 +1,6 @@
 import myfirstinstapost from '../images/myfirstinstapost.png'
 import backcountrychecklist from '../images/backcountrychecklist.png'
+import avyobs from '../images/avyobs.png'
 
 export default function Projects() {
   return (
@@ -19,6 +20,27 @@ export default function Projects() {
             .
           </p>
         </div>
+      </div>
+      <div className="flex flex-col gap-6">
+        <a
+          href="https://www.avyobs.com/?utm_source=kellenbusby.com"
+          className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center items-center rounded-md p-4"
+        >
+          <h2 className="text-xl font-bold">AvyObs</h2>
+          <div className="flex flex-col items-center text-center">
+            <p className="max-w-[400px]">
+              A snow and avalanche observations notification service. Always
+              know what's going on in the mountains.
+            </p>
+          </div>
+          <img
+            src={avyobs}
+            alt="backcountry checklist screenshot"
+            className="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
+            width={1000}
+          />
+          <p className="text-sm">https://www.avyobs.com</p>
+        </a>
       </div>
       <div className="flex flex-col gap-6">
         <a
