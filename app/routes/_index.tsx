@@ -12,6 +12,7 @@ import { ProfileContainer } from '../components/ProfileContainer'
 import { useEffect, useState } from 'react'
 import classNames from 'classnames'
 import { useHover } from '~/hooks/useHover'
+import { Link } from '@remix-run/react'
 
 export function headers() {
   return {
@@ -87,8 +88,8 @@ export default function Index() {
         />
       </figure>
       <div className="flex flex-col md:min-w-[800px] md:flex-row md:items-center md:gap-8">
-        <a
-          href="https://www.contra.com/kellenbusby"
+        <Link
+          to="/software"
           className="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-end rounded-md md:h-48 p-4"
           ref={softwareLinkRef}
         >
@@ -107,11 +108,11 @@ export default function Index() {
           <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-theme-white flex items-center gap-1">
             Software <CaretRightIcon />
           </button>
-        </a>
+        </Link>
         <div className="bg-theme-white h-px w-42 md:h-44 md:w-1" />
-        <a
-          href="https://www.instagram.com/kellenbusby"
-          className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-48 p-4"
+        <Link
+          to="/life"
+          className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-60 p-4"
           ref={outdoorsLinkRef}
         >
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
@@ -124,18 +125,21 @@ export default function Index() {
             Mountain Biker
           </h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Mountain Lover
+            Traveler
+          </h2>
+          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
+            Hobbyist
           </h2>
           <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-theme-white flex items-center gap-1">
-            Outdoors <CaretRightIcon />
+            Life <CaretRightIcon />
           </button>
-        </a>
+        </Link>
       </div>
       <div className="flex flex-col gap-2">
         <h2 className="text-xs uppercase">Profiles</h2>
         <div className="flex gap-2">
           <ProfileContainer
-            href="https://www.contra.com/kellenbusby"
+            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
             tooltip="Contra | kellenbusby"
           >
             <img src={contra} alt="contra logo" width={48} height={48} />

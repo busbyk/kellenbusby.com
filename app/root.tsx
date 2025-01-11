@@ -4,6 +4,7 @@ import {
   Link,
   Links,
   Meta,
+  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
@@ -12,6 +13,7 @@ import {
 import favicons from '~/data/favicons'
 import '~/tailwind.css'
 import 'mapbox-gl/dist/mapbox-gl.css'
+import classNames from 'classnames'
 
 export const links: LinksFunction = () => [...favicons]
 
@@ -61,18 +63,43 @@ export default function App() {
       </head>
       <body className="flex min-h-screen w-screen flex-col overflow-x-clip bg-theme-gray-default text-theme-white">
         <header className="w-full flex justify-between items-center px-4 py-2">
-          <Link to="/" className="font-extrabold">
-            KB
-          </Link>
+          <div className="flex gap-8 items-center">
+            <Link to="/" className="font-extrabold">
+              KB
+            </Link>
+            <div className="flex items-center gap-2">
+              <NavLink
+                to="/life"
+                className={({ isActive }) =>
+                  classNames(
+                    'border-b-2',
+                    isActive && 'border-b-theme-white',
+                    !isActive && 'border-b-transparent'
+                  )
+                }
+              >
+                Life
+              </NavLink>
+              <NavLink
+                to="/software"
+                className={({ isActive }) =>
+                  classNames(
+                    'border-b-2',
+                    isActive && 'border-b-theme-white',
+                    !isActive && 'border-b-transparent'
+                  )
+                }
+              >
+                Software
+              </NavLink>
+            </div>
+          </div>
           <div className="flex flex-col text-xs">
             <Link to="/blog" className="hover:underline">
               Blog
             </Link>
             <Link to="/projects" className="hover:underline">
               Projects
-            </Link>
-            <Link to="/cards" className="hover:underline">
-              Cards
             </Link>
           </div>
         </header>
