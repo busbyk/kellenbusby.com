@@ -374,6 +374,7 @@ export default function Software() {
                           title="Data Platform"
                           tagline="Audience data access and reporting tool built using the MERN stack & AWS Glue for data company users"
                           className=""
+                          to="/blog/data-platform"
                         />
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2 gap-y-4">
@@ -381,12 +382,13 @@ export default function Software() {
                           title="Random Trivia Generator"
                           tagline="Rebuild of existing application frontend and backend including a database migration and new features for entrepreneur"
                           className=""
+                          // to="/blog/random-trivia-generator"
                         />
                         <ProjectPostCard
                           title="Static websites with CMS"
                           tagline="Several static websites with content management systems for small businesses"
-                          date=""
                           className=""
+                          to="/blog/static-sites-with-cms"
                         />
                       </div>
                       <div className="flex justify-center">

@@ -1,10 +1,9 @@
-import { ServerBuild } from '@remix-run/node'
-
 export type Frontmatter = {
   title: string
   description: string
   published: string // YYYY-MM-DD
   featured: boolean
+  tags: string
 }
 
 export type PostMeta = {
@@ -28,7 +27,8 @@ export const getPosts = async (): Promise<PostMeta[]> => {
       frontmatter: post.frontmatter,
     }
   })
-  return sortBy(posts, (post) => post.frontmatter.published, 'desc')
+  const publishedPosts = posts.filter((post) => post.frontmatter.published)
+  return sortBy(publishedPosts, (post) => post.frontmatter.published, 'desc')
 }
 
 function sortBy<T>(

@@ -1,5 +1,7 @@
 User-agent: *
 Disallow: /pocs/
+Disallow: /blog/cardonomics
+Disallow: /blog/data-platform
 Allow: /
 
 Host: https://kellenbusby.com
