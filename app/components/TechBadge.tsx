@@ -1,6 +1,8 @@
 import classNames from 'classnames'
-import { ExternalLinkIcon } from 'lucide-react'
 import { ReactNode } from 'react'
+import * as lucidePkg from 'lucide-react'
+
+const { ExternalLinkIcon } = lucidePkg
 
 export default function TechBadge({
   children,

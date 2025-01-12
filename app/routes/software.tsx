@@ -22,7 +22,9 @@ import stripeIcon from '../images/stripe-logo.svg'
 import resendIcon from '../images/resend-logo.png'
 import twilioIcon from '../images/twilio-logo.png'
 import Service from '~/components/Service'
-import { Mail } from 'lucide-react'
+import * as lucidePkg from 'lucide-react'
+
+const { Mail } = lucidePkg
 
 const emailParts = {
   user: 'kellenbusby',
@@ -48,12 +50,12 @@ export default function Software() {
           Web App Developer
         </h1>
         <div className="flex flex-col gap-10">
-          <figure className="flex">
+          <figure className="flex w-full">
             <img
               src="/blog/software-cover-photo.webp"
               width={1400}
-              height={934}
-              className="w-full rounded-xl shadow-xl"
+              height={357}
+              className="w-full rounded-xl shadow-xl aspect-[1400/357]"
             />
           </figure>
           <div className="flex flex-col gap-4">
