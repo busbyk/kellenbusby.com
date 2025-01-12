@@ -42,7 +42,7 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "engines": {
-    "node": "18"
+    "node": "22"
   },
   "author": {
     "name": "Kellen Busby"
