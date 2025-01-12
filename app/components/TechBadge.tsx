@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLinkIcon } from 'lucide-react'
 import { ReactNode } from 'react'
 
 export default function TechBadge({
@@ -36,7 +36,7 @@ export default function TechBadge({
       </div>
       {href && (
         <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 translate-x-0 translate-y-0 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-500">
-          <ExternalLink className="h-4 w-4 shrink-0" />
+          <ExternalLinkIcon className="h-4 w-4 shrink-0" />
         </div>
       )}
     </div>
