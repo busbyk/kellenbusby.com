@@ -22,7 +22,7 @@ export default function ProjectPostCard({
         'border-l-8 border-l-theme-purple-light px-3 py-2 border-y-2 border-y-theme-purple-light border-r-2 border-r-theme-purple-light rounded-r-md',
         className,
         (to || href) &&
-          'cursor-pointer hover:shadow-md hover:border-l-theme-purple-default'
+          'cursor-pointer hover:shadow-md hover:border-l-theme-purple-default hover:border-y-theme-purple-default hover:border-r-theme-purple-default'
       )}
     >
       <p className="font-bold text-lg">{title}</p>

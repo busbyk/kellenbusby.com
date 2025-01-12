@@ -1,8 +1,5 @@
 import classNames from 'classnames'
 import { ReactNode } from 'react'
-import * as lucidePkg from 'lucide-react'
-
-const { ExternalLinkIcon } = lucidePkg
 
 export default function TechBadge({
   children,
@@ -38,7 +35,14 @@ export default function TechBadge({
       </div>
       {href && (
         <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 translate-x-0 translate-y-0 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-500">
-          <ExternalLinkIcon className="h-4 w-4 shrink-0" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="h-5 w-5 shrink-0"
+          >
+            <path d="M10 6V8H5V19H16V14H18V20C18 20.5523 17.5523 21 17 21H4C3.44772 21 3 20.5523 3 20V7C3 6.44772 3.44772 6 4 6H10ZM21 3V11H19L18.9999 6.413L11.2071 14.2071L9.79289 12.7929L17.5849 5H13V3H21Z"></path>
+          </svg>
         </div>
       )}
     </div>
