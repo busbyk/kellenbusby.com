@@ -1,3 +1,16 @@
+import { MetaFunction } from '@remix-run/node'
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: 'About Kellen Busby' },
+    {
+      name: 'description',
+      content:
+        'Skier, climber, mountain biker, traveler, hobbyist, freelance full stack web app developer',
+    },
+  ]
+}
+
 export default function Life() {
   return (
     <div className="py-8 flex flex-col items-center">

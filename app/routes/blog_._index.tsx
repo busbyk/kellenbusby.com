@@ -1,8 +1,12 @@
-import { json } from '@remix-run/node'
+import { json, MetaFunction } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import BlogPostCard from '~/components/BlogPostCard'
 
 import { getPosts } from '~/lib/posts'
+
+export const meta: MetaFunction = () => {
+  return [{ title: "Kellen Busby's Blog" }]
+}
 
 export const loader = async () => json(await getPosts())
 

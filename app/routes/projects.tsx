@@ -1,6 +1,11 @@
 import myfirstinstapost from '../images/myfirstinstapost.png'
 import backcountrychecklist from '../images/backcountrychecklist.png'
 import avyobs from '../images/avyobs.png'
+import { MetaFunction } from '@remix-run/node'
+
+export const meta: MetaFunction = () => {
+  return [{ title: "Kellen Busby's Indie Projects" }]
+}
 
 export default function Projects() {
   return (

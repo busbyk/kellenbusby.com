@@ -1,4 +1,9 @@
+import { MetaFunction } from '@remix-run/node'
 import { useEffect } from 'react'
+
+export const meta: MetaFunction = () => {
+  return [{ title: "Kellen's Credit Card Recommendations" }]
+}
 
 export default function Cards() {
   useEffect(() => {

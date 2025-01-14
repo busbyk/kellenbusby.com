@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react'
+import { Link, MetaFunction } from '@remix-run/react'
 import ProjectPostCard from '~/components/ProjectPostCard'
 import backcountrychecklist from '../images/backcountrychecklist.png'
 import avyobs from '../images/avyobs.png'
@@ -22,6 +22,20 @@ import stripeIcon from '../images/stripe-logo.svg'
 import resendIcon from '../images/resend-logo.png'
 import twilioIcon from '../images/twilio-logo.png'
 import Service from '~/components/Service'
+import { ProfileContainer } from '~/components/ProfileContainer'
+import contra from '../images/contra-circle.svg'
+import github from '../images/github-circle.svg'
+import linkedin from '../images/linkedin-circle.svg'
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: 'Kellen Busby Software' },
+    {
+      name: 'description',
+      content: 'Freelance full stack web app developer',
+    },
+  ]
+}
 
 const emailParts = {
   user: 'kellenbusby',
@@ -47,14 +61,41 @@ export default function Software() {
           Web App Developer
         </h1>
         <div className="flex flex-col gap-10">
-          <figure className="flex w-full">
-            <img
-              src="/blog/software-cover-photo.webp"
-              width={1400}
-              height={357}
-              className="w-full rounded-xl shadow-xl aspect-[1400/357]"
-            />
-          </figure>
+          <div className="flex flex-col gap-6">
+            <figure className="flex w-full">
+              <img
+                src="/blog/software-cover-photo.webp"
+                width={1400}
+                height={357}
+                className="w-full rounded-xl shadow-xl aspect-[1400/357]"
+              />
+            </figure>
+            <div className="flex gap-2 items-center justify-center">
+              <ProfileContainer
+                href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
+                tooltip="Contra | kellenbusby"
+              >
+                <img src={contra} alt="contra logo" width={48} height={48} />
+              </ProfileContainer>
+              <ProfileContainer
+                href="https://github.com/busbyk"
+                tooltip="GitHub | busbyk"
+              >
+                <img src={github} alt="github logo" width={48} height={48} />
+              </ProfileContainer>
+              <ProfileContainer
+                href="https://www.linkedin.com/services/page/940755311278b0742a/"
+                tooltip="LinkedIn | Kellen Busby Software"
+              >
+                <img
+                  src={linkedin}
+                  alt="linkedin logo"
+                  width={48}
+                  height={48}
+                />
+              </ProfileContainer>
+            </div>
+          </div>
           <div className="flex flex-col gap-4">
             <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-theme-orange-default pl-2">
               About Me
@@ -367,13 +408,13 @@ export default function Software() {
                         <ProjectPostCard
                           title="Cardonomics"
                           tagline="Credit card affiliate marketing platform for creators built using Remix & Strapi for startup"
-                          className=""
+                          className="h-full"
                           to="/blog/cardonomics"
                         />
                         <ProjectPostCard
                           title="Data Platform"
                           tagline="Audience data access and reporting tool built using the MERN stack & AWS Glue for data company users"
-                          className=""
+                          className="h-full"
                           to="/blog/data-platform"
                         />
                       </div>
@@ -381,13 +422,13 @@ export default function Software() {
                         <ProjectPostCard
                           title="Random Trivia Generator"
                           tagline="Rebuild of existing application frontend and backend including a database migration and new features for entrepreneur"
-                          className=""
-                          // to="/blog/random-trivia-generator"
+                          className="h-full"
+                          to="/blog/random-trivia-generator"
                         />
                         <ProjectPostCard
                           title="Static websites with CMS"
                           tagline="Several static websites with content management systems for small businesses"
-                          className=""
+                          className="h-full"
                           to="/blog/static-sites-with-cms"
                         />
                       </div>
