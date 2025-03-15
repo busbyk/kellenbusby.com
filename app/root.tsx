@@ -92,15 +92,31 @@ export default function App() {
               >
                 Software
               </NavLink>
+              <NavLink
+                to="/blog"
+                className={({ isActive }) =>
+                  classNames(
+                    'border-b-2',
+                    isActive && 'border-b-theme-white',
+                    !isActive && 'border-b-transparent'
+                  )
+                }
+              >
+                Blog
+              </NavLink>
+              <NavLink
+                to="/projects"
+                className={({ isActive }) =>
+                  classNames(
+                    'border-b-2',
+                    isActive && 'border-b-theme-white',
+                    !isActive && 'border-b-transparent'
+                  )
+                }
+              >
+                Indie Projects
+              </NavLink>
             </div>
-          </div>
-          <div className="flex flex-col text-xs">
-            <Link to="/blog" className="hover:underline">
-              Blog
-            </Link>
-            <Link to="/projects" className="hover:underline">
-              Projects
-            </Link>
           </div>
         </header>
         <main className="w-full px-4 pb-2 md:px-5 md:pb-5 overflow-x-clip min-h-[calc(100vh-64px)] flex flex-col">

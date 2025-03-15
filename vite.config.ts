@@ -12,7 +12,7 @@ installGlobals()
 
 export default defineConfig({
   ssr: {
-    noExternal: ['react-use'],
+    noExternal: ['react-use', /^@keystatic\//, 'minimatch'],
   },
   plugins: [
     tsconfigPaths(),

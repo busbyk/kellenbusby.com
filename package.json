@@ -11,6 +11,9 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@keystatic/core": "^0.5.45",
+    "@keystatic/remix": "^5.0.2",
+    "@markdoc/markdoc": "^0.5.1",
     "@remix-run/node": "2.15.2",
     "@remix-run/react": "2.15.2",
     "@remix-run/serve": "2.15.2",
