@@ -1,5 +1,6 @@
 import { MetaFunction } from '@remix-run/node'
 import { useEffect } from 'react'
+import PageLayout from '~/components/layout/PageLayout'
 
 export const meta: MetaFunction = () => {
   return [{ title: "Kellen's Credit Card Recommendations" }]
@@ -20,35 +21,38 @@ export default function Cards() {
     }
   }, [])
   return (
-    <div className="flex flex-col gap-6 md:gap-8 flex-grow w-full items-center px-2 pb-2 md:px-5 md:pb-5 pt-8 md:pt-14">
-      <div className="flex flex-col gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-center">
+    <PageLayout
+      heading={
+        <>
           My Recommended <br />
           Credit Cards
-        </h1>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-4">
         <a
           href="https://www.cardonomics.com/i/kellenbusby?utm_source=kellenbusby.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-center max-w-max mx-auto"
+          className=""
         >
           <button className="border rounded-md px-4 py-0.5 text-sm hover:shadow-xl">
             My Top Picks on Cardonomics
           </button>
         </a>
-        <div className="flex flex-col gap-2 max-w-[90%] md:max-w-[600px] mx-auto">
-          <p className="text-center">
+        <div className="flex flex-col gap-2">
+          <p className="">
             I use a few different cards to maximize either cash back or points
             depending on the card.
           </p>
-          <p className="text-center">
+          <p className="">
             Run all of your transactions through the right card and make sure
             you pay off your card in full every statement period and you'll get
             free flights, hotel stays, and make significant cash back.
           </p>
         </div>
       </div>
-      <div className="flex flex-col gap-3 items-center">
+      <div className="flex flex-col gap-3">
         <h2 className="font-bold text-lg border-b px-4 py-1">
           All-arounder, optimizing for points
         </h2>
@@ -58,7 +62,7 @@ export default function Cards() {
           data-cardo-slug="kellenbusby__capital-one-venture-one-rewards-credit-card"
         ></div>
       </div>
-      <div className="flex flex-col gap-3 items-center">
+      <div className="flex flex-col gap-3">
         <h2 className="font-bold text-lg border-b px-4 py-1">
           Great shared expenses card for cash back
         </h2>
@@ -68,7 +72,7 @@ export default function Cards() {
           data-cardo-slug="kellenbusby__capital-one-savor-one-cash-rewards-credit-card"
         ></div>
       </div>
-      <div className="flex flex-col gap-3 items-center">
+      <div className="flex flex-col gap-3">
         <h2 className="font-bold text-lg border-b px-4 py-1">
           Better all-arounder, book flights through Chase Travel℠
         </h2>
@@ -78,6 +82,6 @@ export default function Cards() {
           data-cardo-slug="kellenbusby__chase-freedom-unlimited"
         ></div>
       </div>
-    </div>
+    </PageLayout>
   )
 }

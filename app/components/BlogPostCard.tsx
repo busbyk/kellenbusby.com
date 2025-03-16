@@ -1,30 +1,33 @@
 import { Link } from '@remix-run/react'
-import classNames from 'classnames'
-import { PostMeta } from '~/lib/posts'
+import { Entry } from '@keystatic/core/reader'
+import keystaticConfig from '../../keystatic.config'
+import { cn } from '~/lib/utils'
+
+type Post = { slug: string } & {
+  entry: Entry<(typeof keystaticConfig)['collections']['posts']>
+}
 
 export default function BlogPostCard({
   className,
-  postMeta,
+  post,
 }: {
   className?: string
-  postMeta: PostMeta
+  post: Post
 }) {
-  const tags = postMeta.frontmatter.tags?.split(',')
-
   return (
     <Link
-      to={`/blog/${postMeta.slug}`}
-      className={classNames(
-        className,
-        'rounded-md hover:border-b-white border-b-transparent border-b outline p-4'
-      )}
+      to={`/blog/${post.slug}`}
+      className={cn('rounded-md border p-4', className)}
     >
-      <h2 className="text-xl font-bold">{postMeta.frontmatter.title}</h2>
-      <p className="">{postMeta.frontmatter.description}</p>
+      <h2 className="text-xl font-bold">{post.entry.title}</h2>
+      <p className="">{post.entry.description}</p>
       <div className="flex items-center gap-2 pt-2">
-        {tags.map((tag) => (
-          <div className="border rounded-md py-0.5 px-2 text-theme-white/80 text-sm capitalize">
-            {tag}
+        {post.entry.tags.map((tag) => (
+          <div
+            key={tag}
+            className="border rounded-md py-0.5 px-2 text-theme-white/80 text-sm capitalize"
+          >
+            {tag?.replace('-', ' ')}
           </div>
         ))}
       </div>

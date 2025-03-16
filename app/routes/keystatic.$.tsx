@@ -6,7 +6,7 @@ export function loader() {
     throw new Response('Not found', { status: 404 })
   }
 
-  return
+  return null
 }
 
 export default makePage(config)

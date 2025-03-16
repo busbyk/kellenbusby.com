@@ -11,6 +11,7 @@ export default config({
       path: 'app/content/posts/*',
       format: { contentField: 'content' },
       entryLayout: 'content',
+      columns: ['title', 'published'],
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
         published: fields.checkbox({ label: 'Published' }),

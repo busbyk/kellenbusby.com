@@ -1,19 +1,20 @@
 import type { LinksFunction } from '@remix-run/node'
 import {
+  isRouteErrorResponse,
   json,
-  Link,
   Links,
   Meta,
-  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
+  useLocation,
+  useRouteError,
+  useRouteLoaderData,
 } from '@remix-run/react'
 import favicons from '~/data/favicons'
-import '~/tailwind.css'
+import '~/styles/tailwind.css'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import classNames from 'classnames'
+import MainLayout from './components/layout/MainLayout'
 
 export const links: LinksFunction = () => [...favicons]
 
@@ -26,8 +27,17 @@ export function loader() {
   })
 }
 
-export default function App() {
-  const loaderData = useLoaderData<typeof loader>()
+export function Layout({ children }: { children: React.ReactNode }) {
+  const loaderData = useRouteLoaderData<typeof loader>('root')
+
+  let renderMainLayout = true
+
+  const location = useLocation()
+  const pathname = location.pathname
+
+  if (pathname === '/keystatic') {
+    renderMainLayout = false
+  }
 
   return (
     <html lang="en">
@@ -62,72 +72,15 @@ export default function App() {
         <Links />
       </head>
       <body className="flex min-h-screen w-screen flex-col overflow-x-clip bg-theme-gray-default text-theme-white">
-        <header className="w-full flex justify-between items-center px-4 py-2">
-          <div className="flex gap-8 items-center">
-            <Link to="/" className="font-extrabold">
-              KB
-            </Link>
-            <div className="flex items-center gap-4">
-              <NavLink
-                to="/life"
-                className={({ isActive }) =>
-                  classNames(
-                    'border-b-2',
-                    isActive && 'border-b-theme-white',
-                    !isActive && 'border-b-transparent'
-                  )
-                }
-              >
-                Life
-              </NavLink>
-              <NavLink
-                to="/software"
-                className={({ isActive }) =>
-                  classNames(
-                    'border-b-2',
-                    isActive && 'border-b-theme-white',
-                    !isActive && 'border-b-transparent'
-                  )
-                }
-              >
-                Software
-              </NavLink>
-              <NavLink
-                to="/blog"
-                className={({ isActive }) =>
-                  classNames(
-                    'border-b-2',
-                    isActive && 'border-b-theme-white',
-                    !isActive && 'border-b-transparent'
-                  )
-                }
-              >
-                Blog
-              </NavLink>
-              <NavLink
-                to="/projects"
-                className={({ isActive }) =>
-                  classNames(
-                    'border-b-2',
-                    isActive && 'border-b-theme-white',
-                    !isActive && 'border-b-transparent'
-                  )
-                }
-              >
-                Indie Projects
-              </NavLink>
-            </div>
-          </div>
-        </header>
-        <main className="w-full px-4 pb-2 md:px-5 md:pb-5 overflow-x-clip min-h-[calc(100vh-64px)] flex flex-col">
-          <Outlet />
-        </main>
+        {renderMainLayout ? <MainLayout>{children}</MainLayout> : children}
         <ScrollRestoration />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(loaderData.ENV)}`,
-          }}
-        />
+        {loaderData && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.ENV = ${JSON.stringify(loaderData.ENV)}`,
+            }}
+          />
+        )}
         {process.env.NODE_ENV === 'production' && (
           <script
             defer
@@ -140,4 +93,38 @@ export default function App() {
       </body>
     </html>
   )
+}
+
+export default function App() {
+  return <Outlet />
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError()
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div className="flex justify-center items-center flex-col gap-6 flex-grow">
+        <h1 className="text-4xl">
+          {error.status} <span className="text-xl">{error.statusText}</span>
+        </h1>
+        <p>{error.data}</p>
+      </div>
+    )
+  } else if (error instanceof Error) {
+    return (
+      <div className="flex justify-center items-center flex-col gap-6 flex-grow">
+        <h1>Error</h1>
+        <p>{error.message}</p>
+        <p>The stack trace is:</p>
+        <pre>{error.stack}</pre>
+      </div>
+    )
+  } else {
+    return (
+      <div className="flex justify-center items-center flex-col gap-6 flex-grow">
+        <h1>Unknown Error</h1>
+      </div>
+    )
+  }
 }
