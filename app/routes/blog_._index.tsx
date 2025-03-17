@@ -6,10 +6,6 @@ import keystaticConfig from '../../keystatic.config'
 import PageLayout from '~/components/layout/PageLayout'
 import BlogPostCard from '~/components/BlogPostCard'
 
-export const config = {
-  runtime: 'edge',
-}
-
 export async function loader() {
   const reader = createReader(process.cwd(), keystaticConfig)
   const posts = await reader.collections.posts.all()
