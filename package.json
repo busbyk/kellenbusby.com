@@ -28,7 +28,7 @@
     "react-use": "^17.5.0",
     "remix-utils": "^7.6.0",
     "tailwind-merge": "^3.0.2",
-    "zwitch": "^2.0.4"
+    "zwitch": "^2.0.0"
   },
   "devDependencies": {
     "@remix-run/dev": "2.15.3",
