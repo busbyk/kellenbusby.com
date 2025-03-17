@@ -10,7 +10,7 @@
     }
   ],
   "functions": {
-    "api/**/*.js": {
+    "blog/**/*.js": {
       "includeFiles": "app/content/**"
     }
   }
