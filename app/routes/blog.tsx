@@ -1,6 +1,10 @@
 import { Link, MetaFunction, Outlet } from '@remix-run/react'
 import PageLayout from '~/components/layout/PageLayout'
 
+export const config = {
+  runtime: 'edge',
+}
+
 export const meta: MetaFunction = () => {
   return [{ title: "Kellen Busby's Blog" }]
 }

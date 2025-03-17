@@ -4,6 +4,10 @@ import { type LoaderFunctionArgs, json } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { reader } from '~/lib/keystatic-reader.server'
 
+export const config = {
+  runtime: 'edge',
+}
+
 export async function loader({ params }: LoaderFunctionArgs) {
   const slug = params.slug
   if (!slug) throw json('Not Found', { status: 404 })

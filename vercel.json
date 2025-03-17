@@ -8,10 +8,5 @@
       "source": "/stats/api/event",
       "destination": "https://plausible.io/api/event"
     }
-  ],
-  "functions": {
-    "blog/**/*.js": {
-      "includeFiles": "app/content/**"
-    }
-  }
+  ]
 }
