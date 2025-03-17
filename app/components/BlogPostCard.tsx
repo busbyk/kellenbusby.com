@@ -24,7 +24,7 @@ export default function BlogPostCard({
       <div className="flex items-center gap-2 pt-2">
         {post.entry.tags.map((tag) => (
           <div
-            key={tag}
+            key={`${post.slug}-${tag}`}
             className="border rounded-md py-0.5 px-2 text-theme-white/80 text-sm capitalize"
           >
             {tag?.replace('-', ' ')}
