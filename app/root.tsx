@@ -35,7 +35,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const pathname = location.pathname
 
-  if (pathname === '/keystatic') {
+  if (pathname.includes('/keystatic')) {
     renderMainLayout = false
   }
 

@@ -9,7 +9,7 @@ export default function MainLayout({
   return (
     <>
       <header className="w-full flex justify-between items-center px-4 py-2">
-        <div className="flex gap-8 items-center justify-between md:justify-normal w-full">
+        <div className="flex gap-8 items-center justify-between md:justify-normal w-full max-w-6xl mx-auto">
           <Link to="/" className="font-extrabold">
             KB
           </Link>
