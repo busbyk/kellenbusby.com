@@ -11,7 +11,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const post = await reader.collections.posts.read(slug, {
     resolveLinkedFiles: true,
   })
-  if (!post) throw json('Not Found', { status: 404 })
+  if (!post || !post.published) throw json('Not Found', { status: 404 })
 
   const errors = Markdoc.validate(post.content.node, {})
   if (errors.length) {
