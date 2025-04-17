@@ -3,16 +3,12 @@ import { handleLoader } from '@keystatic/remix/api'
 import config from '../../keystatic.config'
 
 export const loader: LoaderFunction = (args) => {
-  // if (process.env.NODE_ENV === 'production') {
-  //   throw new Response('Not found', { status: 404 })
-  // }
+  console.log('GET request to /api/keystatic')
 
   return handleLoader({ config }, args)
 }
 export const action: ActionFunction = (args) => {
-  // if (process.env.NODE_ENV === 'production') {
-  //   return null
-  // }
+  console.log('non-GET request to /api/keystatic')
 
   return handleLoader({ config }, args)
 }
