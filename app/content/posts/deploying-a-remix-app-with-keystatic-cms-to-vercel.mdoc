@@ -15,3 +15,20 @@ I want a nicer writing experience for my personal website's blog than manually w
 It's proven difficult to deploy. You can't use local mode without doing some hacking to include all of your content files in your serverless bundles. And getting GitHub mode to work has been tricky.
 
 So here's what I learned and how I got Keystatic working with a Remix app running on Vercel.
+
+# The Solution
+
+1. Use the `createGithubReader` fn instead of `createReader`
+
+1. Configure to point at the appropriate GitHub branch based on the environment the app is deployed in
+
+   ```javascript
+   import keystaticConfig from '../../keystatic.config'
+   import { createGitHubReader } from '@keystatic/core/reader/github'
+   
+   export const reader = createGitHubReader(keystaticConfig, {
+     repo: process.env.GITHUB_REPO,
+     token: process.env.GITHUB_PAT,
+     ref: process.env.VERCEL_GIT_COMMIT_REF || process.env.LOCAL_GIT_REF || 'dev',
+   })
+   ```
