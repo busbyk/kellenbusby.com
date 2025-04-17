@@ -15,6 +15,7 @@ import favicons from '~/data/favicons'
 import '~/styles/tailwind.css'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import MainLayout from './components/layout/MainLayout'
+import { ThemeProvider } from './context/ThemeProvider'
 
 export const links: LinksFunction = () => [...favicons]
 
@@ -26,6 +27,18 @@ export function loader() {
     },
   })
 }
+
+// Script to prevent flash of wrong theme
+const themeScript = `
+  let saved = localStorage.getItem('theme');
+  let theme = saved === 'light' || saved === 'dark' ? saved : 'system';
+  
+  if (theme === 'system') {
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  
+  document.documentElement.classList.add(theme);
+`
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const loaderData = useRouteLoaderData<typeof loader>('root')
@@ -40,7 +53,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -70,9 +83,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <Meta />
         <Links />
+        {/* Add theme script to prevent flash of wrong theme */}
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="flex min-h-screen w-screen flex-col overflow-x-clip bg-theme-gray-default text-theme-white">
-        {renderMainLayout ? <MainLayout>{children}</MainLayout> : children}
+      <body className="flex min-h-screen w-screen flex-col overflow-x-clip bg-theme-bg dark:bg-theme-bg light:bg-theme-light-bg text-theme-text dark:text-theme-text light:text-theme-light-text transition-colors duration-200">
+        <ThemeProvider>
+          {renderMainLayout ? <MainLayout>{children}</MainLayout> : children}
+        </ThemeProvider>
         <ScrollRestoration />
         {loaderData && (
           <script

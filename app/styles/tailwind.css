@@ -10,25 +10,51 @@
 }
 
 @layer base {
+  /* CSS Variables for theme colors */
+  :root {
+    /* Light theme colors (default for :root) */
+    --theme-bg: #f8fafc;
+    --theme-bg-surface: #f1f5f9;
+    --theme-primary: #0891b2;
+    --theme-primary-light: #22d3ee;
+    --theme-secondary: #d97706;
+    --theme-secondary-light: #fbbf24;
+    --theme-text: #1e293b;
+    --theme-text-subtle: #64748b;
+  }
+
+  /* Dark theme colors */
+  html.dark {
+    --theme-bg: #0f172a;
+    --theme-bg-surface: #1e293b;
+    --theme-primary: #06b6d4;
+    --theme-primary-light: #67e8f9;
+    --theme-secondary: #f59e0b;
+    --theme-secondary-light: #fcd34d;
+    --theme-text: #f8fafc;
+    --theme-text-subtle: #94a3b8;
+  }
+
   html {
-    @apply min-h-screen w-screen overflow-x-hidden;
+    @apply min-h-screen w-screen overflow-x-hidden bg-theme-bg text-theme-text;
   }
 
   body {
     margin: 0 auto;
+    @apply transition-colors duration-200;
   }
 }
 
 @layer components {
   @media screen(md) {
     .slide-in-background-from-right::before {
-      @apply bg-theme-blue-default absolute inset-0 rounded-md translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
+      @apply bg-theme-primary absolute inset-0 rounded-md translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
       content: '';
       z-index: -1;
     }
 
     .slide-in-background-from-left::before {
-      @apply bg-theme-blue-default absolute inset-0 rounded-md -translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
+      @apply bg-theme-primary absolute inset-0 rounded-md -translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
       content: '';
       z-index: -1;
     }
@@ -36,5 +62,20 @@
 
   .blog img {
     @apply rounded-md shadow-xl;
+  }
+
+  /* Theme-aware button */
+  .theme-button {
+    @apply bg-theme-primary hover:bg-theme-primary-light text-white px-4 py-2 rounded-md transition-colors duration-200;
+  }
+
+  /* Theme-aware card */
+  .theme-card {
+    @apply bg-theme-bg-surface border border-theme-primary/20 rounded-md p-4 transition-colors duration-200;
+  }
+
+  /* Theme-aware section divider */
+  .theme-divider {
+    @apply border-t border-theme-primary/20 my-6 transition-colors duration-200;
   }
 }

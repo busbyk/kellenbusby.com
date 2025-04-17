@@ -1,5 +1,5 @@
 import { Link } from '@remix-run/react'
-import classNames from 'classnames'
+import { cn } from '~/lib/utils'
 
 export default function ProjectPostCard({
   className,
@@ -18,17 +18,21 @@ export default function ProjectPostCard({
 }) {
   const Card = (
     <div
-      className={classNames(
+      className={cn(
         'group flex items-stretch flex-grow cursor-pointer',
         className
       )}
     >
-      <div className="px-3 py-2 bg-slate-900 rounded-l-md">
+      <div className="px-3 py-2 bg-theme-bg-surface dark:bg-theme-bg-surface light:bg-theme-light-bg-surface rounded-l-md">
         <p className="font-bold text-lg">{title}</p>
         <p>{tagline}</p>
-        {date && <p className="text-xs text-theme-white/70">{date}</p>}
+        {date && (
+          <p className="text-xs text-theme-text-subtle dark:text-theme-text-subtle light:text-theme-light-text-subtle">
+            {date}
+          </p>
+        )}
       </div>
-      <div className="flex items-center justify-center bg-theme-purple-default rounded-r-md px-px group-hover:bg-theme-purple-light">
+      <div className="flex items-center justify-center bg-theme-primary dark:bg-theme-primary light:bg-theme-light-primary rounded-r-md px-px group-hover:bg-theme-primary-light dark:group-hover:bg-theme-primary-light light:group-hover:bg-theme-light-primary-light transition-colors duration-200">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
