@@ -53,7 +53,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -86,7 +86,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Add theme script to prevent flash of wrong theme */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="flex min-h-screen w-screen flex-col overflow-x-clip bg-theme-bg dark:bg-theme-bg light:bg-theme-light-bg text-theme-text dark:text-theme-text light:text-theme-light-text transition-colors duration-200">
+      <body className="flex min-h-screen w-screen flex-col overflow-x-clip">
         <ThemeProvider>
           {renderMainLayout ? <MainLayout>{children}</MainLayout> : children}
         </ThemeProvider>
