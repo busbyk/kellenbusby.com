@@ -1,10 +1,34 @@
 import { MetaFunction } from '@remix-run/node'
 import { useEffect } from 'react'
 import PageLayout from '~/components/layout/PageLayout'
+import '~/styles/cardonomics-widget-overrides.css'
 
 export const meta: MetaFunction = () => {
   return [{ title: "Kellen's Credit Card Recommendations" }]
 }
+
+export const links = () => [
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+  {
+    rel: 'preconnect',
+    href: 'https://fonts.gstatic.com',
+    crossOrigin: 'anonymous',
+  },
+  {
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
+  },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+  {
+    rel: 'preconnect',
+    href: 'https://fonts.gstatic.com',
+    crossOrigin: 'anonymous',
+  },
+  {
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap',
+  },
+]
 
 export default function Cards() {
   useEffect(() => {

@@ -1,0 +1,24 @@
+.cardo-widget {
+  font-family: 'Inter', sans-serif !important;
+  color: #454545 !important;
+}
+
+.cardo-widget::before,
+.cardo-widget::after,
+.cardo-widget *:not(path)::before,
+.cardo-widget *:not(path)::after,
+.cardo-widget *:not(path) {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.cardo-widget .cardo-section-heading {
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 600 !important;
+  color: #212121 !important;
+}
+
+.cardo-widget .card-name {
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 600 !important;
+  color: #212121 !important;
+}
