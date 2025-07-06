@@ -6,12 +6,28 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { seoPlugin } from '@payloadcms/plugin-seo'
+import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Post } from '@/payload-types'
+import { getServerSideURL } from './utils/getURL'
+import { Posts } from './collections/Posts'
+import { Tags } from './collections/Tags'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const generateTitle: GenerateTitle<Post> = ({ doc }) => {
+  return doc?.title ? `${doc.title} | Kellen Busby` : 'Kellen Busby'
+}
+
+const generateURL: GenerateURL<Post> = ({ doc }) => {
+  const url = getServerSideURL()
+
+  return doc?.slug ? `${url}/${doc.slug}` : url
+}
 
 export default buildConfig({
   admin: {
@@ -20,7 +36,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [Users, Media, Posts, Tags],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -34,6 +50,10 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
+    seoPlugin({
+      generateTitle,
+      generateURL,
+    }),
     // storage-adapter-placeholder
   ],
 })

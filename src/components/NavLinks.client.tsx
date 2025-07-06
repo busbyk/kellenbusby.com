@@ -17,7 +17,7 @@ export default function NavLinks() {
   return (
     <div className="flex items-center sm:gap-2">
       {links.map((link) => {
-        const isActive = pathname === link.href
+        const isActive = pathname.includes(link.href)
         return (
           <Link
             key={link.href}
