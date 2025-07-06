@@ -3,7 +3,12 @@
 import { useEffect, useState } from 'react'
 
 export default function DarkModeToggle() {
-  const [isDark, setIsDark] = useState(false)
+  const [isDark, setIsDark] = useState(() => {
+    const savedTheme = localStorage.getItem('theme')
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+
+    return savedTheme === 'dark' || (!savedTheme && systemPrefersDark)
+  })
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme')

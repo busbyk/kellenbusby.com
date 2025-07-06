@@ -28,7 +28,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const { user } = await payload.auth({ headers })
 
   return (
-    <html lang="en" className={rubik.className}>
+    <html lang="en" className={rubik.className} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
