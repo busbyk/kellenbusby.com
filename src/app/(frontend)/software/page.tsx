@@ -29,6 +29,13 @@ import linkedin from '@/images/linkedin-circle.svg'
 import PageLayout from '@/components/layout/PageLayout'
 import Link from 'next/link'
 import EmailMe from '@/components/EmailMe.client'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Software | Kellen Busby',
+  description:
+    "I'm a freelance full stack web app developer for startups, individuals, and small teams.",
+}
 
 export default function Software() {
   return (

@@ -1,4 +1,11 @@
 import PageLayout from '@/components/layout/PageLayout'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'About | Kellen Busby',
+  description:
+    "I'm a skier, climber, mountain biker, traveler, hobbyist, and freelance full stack web app developer",
+}
 
 export default function Life() {
   return (

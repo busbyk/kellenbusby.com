@@ -3,6 +3,12 @@ import backcountrychecklist from '@/images/backcountrychecklist.png'
 import avyobs from '@/images/avyobs.png'
 import PageLayout from '@/components/layout/PageLayout'
 import SlideInBackground from '@/components/SlideInBackground'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Projects | Kellen Busby',
+  description: "Kellen Busby's independent software projects",
+}
 
 export default function Projects() {
   return (
