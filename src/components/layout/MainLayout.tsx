@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import DarkModeToggle from '../DarkModeToggle'
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,9 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <Link href="/blog">Blog</Link>
             <Link href="/projects">Projects</Link>
           </div>
+        </div>
+        <div className="flex items-center">
+          <DarkModeToggle />
         </div>
       </header>
       <main className="w-full px-4 pb-2 md:px-5 md:pb-5 overflow-x-clip min-h-[calc(100vh-42px)] flex flex-col">

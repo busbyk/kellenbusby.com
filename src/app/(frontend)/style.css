@@ -29,35 +29,6 @@
   --color-card-foreground: #344a53;
 }
 
-@media (prefers-color-scheme: dark) {
-  @theme {
-    /* Dark mode colors */
-    --color-background: #0f172a;
-    --color-foreground: #f1f5f9;
-    --color-muted: #94a3b8;
-    --color-border: #334155;
-
-    /* Primary colors - adjusted for dark mode */
-    --color-primary: #7fb3c8;
-    --color-primary-foreground: #0f172a;
-    --color-primary-hover: #6ba3c0;
-
-    /* Secondary colors - lightened for dark mode */
-    --color-secondary: #837184;
-    --color-secondary-foreground: #f1f5f9;
-    --color-secondary-hover: #937294;
-
-    /* Accent colors - adjusted saturation */
-    --color-accent: #f59432;
-    --color-accent-foreground: #0f172a;
-    --color-accent-hover: #e4634a;
-
-    /* Card and surface colors */
-    --color-card: #1e293b;
-    --color-card-foreground: #f1f5f9;
-  }
-}
-
 /* Manual dark mode class override */
 .dark {
   --color-background: #0f172a;
@@ -88,10 +59,13 @@
 
   body {
     margin: 0 auto;
-    background-color: var(--color-background);
-    color: var(--color-foreground);
     font-feature-settings:
       'rlig' 1,
       'calt' 1;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
   }
 }

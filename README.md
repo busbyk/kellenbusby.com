@@ -13,5 +13,5 @@
 - [ ] Posts collection
 - [ ] Implement blog
 - [ ] Add live preview
-- [ ] Light/dark mode
+- [x] Light/dark mode
 - [ ] Migrate baileys traverse POC + map component(s)
