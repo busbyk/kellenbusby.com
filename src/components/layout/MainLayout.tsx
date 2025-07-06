@@ -12,7 +12,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             <Link href="/life">Life</Link>
             <Link href="/software">Software</Link>
             <Link href="/blog">Blog</Link>
-            <Link href="/projects">Indie Projects</Link>
+            <Link href="/projects">Projects</Link>
           </div>
         </div>
       </header>

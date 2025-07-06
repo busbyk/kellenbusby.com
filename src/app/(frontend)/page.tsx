@@ -1,4 +1,4 @@
-import { ProfileContainer } from '@/components/ProfileContainer'
+import ProfileContainer from '@/components/ProfileContainer'
 import contra from '@/images/contra-circle.svg'
 import github from '@/images/github-circle.svg'
 import linkedin from '@/images/linkedin-circle.svg'

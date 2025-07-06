@@ -1,4 +1,4 @@
-export function ProfileContainer({
+export default function ProfileContainer({
   href,
   children,
   tooltip,
