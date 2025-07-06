@@ -65,12 +65,12 @@ export default function HomePageHero() {
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Web App Dev</h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">JS|TS|React Dev</h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Remix.run Dev</h2>
-          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-theme-white flex items-center gap-1">
+          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-border flex items-center gap-1 cursor-pointer group-hover:border-foreground">
             Software <CaretRightIcon />
           </button>
-          <div className="hidden md:block bg-theme-blue absolute inset-0 rounded-md translate-x-[110%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-[-1]" />
+          <div className="hidden md:block bg-primary absolute inset-0 rounded-md translate-x-[110%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-[-1]" />
         </Link>
-        <div className="bg-theme-white h-px w-42 md:h-44 md:w-1" />
+        <div className="bg-foreground mx-auto h-px w-44 md:h-44 md:w-1" />
         <Link
           href="/life"
           className="group relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-60 p-4"
@@ -81,10 +81,10 @@ export default function HomePageHero() {
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Mountain Biker</h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Traveler</h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Hobbyist</h2>
-          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-theme-white flex items-center gap-1">
+          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-border flex items-center gap-1 cursor-pointer group-hover:border-foreground">
             Life <CaretRightIcon />
           </button>
-          <div className="hidden md:block bg-theme-blue absolute inset-0 rounded-md -translate-x-[110%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-[-1]" />
+          <div className="hidden md:block bg-primary absolute inset-0 rounded-md -translate-x-[110%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-[-1]" />
         </Link>
       </div>
     </div>

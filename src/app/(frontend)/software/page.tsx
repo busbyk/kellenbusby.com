@@ -77,7 +77,7 @@ export default function Software() {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-theme-orange-default pl-2">
+          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-accent pl-2">
             About Me
           </h2>
           <div className="flex flex-col gap-4 leading-7">
@@ -106,7 +106,7 @@ export default function Software() {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-theme-orange-default pl-2">
+          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-accent pl-2">
             Tech
           </h2>
           <div className="flex flex-col gap-10">
@@ -313,7 +313,7 @@ export default function Software() {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-theme-orange-default pl-2">
+          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-accent pl-2">
             Services
           </h2>
           <div className="grid sm:grid-cols-2 gap-10 leading-6 py-4">
@@ -348,18 +348,18 @@ export default function Software() {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-theme-orange-default pl-2">
+          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-accent pl-2">
             Professional Experience
           </h2>
           <div className="flex flex-col gap-10">
             <div>
               <h3 className="text-xl font-semibold mb-1">Owner - Kellen Busby Software LLC</h3>
-              <p className="text-theme-white/70 mb-2">08/2018 - Present</p>
+              <p className="text-muted mb-2">08/2018 - Present</p>
               <div className="flex flex-col gap-4 pl-4">
                 <div>
                   <h4 className="font-medium mb-2">
                     Freelancing Projects
-                    <span className="text-theme-white/70 text-sm ml-2">2020 - Present</span>
+                    <span className="text-muted text-sm ml-2">2020 - Present</span>
                   </h4>
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col sm:flex-row gap-2 gap-y-4">
@@ -401,8 +401,7 @@ export default function Software() {
                 </div>
                 <div>
                   <h4 className="font-medium mb-2">
-                    Riverstone Resources LLC{' '}
-                    <span className="text-theme-white/70 text-sm ml-2">2019</span>
+                    Riverstone Resources LLC <span className="text-muted text-sm ml-2">2019</span>
                   </h4>
                   <p className="mb-2"></p>
                   <ul className="list-disc pl-6 space-y-1">
@@ -428,7 +427,7 @@ export default function Software() {
                 </div>
                 <div>
                   <h4 className="font-medium mb-2">
-                    Bookcicle LLC <span className="text-theme-white/70 text-sm ml-2">2018</span>
+                    Bookcicle LLC <span className="text-muted text-sm ml-2">2018</span>
                   </h4>
                   <ul className="list-disc pl-6 space-y-1">
                     <li>
@@ -447,7 +446,7 @@ export default function Software() {
               <h3 className="text-xl font-semibold mb-1">
                 Software Developer - Liberty Mutual Insurance
               </h3>
-              <p className="text-theme-white/70 mb-2">08/2016 - 08/2018 | Portsmouth, NH</p>
+              <p className="text-muted mb-2">08/2016 - 08/2018 | Portsmouth, NH</p>
               <ul className="list-disc pl-6 space-y-1">
                 <li>
                   Architected and developed an enterprise-level chatbot using NodeJS, Amazon Lex,
@@ -469,9 +468,7 @@ export default function Software() {
               <h3 className="text-xl font-semibold mb-1">
                 IT Analyst, Technical Development Program - Liberty Mutual Insurance
               </h3>
-              <p className="text-theme-white/70 mb-2">
-                06/2014 - 08/2016 | Seattle, WA / Dover, NH
-              </p>
+              <p className="text-muted mb-2">06/2014 - 08/2016 | Seattle, WA / Dover, NH</p>
               <p className="mb-4">
                 The Technical Development Program is an IT rotational program that exposes
                 participants to different areas of the company, all aspects of the software
@@ -487,7 +484,7 @@ export default function Software() {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-theme-orange-default pl-2">
+          <h2 className="text-2xl md:text-4xl font-semibold border-l-8 border-l-accent pl-2">
             Active Indie Projects
           </h2>
           <p className="">These are my independent projects.</p>
