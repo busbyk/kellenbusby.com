@@ -14,4 +14,5 @@
 - [ ] Implement blog
 - [ ] Add live preview
 - [x] Light/dark mode
+  - [ ] Fix hydration error related to dark class being added
 - [ ] Migrate baileys traverse POC + map component(s)

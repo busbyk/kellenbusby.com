@@ -7,6 +7,7 @@ import { useHover } from '@/hooks/useHover'
 import { cn } from '@/utils'
 import Link from 'next/link'
 import CaretRightIcon from '@/components/icons/CaretRightIcon'
+import SlideInBackground from '@/components/SlideInBackground'
 
 export default function HomePageHero() {
   const [profile, setProfile] = useState<'software' | 'outdoors'>('software')
@@ -56,36 +57,38 @@ export default function HomePageHero() {
         />
       </figure>
       <div className="flex flex-col md:min-w-[800px] md:flex-row md:items-center md:gap-8">
-        <Link
-          href="/software"
-          className="group relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-end rounded-md md:h-48 p-4"
-          ref={softwareLinkRef}
-        >
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Software Engineer</h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Web App Dev</h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">JS|TS|React Dev</h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Remix.run Dev</h2>
-          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-border flex items-center gap-1 cursor-pointer group-hover:border-foreground">
-            Software <CaretRightIcon />
-          </button>
-          <div className="hidden md:block bg-primary absolute inset-0 rounded-md translate-x-[110%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-[-1]" />
-        </Link>
+        <SlideInBackground direction="rtl">
+          <Link
+            href="/software"
+            className="relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-end rounded-md md:h-48 p-4"
+            ref={softwareLinkRef}
+          >
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Software Engineer</h2>
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Web App Dev</h2>
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">JS|TS|React Dev</h2>
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Remix.run Dev</h2>
+            <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-border flex items-center gap-1 cursor-pointer hover:border-foreground">
+              Software <CaretRightIcon />
+            </button>
+          </Link>
+        </SlideInBackground>
         <div className="bg-foreground mx-auto h-px w-44 md:h-44 md:w-1" />
-        <Link
-          href="/life"
-          className="group relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-60 p-4"
-          ref={outdoorsLinkRef}
-        >
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Skier</h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Climber</h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Mountain Biker</h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Traveler</h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Hobbyist</h2>
-          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-border flex items-center gap-1 cursor-pointer group-hover:border-foreground">
-            Life <CaretRightIcon />
-          </button>
-          <div className="hidden md:block bg-primary absolute inset-0 rounded-md -translate-x-[110%] group-hover:translate-x-0 transition-transform duration-500 ease-in-out z-[-1]" />
-        </Link>
+        <SlideInBackground direction="ltr">
+          <Link
+            href="/life"
+            className="relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-60 p-4"
+            ref={outdoorsLinkRef}
+          >
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Skier</h2>
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Climber</h2>
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Mountain Biker</h2>
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Traveler</h2>
+            <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">Hobbyist</h2>
+            <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-border flex items-center gap-1 cursor-pointer group-hover:border-foreground">
+              Life <CaretRightIcon />
+            </button>
+          </Link>
+        </SlideInBackground>
       </div>
     </div>
   )

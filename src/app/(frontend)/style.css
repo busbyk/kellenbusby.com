@@ -10,8 +10,8 @@
   --color-border: #e2dfe5;
 
   /* Primary colors */
-  --color-primary: oklch(0.5614 0.1004 223.51);
-  --color-primary-foreground: #ffffff;
+  --color-primary: #7fb3c8;
+  --color-primary-foreground: #0f172a;
   --color-primary-hover: #6ba3c0;
 
   /* Secondary colors */
@@ -36,8 +36,8 @@
   --color-muted: #94a3b8;
   --color-border: #334155;
 
-  --color-primary: #7fb3c8;
-  --color-primary-foreground: #0f172a;
+  --color-primary: oklch(0.5614 0.1004 223.51);
+  --color-primary-foreground: #ffffff;
   --color-primary-hover: #6ba3c0;
 
   --color-secondary: #837184;
