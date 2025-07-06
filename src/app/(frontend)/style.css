@@ -1,0 +1,147 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Rubik', 'sans-serif';
+
+  /* Light mode colors (default) */
+  --color-background: #fcf8ff;
+  --color-foreground: #344a53;
+  --color-muted: #f5f3f7;
+  --color-muted-foreground: #647b84;
+  --color-border: #e2dfe5;
+  --color-input: #ffffff;
+  --color-ring: oklch(0.5614 0.1004 223.51);
+
+  /* Primary colors */
+  --color-primary: oklch(0.5614 0.1004 223.51);
+  --color-primary-foreground: #ffffff;
+  --color-primary-hover: #6ba3c0;
+
+  /* Secondary colors */
+  --color-secondary: #5d3b60;
+  --color-secondary-foreground: #ffffff;
+  --color-secondary-hover: #6d4b70;
+
+  /* Accent colors */
+  --color-accent: #f59432;
+  --color-accent-foreground: #ffffff;
+  --color-accent-hover: #e4634a;
+
+  /* State colors */
+  --color-success: #22c55e;
+  --color-success-foreground: #ffffff;
+  --color-warning: #f59432;
+  --color-warning-foreground: #ffffff;
+  --color-destructive: #e4634a;
+  --color-destructive-foreground: #ffffff;
+
+  /* Card and surface colors */
+  --color-card: #ffffff;
+  --color-card-foreground: #344a53;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #344a53;
+
+  /* Keep your original theme colors for backward compatibility */
+  --color-theme-gray: #344a53;
+  --color-theme-gray-mid: #647b84;
+  --color-theme-gray-light: #7c7484;
+  --color-theme-blue: oklch(0.5614 0.1004 223.51);
+  --color-theme-blue-light: #7fb3c8;
+  --color-theme-purple: #5d3b60;
+  --color-theme-purple-light: #837184;
+  --color-theme-orange: #e4634a;
+  --color-theme-orange-light: #f59432;
+  --color-theme-white: #fcf8ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  @theme {
+    /* Dark mode colors */
+    --color-background: #0f172a;
+    --color-foreground: #f1f5f9;
+    --color-muted: #1e293b;
+    --color-muted-foreground: #94a3b8;
+    --color-border: #334155;
+    --color-input: #1e293b;
+    --color-ring: #7fb3c8;
+
+    /* Primary colors - adjusted for dark mode */
+    --color-primary: #7fb3c8;
+    --color-primary-foreground: #0f172a;
+    --color-primary-hover: #6ba3c0;
+
+    /* Secondary colors - lightened for dark mode */
+    --color-secondary: #837184;
+    --color-secondary-foreground: #f1f5f9;
+    --color-secondary-hover: #937294;
+
+    /* Accent colors - adjusted saturation */
+    --color-accent: #f59432;
+    --color-accent-foreground: #0f172a;
+    --color-accent-hover: #e4634a;
+
+    /* State colors - dark mode appropriate */
+    --color-success: #10b981;
+    --color-success-foreground: #f1f5f9;
+    --color-warning: #f59432;
+    --color-warning-foreground: #0f172a;
+    --color-destructive: #ef4444;
+    --color-destructive-foreground: #f1f5f9;
+
+    /* Card and surface colors */
+    --color-card: #1e293b;
+    --color-card-foreground: #f1f5f9;
+    --color-popover: #1e293b;
+    --color-popover-foreground: #f1f5f9;
+  }
+}
+
+/* Manual dark mode class override */
+.dark {
+  --color-background: #0f172a;
+  --color-foreground: #f1f5f9;
+  --color-muted: #1e293b;
+  --color-muted-foreground: #94a3b8;
+  --color-border: #334155;
+  --color-input: #1e293b;
+  --color-ring: #7fb3c8;
+
+  --color-primary: #7fb3c8;
+  --color-primary-foreground: #0f172a;
+  --color-primary-hover: #6ba3c0;
+
+  --color-secondary: #837184;
+  --color-secondary-foreground: #f1f5f9;
+  --color-secondary-hover: #937294;
+
+  --color-accent: #f59432;
+  --color-accent-foreground: #0f172a;
+  --color-accent-hover: #e4634a;
+
+  --color-success: #10b981;
+  --color-success-foreground: #f1f5f9;
+  --color-warning: #f59432;
+  --color-warning-foreground: #0f172a;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f1f5f9;
+
+  --color-card: #1e293b;
+  --color-card-foreground: #f1f5f9;
+  --color-popover: #1e293b;
+  --color-popover-foreground: #f1f5f9;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    margin: 0 auto;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+}

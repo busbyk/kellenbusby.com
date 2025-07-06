@@ -1,52 +1,56 @@
 {
-  "name": "kellenbusby.com",
-  "private": true,
-  "sideEffects": false,
+  "name": "kellenbusby-com",
+  "version": "1.0.0",
+  "description": "A blank template to get started with Payload 3.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "remix vite:build",
-    "dev": "remix vite:dev",
-    "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc"
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
-    "@keystatic/core": "^0.5.45",
-    "@keystatic/remix": "^5.0.2",
-    "@markdoc/markdoc": "^0.5.1",
-    "@remix-run/node": "2.15.3",
-    "@remix-run/react": "2.15.3",
-    "@remix-run/serve": "2.15.3",
-    "@turf/turf": "^7.0.0",
-    "@vercel/remix": "2.15.3",
-    "classnames": "^2.3.2",
+    "@payloadcms/db-sqlite": "3.42.0",
+    "@payloadcms/next": "3.42.0",
+    "@payloadcms/payload-cloud": "3.42.0",
+    "@payloadcms/richtext-lexical": "3.42.0",
+    "@payloadcms/ui": "3.42.0",
+    "@tailwindcss/postcss": "^4.1.10",
     "clsx": "^2.1.1",
-    "isbot": "^3.6.8",
-    "mapbox-gl": "^3.5.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-use": "^17.5.0",
-    "remix-utils": "^7.6.0",
-    "tailwind-merge": "^3.0.2",
-    "zwitch": "^2.0.0"
+    "cross-env": "^7.0.3",
+    "graphql": "^16.8.1",
+    "next": "15.3.0",
+    "payload": "3.42.0",
+    "postcss": "^8.5.6",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "sharp": "0.32.6",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.1.10"
   },
   "devDependencies": {
-    "@remix-run/dev": "2.15.3",
-    "@tailwindcss/aspect-ratio": "^0.4.2",
-    "@tailwindcss/typography": "^0.5.14",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^8.38.0",
-    "postcss": "^8.4.41",
-    "tailwindcss": "^3.4.3",
-    "typescript": "^5.5.4",
-    "vite-tsconfig-paths": "^5.0.1"
+    "@eslint/eslintrc": "^3.2.0",
+    "@types/node": "^22.5.4",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.2",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "15.3.0",
+    "prettier": "^3.4.2",
+    "typescript": "5.7.3"
   },
   "engines": {
-    "node": "22"
+    "node": "^18.20.2 || >=20.9.0",
+    "pnpm": "^9 || ^10"
   },
-  "author": {
-    "name": "Kellen Busby"
-  }
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
+  },
+  "packageManager": "pnpm@10.8.0+sha512.0e82714d1b5b43c74610193cb20734897c1d00de89d0e18420aebc5977fa13d780a9cb05734624e81ebd81cc876cd464794850641c48b9544326b5622ca29971"
 }
