@@ -12,8 +12,10 @@
   - [x] Update in life, software, indie projects pages
 - [x] Light/dark mode
   - [x] Fix hydration error related to dark class being added
-- [ ] Posts collection
+- [x] Posts collection
 - [ ] Implement blog
+  - [ ] Blog list of card components
+  - [ ] Pagination functionality
 - [ ] Add live preview
 - [ ] Set up a media provider for Payload
 - [ ] Set up SQLite for Payload
