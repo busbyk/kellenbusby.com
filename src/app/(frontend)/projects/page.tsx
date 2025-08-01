@@ -1,8 +1,8 @@
-import myfirstinstapost from '@/images/myfirstinstapost.png'
-import backcountrychecklist from '@/images/backcountrychecklist.png'
-import avyobs from '@/images/avyobs.png'
 import PageLayout from '@/components/layout/PageLayout'
 import SlideInBackground from '@/components/SlideInBackground'
+import avyobs from '@/images/avyobs.png'
+import backcountrychecklist from '@/images/backcountrychecklist.png'
+import myfirstinstapost from '@/images/myfirstinstapost.png'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

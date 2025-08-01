@@ -7,7 +7,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     // Prevent flash of unstyled content by setting theme immediately
     const savedTheme = localStorage.getItem('theme')
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    
+
     if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
       document.documentElement.classList.add('dark')
     } else {
@@ -16,4 +16,4 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   }, [])
 
   return <>{children}</>
-} 
+}

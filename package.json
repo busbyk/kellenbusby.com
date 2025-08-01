@@ -12,6 +12,7 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "prettify": "cross-env NODE_OPTIONS=--no-deprecation prettier --write .",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
@@ -25,10 +26,12 @@
     "@tailwindcss/postcss": "^4.1.10",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
+    "date-fns": "^4.1.0",
     "graphql": "^16.8.1",
     "next": "15.3.0",
     "payload": "3.48.0",
     "postcss": "^8.5.6",
+    "prettier-plugin-organize-imports": "^4.2.0",
     "prism-react-renderer": "^2.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",

@@ -1,15 +1,15 @@
 import type { Metadata } from 'next'
 
 // import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
 import RichText from '@/components/RichText'
+import configPromise from '@payload-config'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import { cache } from 'react'
 
-import type { Post } from '@/payload-types'
-import { notFound } from 'next/navigation'
 import PageLayout from '@/components/layout/PageLayout'
+import { ImageMedia } from '@/components/Media/ImageMedia'
+import { notFound } from 'next/navigation'
 
 // import { generateMeta } from '@/utilities/generateMeta'
 // import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -50,6 +50,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   return (
     <PageLayout heading={post.title}>
+      <ImageMedia resource={post.image} pictureClassName="rounded-md overflow-hidden" />
       <RichText data={post.content} enableGutter={false} />
     </PageLayout>
   )

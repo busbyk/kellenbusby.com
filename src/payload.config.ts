@@ -1,18 +1,18 @@
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { seoPlugin } from '@payloadcms/plugin-seo'
+import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
 import sharp from 'sharp'
-import { seoPlugin } from '@payloadcms/plugin-seo'
-import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
+import { fileURLToPath } from 'url'
 
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
 import { Post } from '@/payload-types'
-import { getServerSideURL } from './utils/getURL'
+import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
 import { Tags } from './collections/Tags'
+import { Users } from './collections/Users'
+import { getURL } from './utils/getURL'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,7 +22,7 @@ const generateTitle: GenerateTitle<Post> = ({ doc }) => {
 }
 
 const generateURL: GenerateURL<Post> = ({ doc }) => {
-  const url = getServerSideURL()
+  const url = getURL()
 
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
@@ -59,4 +59,5 @@ export default buildConfig({
     }),
     // storage-adapter-placeholder
   ],
+  debug: true,
 })

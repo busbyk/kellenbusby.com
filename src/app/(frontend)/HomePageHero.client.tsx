@@ -1,13 +1,13 @@
 'use client'
 
-import softwareHeadshot from '@/images/software-headshot.webp'
-import outdoorsHeadshot from '@/images/outdoors-headshot.webp'
-import { useEffect, useState } from 'react'
-import { useHover } from '@/hooks/useHover'
-import { cn } from '@/utils'
-import Link from 'next/link'
 import CaretRightIcon from '@/components/icons/CaretRightIcon'
 import SlideInBackground from '@/components/SlideInBackground'
+import { useHover } from '@/hooks/useHover'
+import outdoorsHeadshot from '@/images/outdoors-headshot.webp'
+import softwareHeadshot from '@/images/software-headshot.webp'
+import { cn } from '@/utils'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function HomePageHero() {
   const [profile, setProfile] = useState<'software' | 'outdoors'>('software')
