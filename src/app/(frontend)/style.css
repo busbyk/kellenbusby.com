@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin "@tailwindcss/typography";
 
 @theme {
   --font-sans: 'Rubik', 'sans-serif';
@@ -67,5 +68,33 @@
   button:not(:disabled),
   [role='button']:not(:disabled) {
     cursor: pointer;
+  }
+
+  /* Rich text checkbox list styling */
+  .payload-richtext .list-check {
+    list-style: none;
+    padding-inline-start: 0.4rem !important;
+  }
+
+  .payload-richtext .list-check .list-item-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .payload-richtext .list-check .list-item-checkbox input {
+    margin-top: 0.4rem;
+  }
+
+  /* Nested checkbox lists */
+  .payload-richtext .list-check .nestedListItem {
+    flex-direction: column;
+  }
+
+  .payload-richtext .list-check .nestedListItem > ul {
+    margin-left: 1.5rem;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    align-items: flex-start;
   }
 }
