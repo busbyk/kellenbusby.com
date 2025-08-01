@@ -1,10 +1,10 @@
 import { withPayload } from '@payloadcms/next/withPayload'
 
-if (!process.env.APP_URL) {
-  throw new Error('APP_URL environment variable is required')
+if (!process.env.NEXT_PUBLIC_APP_URL) {
+  throw new Error('NEXT_PUBLIC_APP_URL environment variable is required')
 }
 
-const url = new URL(process.env.APP_URL)
+const url = new URL(process.env.NEXT_PUBLIC_APP_URL)
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

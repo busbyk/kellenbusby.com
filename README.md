@@ -15,7 +15,8 @@
 - [x] Posts collection
 - [x] ~~Set up SQLite for Payload~~ Set up MongoDB
 - [ ] Implement blog
-  - [ ] Blog list of card components
+  - [x] Blog list of card components
+  - [ ] Better styling using Typography plugin for individual post
   - [ ] Pagination functionality
   - [ ] Tag pages
 - [ ] Set up a media provider for Payload
