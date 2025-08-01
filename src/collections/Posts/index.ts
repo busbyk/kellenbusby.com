@@ -193,4 +193,7 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     maxPerDoc: 50,
   },
+  folders: {
+    browseByFolder: true,
+  },
 }

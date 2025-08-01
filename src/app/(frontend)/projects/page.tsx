@@ -77,7 +77,7 @@ export default function Projects() {
       <div className="flex flex-col gap-6">
         <SlideInBackground direction="ltr">
           <a
-            href="https://www.myfirstinstapost.com/?utm_source=kellenbusby.com"
+            href="https://github.com/busbyk/myfirstinstapost"
             className="relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center rounded-md p-4 max-w-max"
           >
             <h2 className="text-xl font-bold">MyFirstInstaPost</h2>

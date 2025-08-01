@@ -26,16 +26,19 @@ export default async function Page() {
   })
 
   return (
-    <PageLayout heading="Blog">
-      {posts.docs.map((post) => (
-        <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-      ))}
-      <PageRange
-        collection="posts"
-        currentPage={posts.page}
-        limit={12}
-        totalDocs={posts.totalDocs}
-      />
+    <PageLayout heading="Blog" className="flex-grow">
+      <div className="grid grid-cols-2">
+        {posts.docs.map((post) => (
+          <Link key={post.id} href={`/blog/${post.slug}`}>
+            <div className="border-border rounded-md p-3 bg-card text-card-foreground hover:bg-card/80 flex flex-col gap-4">
+              <h2 className="text-2xl">{post.title}</h2>
+              <div className="border rounded px-2 py-0.5 w-fit">
+                {post.tags?.map((tag) => typeof tag !== 'string' && tag.name)}
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </PageLayout>
   )
 }

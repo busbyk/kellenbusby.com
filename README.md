@@ -18,7 +18,9 @@
   - [ ] Pagination functionality
 - [ ] Add live preview
 - [ ] Set up a media provider for Payload
-- [ ] Set up SQLite for Payload
+- [x] ~~Set up SQLite for Payload~~ Set up MongoDB
 - [ ] Custom 404 page
 - [ ] Error boundary
 - [ ] Migrate baileys traverse POC + map component(s)
+- [ ] Global loading indicator
+- [ ] It would be sick to have my profile links move from mid screen to the footer on scroll. This means also having a longer scrolling landing page.
