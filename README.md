@@ -13,14 +13,16 @@
 - [x] Light/dark mode
   - [x] Fix hydration error related to dark class being added
 - [x] Posts collection
+- [x] ~~Set up SQLite for Payload~~ Set up MongoDB
 - [ ] Implement blog
   - [ ] Blog list of card components
   - [ ] Pagination functionality
-- [ ] Add live preview
+  - [ ] Tag pages
 - [ ] Set up a media provider for Payload
-- [x] ~~Set up SQLite for Payload~~ Set up MongoDB
+- [ ] Set up Resend
+- [ ] Add live preview
 - [ ] Custom 404 page
 - [ ] Error boundary
-- [ ] Migrate baileys traverse POC + map component(s)
 - [ ] Global loading indicator
+- [ ] Migrate baileys traverse POC + map component(s)
 - [ ] It would be sick to have my profile links move from mid screen to the footer on scroll. This means also having a longer scrolling landing page.
