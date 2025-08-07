@@ -26,7 +26,7 @@ export default config({
           {
             label: 'Tags',
             itemLabel: (props) => props.value ?? '',
-          }
+          },
         ),
         content: fields.markdoc({
           label: 'Content',

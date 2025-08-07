@@ -58,7 +58,7 @@ const Map = forwardRef(function Map(
     basemap = 'mapbox://styles/mapbox/streets-v11',
     initialBounds,
   }: MapProps,
-  ref: Ref<{ getMap: () => TMap | undefined }>
+  ref: Ref<{ getMap: () => TMap | undefined }>,
 ) {
   const mapContainer = useRef<HTMLDivElement>(null)
   const mapRef = useRef<TMap>()
@@ -113,7 +113,7 @@ const Map = forwardRef(function Map(
         return map
       },
     }),
-    [map]
+    [map],
   )
 
   useEffect(
@@ -129,7 +129,7 @@ const Map = forwardRef(function Map(
         })
       }
     },
-    [map, center, pitch, bearing, zoom, easeToDuration, padding]
+    [map, center, pitch, bearing, zoom, easeToDuration, padding],
   )
 
   useEffect(
@@ -138,7 +138,7 @@ const Map = forwardRef(function Map(
         map.fitBounds(initialBounds, { padding: 100 })
       }
     },
-    [map, initialBounds]
+    [map, initialBounds],
   )
 
   useEffect(
@@ -169,7 +169,7 @@ const Map = forwardRef(function Map(
         map.setTerrain({ source: 'mapbox-dem', exaggeration: 1.5 })
       }
     },
-    [layers, map, sources, terrainSource]
+    [layers, map, sources, terrainSource],
   )
 
   return (

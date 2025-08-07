@@ -86,7 +86,7 @@ export default function MapboxMap() {
               title={feature.properties?.name}
               details={feature.properties?.details}
             />,
-            popupNode
+            popupNode,
           )
           popupRef.current
             .setLngLat(e.lngLat)
@@ -108,11 +108,11 @@ export default function MapboxMap() {
         mapRef.current?.setLayoutProperty(
           'day-3-line',
           'visibility',
-          showDay3 ? 'visible' : 'none'
+          showDay3 ? 'visible' : 'none',
         )
       }
     },
-    [showDay3]
+    [showDay3],
   )
 
   return (

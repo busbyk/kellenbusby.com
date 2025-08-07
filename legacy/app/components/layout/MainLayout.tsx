@@ -20,7 +20,7 @@ export default function MainLayout({
                 classNames(
                   'border-b-2',
                   isActive && 'border-b-theme-white',
-                  !isActive && 'border-b-transparent'
+                  !isActive && 'border-b-transparent',
                 )
               }
             >
@@ -32,7 +32,7 @@ export default function MainLayout({
                 classNames(
                   'border-b-2',
                   isActive && 'border-b-theme-white',
-                  !isActive && 'border-b-transparent'
+                  !isActive && 'border-b-transparent',
                 )
               }
             >
@@ -44,7 +44,7 @@ export default function MainLayout({
                 classNames(
                   'border-b-2',
                   isActive && 'border-b-theme-white',
-                  !isActive && 'border-b-transparent'
+                  !isActive && 'border-b-transparent',
                 )
               }
             >
@@ -56,7 +56,7 @@ export default function MainLayout({
                 classNames(
                   'border-b-2 hidden md:block',
                   isActive && 'border-b-theme-white',
-                  !isActive && 'border-b-transparent'
+                  !isActive && 'border-b-transparent',
                 )
               }
             >

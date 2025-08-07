@@ -19,7 +19,7 @@ export function useHover<T>(): [MutableRefObject<T>, boolean] {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ref.current] // Recall only if ref changes
+    [ref.current], // Recall only if ref changes
   )
   return [ref, value]
 }

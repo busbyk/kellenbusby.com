@@ -20,7 +20,7 @@ export default function ProjectPostCard({
     <div
       className={classNames(
         'group flex items-stretch flex-grow cursor-pointer',
-        className
+        className,
       )}
     >
       <div className="px-3 py-2 bg-slate-900 rounded-l-md">

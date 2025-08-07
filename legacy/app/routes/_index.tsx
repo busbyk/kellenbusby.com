@@ -68,7 +68,7 @@ export default function Index() {
           className={classNames(
             'absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s]rotate-90 transition duration-1000 motion-reduce:duration-[0s]',
             profile === 'outdoors' && 'md:-rotate-90 md:opacity-0',
-            profile === 'software' && 'md:rotate-0 md:opacity-100'
+            profile === 'software' && 'md:rotate-0 md:opacity-100',
           )}
           style={{ transformOrigin: '50% 300px' }}
           loading="eager"
@@ -81,7 +81,7 @@ export default function Index() {
           className={classNames(
             'hidden md:block absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s]rotate-90 transition duration-1000 motion-reduce:duration-[0s]',
             profile === 'software' && 'rotate-90 opacity-0',
-            profile === 'outdoors' && 'rotate-0 opacity-100'
+            profile === 'outdoors' && 'rotate-0 opacity-100',
           )}
           style={{ transformOrigin: '50% 300px' }}
           loading="lazy"

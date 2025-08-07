@@ -19,14 +19,14 @@ export default function TechBadge({
           'bg-slate-900 py-1.5 rounded-full flex items-center',
           icon && 'pl-1.5 pr-4 gap-2',
           !icon && 'px-4',
-          className
+          className,
         )}
       >
         <figure
           className={classNames(
             'flex items-center justify-center h-8',
             icon && 'w-8 rounded-full bg-black p-0.5',
-            !icon && 'w-0'
+            !icon && 'w-0',
           )}
         >
           {icon}

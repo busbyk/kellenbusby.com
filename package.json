@@ -13,7 +13,10 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "prettify": "cross-env NODE_OPTIONS=--no-deprecation prettier --write .",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
-    "prepare": "husky"
+    "prepare": "husky",
+    "tsc": "tsc",
+    "migrate": "payload migrate",
+    "ci": "payload migrate && pnpm build"
   },
   "lint-staged": {
     "**/*": "pnpm prettify"

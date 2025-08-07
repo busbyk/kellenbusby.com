@@ -47,7 +47,7 @@ const daysLayers = daysSources.flatMap((source) => [
 ])
 
 const allFeatureCollections = featureCollection(
-  daysSources.flatMap((source) => source.data.features)
+  daysSources.flatMap((source) => source.data.features),
 )
 const centerOfAllFeatures = center(allFeatureCollections)
 const bounds = bbox(allFeatureCollections)
@@ -119,7 +119,7 @@ const sections: Section[] = [
 
 export default function BaileysTraverseToOlympusHighRoute() {
   const [center, setCenter] = useState<LngLatLike | null>(
-    centerOfAllFeatures.geometry.coordinates as LngLatLike
+    centerOfAllFeatures.geometry.coordinates as LngLatLike,
   )
   const [easeToDuration, setEaseToDuration] = useState(2000)
   const [mapPadding, setMapPadding] = useState<PaddingOptions>()
@@ -142,12 +142,12 @@ export default function BaileysTraverseToOlympusHighRoute() {
         ...section,
         ref: createRef<HTMLDivElement>(),
       })),
-    []
+    [],
   )
 
   const [visibleSections, setVisibleSections] = useState<SectionWithRef[]>([])
   const [visibleSection, setVisibleSection] = useState<SectionWithRef | null>(
-    null
+    null,
   )
 
   useEffect(() => {
@@ -177,7 +177,7 @@ export default function BaileysTraverseToOlympusHighRoute() {
       (entries) => {
         entries.forEach((entry) => {
           const section = sectionRefs.find(
-            (ref) => ref.ref.current === entry.target
+            (ref) => ref.ref.current === entry.target,
           )
 
           if (entry.isIntersecting) {
@@ -188,7 +188,7 @@ export default function BaileysTraverseToOlympusHighRoute() {
           if (!entry.isIntersecting) {
             if (section) {
               setVisibleSections((prev) =>
-                prev.filter((s) => s.id !== section.id)
+                prev.filter((s) => s.id !== section.id),
               )
             }
           }
@@ -198,7 +198,7 @@ export default function BaileysTraverseToOlympusHighRoute() {
         root: null,
         rootMargin: '0px 0px -50% 0px',
         threshold: 0,
-      }
+      },
     )
 
     sectionRefs.forEach((ref) => {
@@ -236,7 +236,7 @@ export default function BaileysTraverseToOlympusHighRoute() {
                   map.setPaintProperty(
                     `${source.id}-line`,
                     'line-color',
-                    '#1e1e1e'
+                    '#1e1e1e',
                   )
                   map.setPaintProperty(`${source.id}-line`, 'line-width', 4)
                 })
@@ -245,7 +245,7 @@ export default function BaileysTraverseToOlympusHighRoute() {
                 map.setPaintProperty(
                   `${source.id}-line`,
                   'line-color',
-                  '#1e1e1e'
+                  '#1e1e1e',
                 )
                 map.setPaintProperty(`${source.id}-line`, 'line-width', 4)
               })
@@ -258,7 +258,7 @@ export default function BaileysTraverseToOlympusHighRoute() {
         }
       }
     },
-    [getMap, visibleSection]
+    [getMap, visibleSection],
   )
 
   return (
