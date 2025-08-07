@@ -1,13 +1,14 @@
+import { Post } from '@/payload-types'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
-
-import { Post } from '@/payload-types'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
 import { Tags } from './collections/Tags'
@@ -44,6 +45,11 @@ export default buildConfig({
   },
   collections: [Users, Media, Posts, Tags],
   editor: lexicalEditor(),
+  email: resendAdapter({
+    defaultFromAddress: 'me@kellenbusby.com',
+    defaultFromName: 'Kellen Busby',
+    apiKey: process.env.RESEND_API_KEY || '',
+  }),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
@@ -57,7 +63,12 @@ export default buildConfig({
       generateTitle,
       generateURL,
     }),
-    // storage-adapter-placeholder
+    vercelBlobStorage({
+      collections: {
+        media: true,
+      },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
   ],
   debug: true,
 })
