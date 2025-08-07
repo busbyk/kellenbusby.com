@@ -18,16 +18,18 @@
 - [ ] Implement blog
   - [x] Blog list of card components
   - [x] Better styling using Typography plugin for individual post
-  - [ ] Pagination functionality
   - [ ] Tag pages
 - [x] Set up a media provider for Payload
 - [x] Set up Resend
+- [ ] Create Turso db for previews - move to github workflows for CI probably
+
 - [ ] Add live preview
 - [ ] Custom 404 page
 - [ ] Error boundary
 - [ ] Global loading indicator
 - [ ] Migrate baileys traverse POC + map component(s)
 - [ ] It would be sick to have my profile links move from mid screen to the footer on scroll. This means also having a longer scrolling landing page.
+- [ ] Pagination functionality for blog (once I have enough content for that to matter)
 
 ### Next step / WIP note
 

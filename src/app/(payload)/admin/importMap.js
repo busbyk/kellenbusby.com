@@ -43,22 +43,16 @@ import {
 } from '@payloadcms/ui/rsc'
 
 export const importMap = {
-  '@payloadcms/ui/rsc#FolderTableCell': FolderTableCell_ab83ff7e88da8d3530831f296ec4756a,
-  '@payloadcms/ui/rsc#FolderField': FolderField_ab83ff7e88da8d3530831f296ec4756a,
   '@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell':
     RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   '@payloadcms/richtext-lexical/rsc#RscEntryLexicalField':
     RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   '@payloadcms/richtext-lexical/rsc#LexicalDiffComponent':
     LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,
-  '@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient':
-    HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   '@payloadcms/richtext-lexical/client#InlineToolbarFeatureClient':
     InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   '@payloadcms/richtext-lexical/client#FixedToolbarFeatureClient':
     FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  '@payloadcms/richtext-lexical/client#BlocksFeatureClient':
-    BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   '@payloadcms/richtext-lexical/client#BoldFeatureClient':
     BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   '@payloadcms/richtext-lexical/client#ItalicFeatureClient':
@@ -95,6 +89,12 @@ export const importMap = {
     BlockquoteFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   '@payloadcms/richtext-lexical/client#UploadFeatureClient':
     UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  '@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient':
+    HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  '@payloadcms/ui/rsc#FolderTableCell': FolderTableCell_ab83ff7e88da8d3530831f296ec4756a,
+  '@payloadcms/ui/rsc#FolderField': FolderField_ab83ff7e88da8d3530831f296ec4756a,
+  '@payloadcms/richtext-lexical/client#BlocksFeatureClient':
+    BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   '@payloadcms/plugin-seo/client#OverviewComponent':
     OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   '@payloadcms/plugin-seo/client#MetaTitleComponent':
