@@ -21,7 +21,7 @@ export default function BlogPostCard({ post, className }: { post: Post; classNam
             </p>
           </div>
           <div className="border rounded px-2 py-0.5 w-fit text-sm text-muted">
-            #{post.tags?.map((tag) => typeof tag !== 'string' && tag.name.toLowerCase())}
+            #{post.tags?.map((tag) => typeof tag !== 'number' && tag.name.toLowerCase())}
           </div>
         </div>
       </div>
