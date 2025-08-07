@@ -14,14 +14,14 @@
   - [x] Fix hydration error related to dark class being added
 - [x] Posts collection
 - [x] ~~Set up SQLite for Payload~~ Set up MongoDB
-- [ ] Whoa I might switch back to SQLite cuz that's wicked cheap on Turso
+- [x] Whoa I might switch back to SQLite cuz that's wicked cheap on Turso
 - [ ] Implement blog
   - [x] Blog list of card components
   - [x] Better styling using Typography plugin for individual post
   - [ ] Pagination functionality
   - [ ] Tag pages
 - [x] Set up a media provider for Payload
-- [ ] Set up Resend
+- [x] Set up Resend
 - [ ] Add live preview
 - [ ] Custom 404 page
 - [ ] Error boundary

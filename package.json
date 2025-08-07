@@ -14,7 +14,6 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
-    "@payloadcms/db-mongodb": "3.50.0",
     "@payloadcms/db-sqlite": "3.50.0",
     "@payloadcms/email-resend": "3.50.0",
     "@payloadcms/next": "3.50.0",
