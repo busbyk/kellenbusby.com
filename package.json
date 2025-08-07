@@ -9,9 +9,14 @@
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
+    "lint-staged": "lint-staged",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "prettify": "cross-env NODE_OPTIONS=--no-deprecation prettier --write .",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "**/*": "pnpm prettify"
   },
   "dependencies": {
     "@payloadcms/db-sqlite": "3.50.0",
@@ -46,6 +51,8 @@
     "@types/react-dom": "19.1.2",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.4",
     "prettier": "^3.4.2",
     "typescript": "5.7.3"
   },
