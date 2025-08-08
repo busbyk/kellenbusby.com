@@ -25,6 +25,7 @@
 - [ ] Revalidation!
 - [ ] Create Turso db for previews - move to github workflows for CI probably
 - [ ] Change the posts sitemap to just a single site-wide sitemap, include tags pages in it
+- [ ] Investigate all of the revalidation that's happening on autosave in posts
 
 - [ ] Add live preview
 - [ ] Custom 404 page
