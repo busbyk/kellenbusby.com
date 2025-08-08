@@ -312,10 +312,18 @@ export interface Post {
     description?: string | null
   }
   publishedAt?: string | null
-  slug?: string | null
+  slug: string
   slugLock?: boolean | null
   relatedPosts?: (number | Post)[] | null
   tags?: (number | Tag)[] | null
+  blocksInContent?:
+    | {
+        blockType?: string | null
+        collection?: string | null
+        blockId?: number | null
+        id?: string | null
+      }[]
+    | null
   folder?: (number | null) | FolderInterface
   updatedAt: string
   createdAt: string
@@ -328,7 +336,7 @@ export interface Post {
 export interface Tag {
   id: number
   name: string
-  slug?: string | null
+  slug: string
   slugLock?: boolean | null
   updatedAt: string
   createdAt: string
@@ -634,6 +642,14 @@ export interface PostsSelect<T extends boolean = true> {
   slugLock?: T
   relatedPosts?: T
   tags?: T
+  blocksInContent?:
+    | T
+    | {
+        blockType?: T
+        collection?: T
+        blockId?: T
+        id?: T
+      }
   folder?: T
   updatedAt?: T
   createdAt?: T

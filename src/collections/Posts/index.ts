@@ -25,6 +25,7 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { populateBlocksInContent } from './hooks/populateBlocksInContent'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -34,9 +35,6 @@ export const Posts: CollectionConfig<'posts'> = {
     read: authenticatedOrPublished,
     update: authenticated,
   },
-  // This config controls what's populated by default when a post is referenced
-  // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
-  // Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'posts'>
   defaultPopulate: {
     title: true,
     slug: true,
@@ -179,15 +177,41 @@ export const Posts: CollectionConfig<'posts'> = {
       hasMany: true,
       relationTo: 'tags',
     },
+    // Hidden field to track blocks embedded in content for revalidation purposes
+    {
+      name: 'blocksInContent',
+      type: 'array',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        disabled: true,
+        readOnly: true,
+      },
+      fields: [
+        {
+          name: 'blockType',
+          type: 'text',
+        },
+        {
+          name: 'collection',
+          type: 'text',
+        },
+        {
+          name: 'blockId',
+          type: 'number',
+        },
+      ],
+    },
   ],
   hooks: {
-    afterChange: [revalidatePost],
+    afterChange: [revalidatePost, populateBlocksInContent],
     afterDelete: [revalidateDelete],
   },
   versions: {
     drafts: {
       autosave: {
-        interval: 100, // We set this interval for optimal live preview
+        interval: 100,
       },
       schedulePublish: true,
     },

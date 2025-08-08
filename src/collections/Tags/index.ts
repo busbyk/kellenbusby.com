@@ -1,8 +1,9 @@
 import type { CollectionConfig } from 'payload'
 
+import { anyone } from '@/access/anyone'
+import { authenticated } from '@/access/authenticated'
 import { slugField } from '@/fields/slug'
-import { anyone } from '../access/anyone'
-import { authenticated } from '../access/authenticated'
+import { revalidateTagDelete, revalidateTagHook } from './hooks/revalidateTag'
 
 export const Tags: CollectionConfig = {
   slug: 'tags',
@@ -23,4 +24,8 @@ export const Tags: CollectionConfig = {
     },
     ...slugField(),
   ],
+  hooks: {
+    afterChange: [revalidateTagHook],
+    afterDelete: [revalidateTagDelete],
+  },
 }
