@@ -19,8 +19,10 @@
   - [x] Blog list of card components
   - [x] Better styling using Typography plugin for individual post
   - [ ] Tag pages
+  - [ ] Fix color of text in light mode on blog post page
 - [x] Set up a media provider for Payload
 - [x] Set up Resend
+- [ ] Revalidation!
 - [ ] Create Turso db for previews - move to github workflows for CI probably
 
 - [ ] Add live preview

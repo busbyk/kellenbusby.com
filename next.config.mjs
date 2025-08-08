@@ -18,6 +18,18 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/stats/js/script.js',
+        destination: 'https://plausible.io/js/script.js',
+      },
+      {
+        source: '/stats/api/event',
+        destination: 'https://plausible.io/api/event',
+      },
+    ]
+  },
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })

@@ -25,7 +25,7 @@ const generateTitle: GenerateTitle<Post> = ({ doc }) => {
 const generateURL: GenerateURL<Post> = ({ doc }) => {
   const url = getURL()
 
-  return doc?.slug ? `${url}/${doc.slug}` : url
+  return doc?.slug ? `${url}/blog/${doc.slug}` : url
 }
 
 export default buildConfig({
