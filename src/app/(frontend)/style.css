@@ -1,13 +1,15 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: 'Rubik', 'sans-serif';
 
   /* Light mode colors (default) */
   --color-background: #fcf8ff;
-  --color-foreground: #344a53;
-  --color-muted: #647b84;
+  --color-foreground: #1e293b;
+  --color-muted: #475569;
   --color-border: #e2dfe5;
 
   /* Primary colors */
@@ -27,7 +29,7 @@
 
   /* Card and surface colors */
   --color-card: #ffffff;
-  --color-card-foreground: #344a53;
+  --color-card-foreground: #1e293b;
 }
 
 /* Manual dark mode class override */
@@ -60,9 +62,23 @@
 
   body {
     margin: 0 auto;
+    color: var(--color-foreground);
     font-feature-settings:
       'rlig' 1,
       'calt' 1;
+  }
+
+  /* Ensure all text inherits the proper color */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  div,
+  span {
+    color: inherit;
   }
 
   button:not(:disabled),

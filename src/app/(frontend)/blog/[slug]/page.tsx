@@ -41,9 +41,7 @@ type Args = {
 }
 
 export default async function Post({ params: paramsPromise }: Args) {
-  const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
-  const url = '/blog/' + slug
   const post = await queryPostBySlug({ slug })
 
   if (!post) return notFound()
@@ -60,8 +58,12 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '' } = await paramsPromise
   const post = await queryPostBySlug({ slug })
 
-  // return generateMeta({ doc: post })
-  return {}
+  if (!post) return {}
+
+  return {
+    title: `${post.title} - Kellen Busby`,
+    description: post.meta?.description || `Read ${post.title} on Kellen Busby's blog`,
+  }
 }
 
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
