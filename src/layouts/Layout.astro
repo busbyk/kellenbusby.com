@@ -1,11 +1,26 @@
 ---
 import '../styles/global.css';
+import DarkModeToggle from '../components/DarkModeToggle.astro';
 
 interface Props {
   title?: string;
 }
 
 const { title = 'Kellen Busby' } = Astro.props;
+
+const themeScript = `
+  (function() {
+    try {
+      var theme = localStorage.getItem('theme');
+      var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (theme === 'dark' || (!theme && systemPrefersDark)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {}
+  })();
+`;
 ---
 
 <!doctype html>
@@ -16,8 +31,12 @@ const { title = 'Kellen Busby' } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<script is:inline set:html={themeScript} />
 	</head>
 	<body class="flex min-h-screen w-screen flex-col bg-background text-foreground">
+		<header class="absolute top-4 right-4">
+			<DarkModeToggle />
+		</header>
 		<slot />
 	</body>
 </html>
