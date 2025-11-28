@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/typography";
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/font/Rubik-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Rubik', 'sans-serif';
+
+  /* Light mode colors (default) */
+  --color-background: #fcf8ff;
+  --color-foreground: #1e293b;
+  --color-muted: #475569;
+  --color-border: #e2dfe5;
+
+  /* Primary colors */
+  --color-primary: #7fb3c8;
+  --color-primary-foreground: #0f172a;
+  --color-primary-hover: #6ba3c0;
+
+  /* Secondary colors */
+  --color-secondary: #5d3b60;
+  --color-secondary-foreground: #ffffff;
+  --color-secondary-hover: #6d4b70;
+
+  /* Accent colors */
+  --color-accent: #f59432;
+  --color-accent-foreground: #ffffff;
+  --color-accent-hover: #e4634a;
+
+  /* Card and surface colors */
+  --color-card: #ffffff;
+  --color-card-foreground: #1e293b;
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-background: #0f172a;
+  --color-foreground: #f1f5f9;
+  --color-muted: #94a3b8;
+  --color-border: #334155;
+
+  --color-primary: oklch(0.5614 0.1004 223.51);
+  --color-primary-foreground: #ffffff;
+  --color-primary-hover: #6ba3c0;
+
+  --color-secondary: #837184;
+  --color-secondary-foreground: #f1f5f9;
+  --color-secondary-hover: #937294;
+
+  --color-accent: #f59432;
+  --color-accent-foreground: #0f172a;
+  --color-accent-hover: #e4634a;
+
+  --color-card: #1e293b;
+  --color-card-foreground: #f1f5f9;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    @apply min-h-screen w-screen overflow-x-hidden;
+  }
+
+  body {
+    margin: 0 auto;
+    color: var(--color-foreground);
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+
+  p, h1, h2, h3, h4, h5, h6, div, span {
+    color: inherit;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  @media screen(md) {
+    .slide-in-background-from-right::before {
+      @apply bg-primary absolute inset-0 rounded-md translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
+      content: '';
+      z-index: -1;
+    }
+
+    .slide-in-background-from-left::before {
+      @apply bg-primary absolute inset-0 rounded-md -translate-x-[110%] hover:translate-x-0 transition-transform duration-500 ease-in-out;
+      content: '';
+      z-index: -1;
+    }
+  }
+
+  .blog img {
+    @apply rounded-md shadow-xl;
+  }
+}
