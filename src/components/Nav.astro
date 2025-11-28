@@ -1,0 +1,42 @@
+---
+import DarkModeToggle from './DarkModeToggle.astro';
+
+const pathname = Astro.url.pathname;
+
+const links = [
+  { href: '/life', label: 'Life' },
+  { href: '/software', label: 'Software' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/projects', label: 'Projects' },
+];
+
+function isActive(href: string) {
+  return pathname.includes(href);
+}
+---
+
+<div class="h-[57px]" />
+<header class="fixed top-0 inset-x-0 bg-background border-b border-border py-3 px-4 z-50">
+  <div class="flex gap-8 items-center justify-between w-full max-w-4xl mx-auto">
+    <a href="/" class="font-extrabold text-xl">
+      KB
+    </a>
+    <nav class="flex items-center sm:gap-2">
+      {links.map(link => (
+        <a
+          href={link.href}
+          class="group relative px-2 sm:px-4 py-1 font-medium transition-colors duration-200"
+        >
+          {link.label}
+          <span
+            class:list={[
+              'absolute bottom-0 left-0 right-0 mx-auto h-0.5 bg-accent transition-all duration-300 ease-out',
+              isActive(link.href) ? 'w-4/5' : 'w-0 group-hover:w-4/5',
+            ]}
+          />
+        </a>
+      ))}
+    </nav>
+    <DarkModeToggle />
+  </div>
+</header>
