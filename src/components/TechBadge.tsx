@@ -16,7 +16,7 @@ export default function TechBadge({
     <div className="relative group">
       <div
         className={cn(
-          'bg-slate-900 py-1.5 rounded-full flex items-center',
+          'bg-card border py-1.5 rounded-full flex items-center',
           icon && 'pl-1.5 pr-4 gap-2',
           !icon && 'px-4',
           className

@@ -1,48 +1,48 @@
-import { ProfileContainer } from './ProfileContainer';
-import TechBadge from './TechBadge';
-import Service from './Service';
-import ProjectPostCard from './ProjectPostCard';
+import { ProfileContainer } from './ProfileContainer'
+import TechBadge from './TechBadge'
+import Service from './Service'
+import ProjectPostCard from './ProjectPostCard'
 
 // Images
-import ContraCircleIcon from './icons/ContraCircleIcon';
-import GithubCircleIcon from './icons/GithubCircleIcon';
-import LinkedinCircleIcon from './icons/LinkedinCircleIcon';
-import remixIcon from '../assets/remix-letter-glowing.png';
-import reactIcon from '../assets/react-js-logo.webp';
-import nodeIcon from '../assets/node-js-logo.webp';
-import typescriptIcon from '../assets/typescript-logo.png';
-import tailwindIcon from '../assets/tailwindcss-logo.png';
-import strapiIcon from '../assets/strapi-logo.png';
-import nextjsIcon from '../assets/nextjs-logo.png';
-import pythonIcon from '../assets/python-logo.webp';
-import awsIcon from '../assets/aws-logo.webp';
-import postgresIcon from '../assets/postgres-logo.png';
-import supabaseIcon from '../assets/supabase-logo.png';
-import mongodbIcon from '../assets/mongodb-logo.svg';
-import expressIcon from '../assets/express-logo.webp';
-import awsGlueIcon from '../assets/aws-glue-logo.webp';
-import openaiIcon from '../assets/openai-logo.webp';
-import stripeIcon from '../assets/stripe-logo.svg';
-import resendIcon from '../assets/resend-logo.png';
-import twilioIcon from '../assets/twilio-logo.png';
-import backcountrychecklist from '../assets/backcountrychecklist.png';
-import avyobs from '../assets/avyobs.png';
+import ContraCircleIcon from './icons/ContraCircleIcon'
+import GithubCircleIcon from './icons/GithubCircleIcon'
+import LinkedinCircleIcon from './icons/LinkedinCircleIcon'
+import remixIcon from '../assets/remix-letter-glowing.png'
+import reactIcon from '../assets/react-js-logo.webp'
+import nodeIcon from '../assets/node-js-logo.webp'
+import typescriptIcon from '../assets/typescript-logo.png'
+import tailwindIcon from '../assets/tailwindcss-logo.png'
+import strapiIcon from '../assets/strapi-logo.png'
+import nextjsIcon from '../assets/nextjs-logo.png'
+import pythonIcon from '../assets/python-logo.webp'
+import awsIcon from '../assets/aws-logo.webp'
+import postgresIcon from '../assets/postgres-logo.png'
+import supabaseIcon from '../assets/supabase-logo.png'
+import mongodbIcon from '../assets/mongodb-logo.svg'
+import expressIcon from '../assets/express-logo.webp'
+import awsGlueIcon from '../assets/aws-glue-logo.webp'
+import openaiIcon from '../assets/openai-logo.webp'
+import stripeIcon from '../assets/stripe-logo.svg'
+import resendIcon from '../assets/resend-logo.png'
+import twilioIcon from '../assets/twilio-logo.png'
+import backcountrychecklist from '../assets/backcountrychecklist.png'
+import avyobs from '../assets/avyobs.png'
 
 const emailParts = {
   user: 'kellenbusby',
   domain: 'gmail',
   tld: 'com',
-};
+}
 
 const constructEmail = () => {
-  return `${emailParts.user}@${emailParts.domain}.${emailParts.tld}`;
-};
+  return `${emailParts.user}@${emailParts.domain}.${emailParts.tld}`
+}
 
 export default function SoftwareContent() {
   const handleContactClick = () => {
-    const email = constructEmail();
-    window.open(`mailto:${email}`, '_blank');
-  };
+    const email = constructEmail()
+    window.open(`mailto:${email}`, '_blank')
+  }
 
   return (
     <div className="flex flex-col gap-10">
@@ -92,18 +92,16 @@ export default function SoftwareContent() {
           </p>
           <p>
             Software development is more than designing and implementing a
-            software system that accomplishes the desired goal. It starts at
-            the idea. Why are we building this? How do we build it in a way
-            that efficiently and effectively accomplishes that goal? I so
-            enjoy looking at the big picture and then diving down into the
-            details. This full process is what makes me enjoy software
-            development.
+            software system that accomplishes the desired goal. It starts at the
+            idea. Why are we building this? How do we build it in a way that
+            efficiently and effectively accomplishes that goal? I so enjoy
+            looking at the big picture and then diving down into the details.
+            This full process is what makes me enjoy software development.
           </p>
           <p>
-            My life and my work are intermingled. I'm a skier, climber,
-            mountain biker, traveler, and hobbyist. Those things are a huge
-            part of who I am and they've shaped how I approach problems and
-            live my{' '}
+            My life and my work are intermingled. I'm a skier, climber, mountain
+            biker, traveler, and hobbyist. Those things are a huge part of who I
+            am and they've shaped how I approach problems and live my{' '}
             <a href="/life" className="underline hover:no-underline">
               life
             </a>
@@ -358,7 +356,7 @@ export default function SoftwareContent() {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="h-5 w-5 group-hover:text-secondary"
+              className="h-5 w-5 group-hover:text-accent"
             >
               <path d="M3 3H21C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3ZM20 7.23792L12.0718 14.338L4 7.21594V19H20V7.23792ZM4.51146 5L12.0619 11.662L19.501 5H4.51146Z"></path>
             </svg>
@@ -384,50 +382,37 @@ export default function SoftwareContent() {
                     2020 - Present
                   </span>
                 </h4>
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col sm:flex-row gap-2 gap-y-4">
-                    <ProjectPostCard
-                      title="Cardonomics"
-                      tagline="Credit card affiliate marketing platform for creators built using Remix & Strapi for startup"
-                      className="h-full"
-                      to="/blog/cardonomics"
-                    />
-                    <ProjectPostCard
-                      title="Data Platform"
-                      tagline="Audience data access and reporting tool built using the MERN stack & AWS Glue for data company users"
-                      className="h-full"
-                      to="/blog/data-platform"
-                    />
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-2 gap-y-4">
-                    <ProjectPostCard
-                      title="Random Trivia Generator"
-                      tagline="Rebuild of existing application frontend and backend including a database migration and new features for entrepreneur"
-                      className="h-full"
-                      to="/blog/random-trivia-generator"
-                    />
-                    <ProjectPostCard
-                      title="Static websites with CMS"
-                      tagline="Several static websites with content management systems for small businesses"
-                      className="h-full"
-                      to="/blog/static-sites-with-cms"
-                    />
-                  </div>
-                  <div className="flex justify-center">
-                    <ProjectPostCard
-                      title="More Projects"
-                      tagline="View more projects on my Contra profile"
-                      href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
-                    />
-                  </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <ProjectPostCard
+                    title="Cardonomics"
+                    tagline="Credit card affiliate marketing platform for creators built using Remix & Strapi for startup"
+                    className="h-full"
+                    to="/blog/cardonomics"
+                  />
+                  <ProjectPostCard
+                    title="Data Platform"
+                    tagline="Audience data access and reporting tool built using the MERN stack & AWS Glue for data company users"
+                    className="h-full"
+                    to="/blog/data-platform"
+                  />
+                  <ProjectPostCard
+                    title="Random Trivia Generator"
+                    tagline="Rebuild of existing application frontend and CMS with new features for independent entrepreneur"
+                    className="h-full"
+                    to="/blog/random-trivia-generator"
+                  />
+                  <ProjectPostCard
+                    title="Static websites with CMS"
+                    tagline="Several static websites with content management systems for small businesses"
+                    className="h-full"
+                    to="/blog/static-sites-with-cms"
+                  />
                 </div>
               </div>
               <div>
                 <h4 className="font-medium mb-2">
                   Riverstone Resources LLC{' '}
-                  <span className="text-muted text-sm ml-2">
-                    2019
-                  </span>
+                  <span className="text-muted text-sm ml-2">2019</span>
                 </h4>
                 <ul className="list-disc pl-6 space-y-1">
                   <li>
@@ -437,9 +422,9 @@ export default function SoftwareContent() {
                   </li>
                   <li>
                     Developed and deployed a React frontend for an NLP-based
-                    industry news aggregation system, enabling users to
-                    filter, search articles, generate reports, and manage
-                    article attributes
+                    industry news aggregation system, enabling users to filter,
+                    search articles, generate reports, and manage article
+                    attributes
                   </li>
                   <li>
                     Maintained and enhanced Python backend for NLP-based news
@@ -458,9 +443,7 @@ export default function SoftwareContent() {
               <div>
                 <h4 className="font-medium mb-2">
                   Bookcicle LLC{' '}
-                  <span className="text-muted text-sm ml-2">
-                    2018
-                  </span>
+                  <span className="text-muted text-sm ml-2">2018</span>
                 </h4>
                 <ul className="list-disc pl-6 space-y-1">
                   <li>
@@ -494,8 +477,8 @@ export default function SoftwareContent() {
               </li>
               <li>
                 Conducted comprehensive research on chatbot technologies
-                including Amazon Lex, DialogFlow, Luis.ai, wit.ai, and
-                Microsoft Bot Framework
+                including Amazon Lex, DialogFlow, Luis.ai, wit.ai, and Microsoft
+                Bot Framework
               </li>
               <li>
                 Designed and implemented a dashboard web application for
@@ -514,8 +497,8 @@ export default function SoftwareContent() {
               06/2014 - 08/2016 | Seattle, WA / Dover, NH
             </p>
             <p className="mb-4">
-              The Technical Development Program is an IT rotational program
-              that exposes participants to different areas of the company, all
+              The Technical Development Program is an IT rotational program that
+              exposes participants to different areas of the company, all
               aspects of the software development lifecycle, and provides
               technical training. This program was influential in my path to
               software development.
@@ -535,17 +518,17 @@ export default function SoftwareContent() {
           Active Indie Projects
         </h2>
         <p>These are my independent projects.</p>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 items-start">
           <div className="flex flex-col gap-6">
             <a
               href="https://www.avyobs.com/?utm_source=kellenbusby.com"
-              className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center items-center rounded-md p-4"
+              className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col gap-1 justify-center items-center rounded-md p-4"
             >
               <h2 className="text-xl font-bold">AvyObs</h2>
               <div className="flex flex-col items-center text-center">
                 <p className="max-w-[400px]">
-                  A snow and avalanche observations notification service.
-                  Always know what's going on in the mountains.
+                  A snow and avalanche observations notification service. Always
+                  know what's going on in the mountains.
                 </p>
               </div>
               <img
@@ -560,7 +543,7 @@ export default function SoftwareContent() {
           <div className="flex flex-col gap-6">
             <a
               href="https://www.backcountrychecklist.com/?utm_source=kellenbusby.com"
-              className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow gap-1 justify-center items-center rounded-md p-4"
+              className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col gap-1 justify-center items-center rounded-md p-4"
             >
               <h2 className="text-xl font-bold">BackcountryChecklist</h2>
               <div className="flex flex-col items-center text-center">
@@ -581,5 +564,5 @@ export default function SoftwareContent() {
         </div>
       </div>
     </div>
-  );
+  )
 }
