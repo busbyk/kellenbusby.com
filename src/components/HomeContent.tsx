@@ -7,12 +7,12 @@ import { cn } from '../lib/utils';
 // Import images
 import softwareHeadshot from '../assets/software-headshot.webp';
 import outdoorsHeadshot from '../assets/outdoors-headshot.webp';
-import contra from '../assets/contra-circle.svg';
-import github from '../assets/github-circle.svg';
-import linkedin from '../assets/linkedin-circle.svg';
-import instagram from '../assets/instagram-circle.svg';
-import twitter from '../assets/twitter-circle.svg';
-import youtube from '../assets/youtube-circle.svg';
+import ContraCircleIcon from './icons/ContraCircleIcon';
+import GithubCircleIcon from './icons/GithubCircleIcon';
+import LinkedinCircleIcon from './icons/LinkedinCircleIcon';
+import InstagramCircleIcon from './icons/InstagramCircleIcon';
+import TwitterCircleIcon from './icons/TwitterCircleIcon';
+import YoutubeCircleIcon from './icons/YoutubeCircleIcon';
 
 export default function HomeContent() {
   const [profile, setProfile] = useState<'software' | 'outdoors'>('software');
@@ -118,37 +118,37 @@ export default function HomeContent() {
             href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
             tooltip="Contra | kellenbusby"
           >
-            <img src={contra.src} alt="contra logo" width={48} height={48} />
+            <ContraCircleIcon />
           </ProfileContainer>
           <ProfileContainer
             href="https://github.com/busbyk"
             tooltip="GitHub | busbyk"
           >
-            <img src={github.src} alt="github logo" width={48} height={48} />
+            <GithubCircleIcon />
           </ProfileContainer>
           <ProfileContainer
             href="https://www.instagram.com/kellenbusby"
             tooltip="Instagram | kellenbusby"
           >
-            <img src={instagram.src} alt="instagram logo" width={48} height={48} />
+            <InstagramCircleIcon />
           </ProfileContainer>
           <ProfileContainer
             href="https://www.linkedin.com/services/page/940755311278b0742a/"
             tooltip="LinkedIn | Kellen Busby Software"
           >
-            <img src={linkedin.src} alt="linkedin logo" width={48} height={48} />
+            <LinkedinCircleIcon />
           </ProfileContainer>
           <ProfileContainer
             href="https://twitter.com/kellenbusbydev"
             tooltip="Twitter | @kellenbusbydev"
           >
-            <img src={twitter.src} alt="twitter logo" width={48} height={48} />
+            <TwitterCircleIcon />
           </ProfileContainer>
           <ProfileContainer
             href="https://www.youtube.com/channel/UCq4RGdMw9cCuFUsVXoXMkTQ"
             tooltip="YouTube | @kellenbusby"
           >
-            <img src={youtube.src} alt="youtube logo" width={48} height={48} />
+            <YoutubeCircleIcon />
           </ProfileContainer>
         </div>
       </div>

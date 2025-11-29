@@ -1,0 +1,30 @@
+export default function YoutubeCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <g clipPath="url(#clip0_712_394)">
+        <circle cx="24" cy="24" r="23.5" stroke="currentColor" />
+        <g clipPath="url(#clip1_712_394)">
+          <path
+            d="M32.2496 14.4493C28.3453 14.1828 19.6493 14.1839 15.7504 14.4493C11.5287 14.7375 11.0314 17.2877 11 24C11.0314 30.7004 11.5243 33.2614 15.7504 33.5507C19.6504 33.8161 28.3453 33.8172 32.2496 33.5507C36.4713 33.2625 36.9686 30.7123 37 24C36.9686 17.2996 36.4757 14.7386 32.2496 14.4493ZM20.75 28.3333V19.6667L29.4167 23.9924L20.75 28.3333Z"
+            fill="currentColor"
+          />
+        </g>
+      </g>
+      <defs>
+        <clipPath id="clip0_712_394">
+          <rect width="48" height="48" fill="white" />
+        </clipPath>
+        <clipPath id="clip1_712_394">
+          <rect width="26" height="26" fill="white" transform="translate(11 11)" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}

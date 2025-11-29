@@ -1,0 +1,25 @@
+export default function LinkedinCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      width="48"
+      height="48"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <g clipPath="url(#clip0_711_383)">
+        <path
+          d="M18.1875 13.6087C18.1875 15.0497 17.0312 16.2174 15.6042 16.2174C14.1771 16.2174 13.0208 15.0497 13.0208 13.6087C13.0208 12.1687 14.1771 11 15.6042 11C17.0312 11 18.1875 12.1687 18.1875 13.6087ZM18.2083 18.3043H13V35H18.2083V18.3043ZM26.5229 18.3043H21.3479V35H26.524V26.2358C26.524 21.3628 32.8042 20.9642 32.8042 26.2358V35H38V24.4285C38 16.2059 28.7062 16.5054 26.5229 20.553V18.3043Z"
+          fill="currentColor"
+        />
+        <circle cx="24" cy="24" r="23.5" stroke="currentColor" />
+      </g>
+      <defs>
+        <clipPath id="clip0_711_383">
+          <rect width="48" height="48" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+}
