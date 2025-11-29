@@ -1,7 +1,7 @@
-import type { MutableRefObject } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import type { RefObject } from 'preact';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
-export function useHover<T extends HTMLElement>(): [MutableRefObject<T | null>, boolean] {
+export function useHover<T extends HTMLElement>(): [RefObject<T | null>, boolean] {
   const [value, setValue] = useState<boolean>(false);
   const ref = useRef<T | null>(null);
   const handleMouseOver = (): void => setValue(true);

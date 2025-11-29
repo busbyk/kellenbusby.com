@@ -1,10 +1,12 @@
+import type { ComponentChildren } from 'preact';
+
 export function ProfileContainer({
   href,
   children,
   tooltip,
 }: {
   href: string;
-  children: React.ReactNode;
+  children: ComponentChildren;
   tooltip: string;
 }) {
   return (

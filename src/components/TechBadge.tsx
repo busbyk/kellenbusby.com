@@ -1,5 +1,5 @@
 import { cn } from '../lib/utils';
-import type { ReactNode } from 'react';
+import type { ComponentChildren } from 'preact';
 
 export default function TechBadge({
   children,
@@ -7,8 +7,8 @@ export default function TechBadge({
   href,
   className,
 }: {
-  children: ReactNode;
-  icon?: ReactNode;
+  children: ComponentChildren;
+  icon?: ComponentChildren;
   href?: string;
   className?: string;
 }) {
