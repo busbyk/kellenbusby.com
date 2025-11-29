@@ -12,4 +12,4 @@ Astro rewrite. See `./MIGRATION_CHECKLIST.md` for detailed reference.
 - [x] Migrate pages (home, software, life, projects)
 - [x] Nav with animated underlines
 - [x] 404 page
-- [ ] Content collections + MDX for blog posts
+- [x] Content collections + MDX for blog posts

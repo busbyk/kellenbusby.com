@@ -1,0 +1,93 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<Layout title={`${post.data.title} | Kellen Busby`}>
+  <article class="py-12 md:py-20 w-full max-w-4xl mx-auto px-4">
+    <header class="mb-8">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
+        {post.data.title}
+      </h1>
+      <p class="text-muted text-lg mb-4">{post.data.description}</p>
+      <div class="flex flex-wrap items-center gap-4 text-sm text-muted">
+        <time datetime={post.data.pubDate.toISOString()}>
+          {formattedDate}
+        </time>
+        {post.data.tags.length > 0 && (
+          <div class="flex gap-2">
+            {post.data.tags.map((tag) => (
+              <a
+                href={`/blog/tags/${tag}`}
+                class="px-2 py-0.5 bg-card rounded text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                {tag}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </header>
+
+    {post.data.heroImage && (
+      <div class="mb-8 -mx-4 md:mx-0">
+        <Image
+          src={post.data.heroImage}
+          alt={post.data.heroImageAlt || ''}
+          class="w-full rounded-md shadow-lg"
+          widths={[400, 800, 1200]}
+          sizes="(max-width: 768px) 100vw, 800px"
+        />
+      </div>
+    )}
+
+    <div
+      class="blog prose prose-slate dark:prose-invert max-w-none
+             prose-headings:font-bold prose-headings:text-foreground
+             prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+             prose-code:bg-card prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+             prose-pre:bg-card prose-pre:border prose-pre:border-border
+             prose-img:rounded-md prose-img:shadow-xl"
+    >
+      <Content />
+    </div>
+
+    <footer class="mt-12 pt-8 border-t border-border">
+      <a
+        href="/blog"
+        class="text-primary hover:underline inline-flex items-center gap-2"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d="M10.8284 12.0007L15.7782 16.9504L14.364 18.3646L8 12.0007L14.364 5.63672L15.7782 7.05093L10.8284 12.0007Z"
+          ></path>
+        </svg>
+        Back to all posts
+      </a>
+    </footer>
+  </article>
+</Layout>

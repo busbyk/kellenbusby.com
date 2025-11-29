@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import PageLayout from '../../../components/PageLayout.astro';
+import BlogPostCard from '../../../components/BlogPostCard.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+
+  // Get all unique tags
+  const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<Layout title={`Posts tagged "${tag}" | Kellen Busby`}>
+  <PageLayout heading={`Posts tagged "${tag}"`}>
+    <a href="/blog/tags" class="text-primary hover:underline mb-6 inline-block">
+      &larr; All tags
+    </a>
+
+    <ul class="flex flex-col gap-6">
+      {posts.map((post) => (
+        <li>
+          <BlogPostCard
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            tags={post.data.tags}
+            href={`/blog/${post.id}`}
+            heroImage={post.data.heroImage}
+            heroImageAlt={post.data.heroImageAlt}
+          />
+        </li>
+      ))}
+    </ul>
+  </PageLayout>
+</Layout>
