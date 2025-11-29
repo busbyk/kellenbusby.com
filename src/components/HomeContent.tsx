@@ -33,7 +33,7 @@ export default function HomeContent() {
   }, [outdoorsHovered]);
 
   return (
-    <div className="flex flex-col gap-2 md:gap-8 flex-grow w-full justify-center items-center h-full">
+    <div className="flex flex-col gap-2 md:gap-8 grow w-full justify-center items-center h-full">
       <h1 className="text-5xl md:text-7xl font-extrabold text-center">
         Kellen Busby
       </h1>
@@ -66,7 +66,7 @@ export default function HomeContent() {
       <div className="flex flex-col md:min-w-[800px] md:flex-row md:items-center md:gap-8">
         <a
           href="/software"
-          className="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-end rounded-md md:h-48 p-4"
+          className="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col grow md:gap-1 justify-center items-center md:items-end rounded-md md:h-48 p-4"
           ref={softwareLinkRef}
         >
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
@@ -88,7 +88,7 @@ export default function HomeContent() {
         <div className="bg-foreground/20 h-px w-42 md:h-44 md:w-1" />
         <a
           href="/life"
-          className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col flex-grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-60 p-4"
+          className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-60 p-4"
           ref={outdoorsLinkRef}
         >
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
