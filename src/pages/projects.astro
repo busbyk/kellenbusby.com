@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import PageLayout from '../components/PageLayout.astro';
 import avyobs from '../assets/avyobs.png';
@@ -34,11 +35,11 @@ import myfirstinstapost from '../assets/myfirstinstapost.png';
             know what's going on in the mountains.
           </p>
         </div>
-        <img
-          src={avyobs.src}
+        <Image
+          src={avyobs}
           alt="AvyObs screenshot"
           class="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
-          width={1000}
+          widths={[250, 300, 400]}
         />
         <p class="text-sm">https://www.avyobs.com</p>
       </a>
@@ -55,11 +56,11 @@ import myfirstinstapost from '../assets/myfirstinstapost.png';
             snowboarding, or snowmobiling in the backcountry.
           </p>
         </div>
-        <img
-          src={backcountrychecklist.src}
+        <Image
+          src={backcountrychecklist}
           alt="Backcountry checklist screenshot"
           class="w-[150px] sm:w-[200px] md:w-[250px] rounded-md shadow-lg"
-          width={150}
+          widths={[150, 200, 250]}
         />
         <p class="text-sm">https://www.backcountrychecklist.com</p>
       </a>
@@ -74,11 +75,11 @@ import myfirstinstapost from '../assets/myfirstinstapost.png';
           <p>A silly website that shows you your first Instagram post.</p>
           <p>It's a fun stroll down memory lane.</p>
         </div>
-        <img
-          src={myfirstinstapost.src}
+        <Image
+          src={myfirstinstapost}
           alt="MyFirstInstaPost screenshot"
           class="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
-          width={400}
+          widths={[250, 300, 400]}
         />
         <p class="text-sm">https://www.myfirstinstapost.com</p>
       </a>

@@ -1,20 +1,21 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import PageLayout from '../components/PageLayout.astro';
+import lifeCoverPhoto from '../assets/life-cover-photo.webp';
+import wavingPhoto from '../assets/waving.webp';
 ---
 
 <Layout title="About Kellen Busby">
   <PageLayout heading="Life">
     <figure class="flex md:hidden">
-      <img
-        src="/blog/life-cover-photo.webp"
-        width={1400}
-        height={934}
+      <Image
+        src={lifeCoverPhoto}
         class="w-full rounded-xl shadow-xl object-cover max-h-[400px]"
         alt="Kellen Busby life cover photo"
       />
     </figure>
-    <div class="flex flex-col-reverse md:flex-row gap-6 md:gap-10">
+    <div class="flex flex-col md:flex-row gap-6 md:gap-10">
       <div class="flex flex-col gap-6 basis-1/2">
         <h2 class="text-lg md:text-2xl font-semibold">About Me</h2>
         <div class="flex flex-col gap-4 leading-7">
@@ -44,35 +45,18 @@ import PageLayout from '../components/PageLayout.astro';
           </p>
         </div>
       </div>
-      <div class="hidden md:flex flex-col gap-4 basis-1/2">
-        <figure class="flex">
-          <img
-            src="/blog/life-cover-photo.webp"
-            width={1400}
-            height={934}
-            class="w-full rounded-xl shadow-xl object-cover max-h-[400px]"
+      <div class="flex flex-col gap-4 basis-1/2">
+          <Image
+            src={lifeCoverPhoto}
+            class="hidden md:block w-full rounded-xl shadow-xl object-cover max-h-[400px]"
             alt="Kellen Busby life cover photo"
           />
-        </figure>
-        <figure class="h-[600px] w-full rounded-xl shadow-xl">
-          <img
-            src="/blog/waving.webp"
-            width={1000}
-            height={1333}
+          <Image
+            src={wavingPhoto}
             class="w-full rounded-xl shadow-xl object-cover max-h-[600px]"
             alt="Kellen Busby waving"
           />
-        </figure>
       </div>
     </div>
-    <figure class="md:hidden w-full rounded-xl shadow-xl">
-      <img
-        src="/blog/waving.webp"
-        width={1000}
-        height={1333}
-        class="w-full rounded-xl shadow-xl object-cover max-h-[800px]"
-        alt="Kellen Busby waving"
-      />
-    </figure>
   </PageLayout>
 </Layout>
