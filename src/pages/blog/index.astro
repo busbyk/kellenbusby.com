@@ -4,10 +4,10 @@ import Layout from '../../layouts/Layout.astro';
 import PageLayout from '../../components/PageLayout.astro';
 import BlogPostCard from '../../components/BlogPostCard.astro';
 
-// Get all posts, sorted by date (newest first)
-const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+// Get all published posts, sorted by date (newest first)
+const posts = (await getCollection('blog'))
+  .filter((post) => post.data.published)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 // Get unique tags for browsing
 const allTags = [...new Set(posts.flatMap((post) => post.data.tags))];

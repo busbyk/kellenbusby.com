@@ -3,9 +3,10 @@ import { getCollection } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
 import PageLayout from '../../../components/PageLayout.astro';
 
-const posts = await getCollection('blog');
+const allPosts = await getCollection('blog');
+const posts = allPosts.filter((post) => post.data.published);
 
-// Count posts per tag
+// Count published posts per tag
 const tagCounts = posts.reduce(
   (acc, post) => {
     post.data.tags.forEach((tag) => {
