@@ -86,6 +86,9 @@ const themeScript = `
 
 		<title>{title}</title>
 		<script is:inline set:html={themeScript} />
+
+		<!-- Plausible Analytics -->
+		<script defer data-domain="kellenbusby.com" data-api="/plausible/api/event" src="/plausible/js/script.js"></script>
 	</head>
 	<body class="flex min-h-screen w-screen flex-col bg-background text-foreground">
 		<Nav />
