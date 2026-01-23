@@ -15,6 +15,10 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
+// Use generated OG image - construct full URL for OG meta tags
+const siteUrl = import.meta.env.PROD ? 'https://www.kellenbusby.com' : `http://localhost:${import.meta.env.PORT || 4321}`;
+const ogImageUrl = `${siteUrl}/og/${post.id}.png`;
+
 const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
@@ -22,7 +26,7 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
 });
 ---
 
-<Layout title={`${post.data.title} | Kellen Busby`}>
+<Layout title={`${post.data.title} | Kellen Busby`} description={post.data.description} image={ogImageUrl}>
   <article class="py-12 md:py-20 w-full max-w-4xl mx-auto px-4">
     <header class="mb-8">
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
