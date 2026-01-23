@@ -49,16 +49,18 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
     </header>
 
     {post.data.heroImage && (
-      <div class="mb-8 -mx-8 md:mx-0">
+      <div class="mb-8 -mx-8 md:mx-0 aspect-3/2 overflow-hidden md:rounded-md">
         <Image
           src={post.data.heroImage}
           alt={post.data.heroImageAlt || ''}
-          class="w-full md:rounded-md shadow-lg"
+          class="w-full h-full object-cover shadow-lg"
           widths={[400, 800, 1200]}
           sizes="(max-width: 768px) 100vw, 800px"
         />
       </div>
     )}
+
+    <hr class="border-t border-border mb-8" />
 
     <div
       class="blog prose prose-slate dark:prose-invert max-w-none
