@@ -120,7 +120,8 @@
 }
 
 .blog img {
-  @apply rounded-md shadow-xl;
+  @apply rounded-md shadow-xl mx-auto block;
+  max-height: calc(100vh - 57px - 2rem);
 }
 
 /* Prose typography overrides for dark mode compatibility */

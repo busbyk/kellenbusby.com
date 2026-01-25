@@ -21,7 +21,7 @@ const { images, alts = [], captions = [], urls = [], class: className } = Astro.
           <Image
             src={img}
             alt={alts[i] || ''}
-            class="w-full h-auto rounded-md shadow-lg"
+            class="max-w-full h-auto rounded-md shadow-lg max-h-[calc(100vh-57px-2rem)] mx-auto block"
             widths={[200, 400, 600]}
             sizes={`(max-width: 768px) ${Math.round(100 / images.length)}vw, ${Math.round(800 / images.length)}px`}
           />
@@ -37,7 +37,7 @@ const { images, alts = [], captions = [], urls = [], class: className } = Astro.
         <Image
           src={img}
           alt={alts[i] || ''}
-          class="w-full h-auto rounded-md shadow-lg"
+          class="max-w-full h-auto rounded-md shadow-lg max-h-[calc(100vh-57px-2rem)] mx-auto block"
           widths={[200, 400, 600]}
           sizes={`(max-width: 768px) ${Math.round(100 / images.length)}vw, ${Math.round(800 / images.length)}px`}
         />
