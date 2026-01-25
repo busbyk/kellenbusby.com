@@ -1,39 +1,39 @@
-import { useEffect, useState } from 'preact/hooks';
-import { useHover } from '../hooks/useHover';
-import { ProfileContainer } from './ProfileContainer';
-import CaretRightIcon from './CaretRightIcon';
-import { cn } from '../lib/utils';
+import { useEffect, useState } from 'preact/hooks'
+import { useHover } from '../hooks/useHover'
+import { ProfileContainer } from './ProfileContainer'
+import CaretRightIcon from './CaretRightIcon'
+import { cn } from '../lib/utils'
 
 // Import images
-import softwareHeadshot from '../assets/software-headshot.webp';
-import outdoorsHeadshot from '../assets/outdoors-headshot.webp';
-import ContraCircleIcon from './icons/ContraCircleIcon';
-import GithubCircleIcon from './icons/GithubCircleIcon';
-import LinkedinCircleIcon from './icons/LinkedinCircleIcon';
-import InstagramCircleIcon from './icons/InstagramCircleIcon';
-import TwitterCircleIcon from './icons/TwitterCircleIcon';
-import YoutubeCircleIcon from './icons/YoutubeCircleIcon';
+import softwareHeadshot from '../assets/software-headshot.webp'
+import outdoorsHeadshot from '../assets/outdoors-headshot.webp'
+import ContraCircleIcon from './icons/ContraCircleIcon'
+import GithubCircleIcon from './icons/GithubCircleIcon'
+import LinkedinCircleIcon from './icons/LinkedinCircleIcon'
+import InstagramCircleIcon from './icons/InstagramCircleIcon'
+import TwitterCircleIcon from './icons/TwitterCircleIcon'
+import YoutubeCircleIcon from './icons/YoutubeCircleIcon'
 
 export default function HomeContent() {
-  const [profile, setProfile] = useState<'software' | 'outdoors'>('software');
+  const [profile, setProfile] = useState<'software' | 'outdoors'>('software')
 
-  const [softwareLinkRef, softwareHovered] = useHover<HTMLAnchorElement>();
-  const [outdoorsLinkRef, outdoorsHovered] = useHover<HTMLAnchorElement>();
+  const [softwareLinkRef, softwareHovered] = useHover<HTMLAnchorElement>()
+  const [outdoorsLinkRef, outdoorsHovered] = useHover<HTMLAnchorElement>()
 
   useEffect(() => {
     if (softwareHovered) {
-      setProfile('software');
+      setProfile('software')
     }
-  }, [softwareHovered]);
+  }, [softwareHovered])
 
   useEffect(() => {
     if (outdoorsHovered) {
-      setProfile('outdoors');
+      setProfile('outdoors')
     }
-  }, [outdoorsHovered]);
+  }, [outdoorsHovered])
 
   return (
-    <div className="flex flex-col gap-2 md:gap-8 grow w-full justify-center items-center h-full">
+    <div className="flex flex-col gap-2 md:gap-8 grow w-full justify-center items-center h-full pt-4">
       <h1 className="text-5xl md:text-7xl font-extrabold text-center">
         Kellen Busby
       </h1>
@@ -46,7 +46,7 @@ export default function HomeContent() {
           className={cn(
             'absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
             profile === 'outdoors' && 'md:-rotate-90 md:opacity-0',
-            profile === 'software' && 'md:rotate-0 md:opacity-100'
+            profile === 'software' && 'md:rotate-0 md:opacity-100',
           )}
           style={{ transformOrigin: '50% 300px' }}
         />
@@ -58,7 +58,7 @@ export default function HomeContent() {
           className={cn(
             'hidden md:block absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
             profile === 'software' && 'rotate-90 opacity-0',
-            profile === 'outdoors' && 'rotate-0 opacity-100'
+            profile === 'outdoors' && 'rotate-0 opacity-100',
           )}
           style={{ transformOrigin: '50% 300px' }}
         />
@@ -153,5 +153,5 @@ export default function HomeContent() {
         </div>
       </div>
     </div>
-  );
+  )
 }

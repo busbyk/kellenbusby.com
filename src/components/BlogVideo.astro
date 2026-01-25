@@ -1,0 +1,28 @@
+---
+interface Props {
+  src: string;
+  caption?: string;
+  title?: string;
+  class?: string;
+}
+
+const { src, caption, title = "Video player", class: className } = Astro.props;
+---
+
+<figure class:list={["not-prose", className]}>
+  <div class="w-full mx-auto rounded-md shadow-lg overflow-hidden h-[300px] sm:h-[550px]">
+    <iframe
+      height="100%"
+      width="100%"
+      src={src}
+      title={title}
+      frameborder="0"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+    />
+  </div>
+  {caption && (
+    <figcaption class="mt-2 text-sm text-muted text-center">
+      {caption}
+    </figcaption>
+  )}
+</figure>

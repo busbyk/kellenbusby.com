@@ -1,0 +1,2 @@
+- [ ] View transitions
+- [ ] More content on landing page (highlight some blog posts and could include more about me directly)

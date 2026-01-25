@@ -16,6 +16,10 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
+// Use generated OG image - construct full URL for OG meta tags
+const siteUrl = import.meta.env.PROD ? 'https://www.kellenbusby.com' : `http://localhost:${import.meta.env.PORT || 4321}`;
+const ogImageUrl = `${siteUrl}/og/${post.id}.png`;
+
 const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'long',
@@ -23,8 +27,8 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
 });
 ---
 
-<Layout title={`${post.data.title} | Kellen Busby`}>
-  <article class="py-12 md:py-20 w-full max-w-4xl mx-auto px-4">
+<Layout title={`${post.data.title} | Kellen Busby`} description={post.data.description} image={ogImageUrl}>
+  <article class="py-12 md:py-20 w-full max-w-4xl mx-auto pl-px">
     <header class="mb-8">
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4">
         {post.data.title}
@@ -50,16 +54,18 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
     </header>
 
     {post.data.heroImage && (
-      <div class="mb-8 -mx-8 md:mx-0">
+      <div class="mb-8 -mx-8 md:mx-0 aspect-3/2 overflow-hidden md:rounded-md">
         <Image
           src={post.data.heroImage}
           alt={post.data.heroImageAlt || ''}
-          class="w-full md:rounded-md shadow-lg"
+          class="w-full h-full object-cover shadow-lg"
           widths={[400, 800, 1200]}
           sizes="(max-width: 768px) 100vw, 800px"
         />
       </div>
     )}
+
+    <hr class="border-t border-border mb-8" />
 
     <div
       class="blog prose prose-slate dark:prose-invert max-w-none
