@@ -60,8 +60,9 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
           src={post.data.heroImage}
           alt={post.data.heroImageAlt || ''}
           class="w-full h-full object-cover shadow-lg"
-          widths={[400, 800, 1200]}
-          sizes="(max-width: 768px) 100vw, 800px"
+          widths={[640, 896, 1344, 1792]}
+          sizes="(max-width: 896px) 100vw, 896px"
+          quality={85}
         />
       </div>
     )}

@@ -246,6 +246,46 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
     })
   }, [])
 
+  // scroll the article behind the scrim so the current photo's spot is
+  // centered: closing then lands at the photo you were viewing, and the
+  // close FLIP never flies to an off-screen rect. rAF-driven because the
+  // overflow lock disables native scrolling and we need to cancel cleanly.
+  const scrollAnim = useRef<number | null>(null)
+  const cancelScroll = () => {
+    if (scrollAnim.current !== null) {
+      cancelAnimationFrame(scrollAnim.current)
+      scrollAnim.current = null
+    }
+  }
+  const scrollPhotoToCenter = (img: HTMLImageElement) => {
+    cancelScroll()
+    const scroller = document.scrollingElement
+    if (!scroller) return
+    const start = scroller.scrollTop
+    const r = img.getBoundingClientRect()
+    const max = scroller.scrollHeight - window.innerHeight
+    const target = Math.max(
+      0,
+      Math.min(max, start + r.top + r.height / 2 - window.innerHeight / 2),
+    )
+    const delta = target - start
+    if (Math.abs(delta) < 1) return
+    if (reducedMotion()) {
+      scroller.scrollTop = target
+      return
+    }
+    const duration = Math.min(550, 250 + Math.abs(delta) * 0.15)
+    const t0 = performance.now()
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - t0) / duration)
+      const e = 1 - Math.pow(1 - p, 3)
+      scroller.scrollTop = start + delta * e
+      scrollAnim.current = p < 1 ? requestAnimationFrame(tick) : null
+    }
+    scrollAnim.current = requestAnimationFrame(tick)
+  }
+  useEffect(() => cancelScroll, [])
+
   // directional crossfade when stepping within the group
   useLayoutEffect(() => {
     if (prevIndex.current === index) return
@@ -261,6 +301,7 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
       ],
       { duration: 240, easing: EASE },
     )
+    scrollPhotoToCenter(group[index].img)
   }, [index])
 
   // upgrade the overlay to a higher-res srcset candidate once it's decoded
@@ -301,6 +342,8 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
   const requestClose = () => {
     if (closing.current) return
     closing.current = true
+    // stop any in-flight centering so the close FLIP targets a settled rect
+    cancelScroll()
     const el = imgRef.current
     if (!el) return onClose()
     scrimRef.current?.animate([{ opacity: 1 }, { opacity: 0 }], {

@@ -25,9 +25,15 @@ title: '${title.replace(/'/g, "''")}'
 description: ''
 pubDate: ${getToday()}
 tags: []
-# heroImage: ./images/hero.jpg
+# heroImage: ./images/hero.webp
 # heroImageAlt: ''
 ---
+
+import BlogImage from '@components/BlogImage.astro'
+import ImageRow from '@components/ImageRow.astro'
+import BlogVideo from '@components/BlogVideo.astro'
+
+{/* --- Image imports below --- */}
 
 `
 }

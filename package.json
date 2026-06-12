@@ -8,7 +8,10 @@
     "preview": "astro preview",
     "astro": "astro",
     "new-post": "node scripts/new-post.js",
-    "social-image": "node scripts/generate-social-images.js"
+    "social-image": "node scripts/generate-social-images.js",
+    "process-images": "node scripts/process-images.js",
+    "process-videos": "node scripts/process-videos.js",
+    "mp4-to-gif": "node scripts/mp4-to-gif.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
