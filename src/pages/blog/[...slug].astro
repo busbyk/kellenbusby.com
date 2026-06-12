@@ -45,11 +45,11 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
           {formattedDate}
         </time>
         {post.data.tags.length > 0 && (
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             {post.data.tags.map((tag) => (
               <a
                 href={`/blog/tags/${tag}`}
-                class="px-2 py-0.5 bg-card rounded text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
+                class="px-2 py-0.5 bg-card rounded text-xs whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 {tag}
               </a>
