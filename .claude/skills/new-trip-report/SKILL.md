@@ -102,7 +102,8 @@ Produce, in order:
    reads top-to-bottom like the trip.
 3. The frontmatter: set `heroImage` to the chosen hero (this is a string path, so
    **keep** the `NN-` prefix — `heroImage: ./images/07-looking-down-the-pitch.webp`),
-   plus `heroImageAlt`, a draft `description`, and kebab-case `tags`.
+   plus `heroImageAlt`, a draft `description`, kebab-case `tags`, and
+   `tripReport: true` (enables the "View as story" mode on the post).
 4. The filled `<TripStats ... />` block(s) — the summary at the top, and per-day
    blocks under each day's section if used (see Step 1).
 5. **Strava embed.** If the user pastes the embed snippet from Strava
