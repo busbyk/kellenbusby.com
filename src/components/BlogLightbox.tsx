@@ -1,11 +1,22 @@
 /**
- * Group-scoped lightbox for blog post images.
+ * Group-scoped lightbox for blog post images. Two viewer modes share the
+ * group detection and animation machinery:
  *
- * Clicking a photo lifts it out of the article into a centered viewer over a
- * translucent scrim (the photo's spot in the article goes empty while it's
- * "out"). Contiguous BlogImage/ImageRow elements with no prose between them
- * form a group: ←/→ steps within the group, and paging past either end
- * closes the viewer — the edge chevron renders as an ✕ to signal that.
+ * - "spotlight" (default): clicking a photo lifts it out of the article into
+ *   a centered viewer over a translucent scrim. Stepping crossfades between
+ *   photos while the article scrolls behind the scrim to keep the current
+ *   photo's spot centered.
+ * - "zoom" (dev preview via ?viewer=zoom): Medium-style zoom-in-place. The
+ *   scrim is barely there and the article stays readable. Stepping flies the
+ *   current photo back into its article spot while the next lifts out of its
+ *   own, with the article scroll driven on the same timeline so both flights
+ *   stay glued to the page as it moves. Scrolling (wheel / vertical touch
+ *   drag) closes.
+ *
+ * Both: contiguous BlogImage/ImageRow elements with no prose between them
+ * form a group; ←/→ steps within it and paging past either end closes (the
+ * edge chevron renders as an ✕). Single-image groups get a corner ✕ instead
+ * of chevrons.
  *
  * Detection contract: BlogImage renders a top-level <figure> containing an
  * <img>, ImageRow renders a top-level <div> whose children are such
@@ -14,6 +25,7 @@
  * Plain markdown images (<p><img></p>) are intentionally not included.
  */
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
+import type { RefObject } from 'preact'
 
 type Item = {
   img: HTMLImageElement
@@ -70,31 +82,34 @@ function detectGroups(): Item[][] {
   return groups
 }
 
-// ---------- animation helpers ----------
+// ---------- geometry / animation helpers ----------
+
+type Box = { left: number; top: number; width: number; height: number }
 
 function reducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function rectTransform(from: DOMRect, to: DOMRect) {
-  return `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`
+// transform that makes an element laid out at `base` appear at `desired`
+function boxTransform(desired: Box, base: Box) {
+  return `translate(${desired.left - base.left}px, ${desired.top - base.top}px) scale(${desired.width / base.width}, ${desired.height / base.height})`
 }
 
-function flipIn(el: HTMLElement, from: DOMRect) {
+function flipIn(el: HTMLElement, from: Box) {
   if (reducedMotion()) {
     return el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 })
   }
   el.style.transformOrigin = 'top left'
   return el.animate(
     [
-      { transform: rectTransform(from, el.getBoundingClientRect()) },
+      { transform: boxTransform(from, el.getBoundingClientRect()) },
       { transform: 'none' },
     ],
     { duration: 320, easing: EASE },
   )
 }
 
-function flipOut(el: HTMLElement, to: DOMRect) {
+function flipOut(el: HTMLElement, to: Box) {
   if (reducedMotion()) {
     return el.animate([{ opacity: 1 }, { opacity: 0 }], {
       duration: 150,
@@ -105,7 +120,7 @@ function flipOut(el: HTMLElement, to: DOMRect) {
   return el.animate(
     [
       { transform: 'none' },
-      { transform: rectTransform(to, el.getBoundingClientRect()) },
+      { transform: boxTransform(to, el.getBoundingClientRect()) },
     ],
     { duration: 280, easing: EASE, fill: 'forwards' },
   )
@@ -124,6 +139,148 @@ function fitSize(img: HTMLImageElement, wFrac: number, hFrac: number) {
 
 function srcOf(img: HTMLImageElement) {
   return img.currentSrc || img.src
+}
+
+function easeOutCubic(p: number) {
+  return 1 - Math.pow(1 - p, 3)
+}
+
+function lerpBox(a: Box, b: Box, t: number): Box {
+  return {
+    left: a.left + (b.left - a.left) * t,
+    top: a.top + (b.top - a.top) * t,
+    width: a.width + (b.width - a.width) * t,
+    height: a.height + (b.height - a.height) * t,
+  }
+}
+
+// element position in document coordinates (scroll-independent)
+function docBox(el: HTMLElement): Box {
+  const r = el.getBoundingClientRect()
+  const scrollTop = document.scrollingElement?.scrollTop ?? 0
+  return {
+    left: r.left,
+    top: r.top + scrollTop,
+    width: r.width,
+    height: r.height,
+  }
+}
+
+// document-space box rendered into viewport coordinates at a given scroll
+function boxAt(doc: Box, scrollTop: number): Box {
+  return { ...doc, top: doc.top - scrollTop }
+}
+
+// scroll position that centers an element's spot in the viewport (clamped)
+function centerScrollTarget(img: HTMLImageElement) {
+  const scroller = document.scrollingElement
+  if (!scroller) return null
+  const r = img.getBoundingClientRect()
+  const max = scroller.scrollHeight - window.innerHeight
+  return {
+    scroller,
+    start: scroller.scrollTop,
+    target: Math.max(
+      0,
+      Math.min(
+        max,
+        scroller.scrollTop + r.top + r.height / 2 - window.innerHeight / 2,
+      ),
+    ),
+  }
+}
+
+// rAF timeline; cancel() stops without firing onDone
+function driveFrames(
+  duration: number,
+  onFrame: (eased: number) => void,
+  onDone: () => void,
+) {
+  let raf = 0
+  const t0 = performance.now()
+  const tick = (now: number) => {
+    const p = Math.min(1, (now - t0) / duration)
+    onFrame(easeOutCubic(p))
+    if (p < 1) raf = requestAnimationFrame(tick)
+    else onDone()
+  }
+  raf = requestAnimationFrame(tick)
+  return () => cancelAnimationFrame(raf)
+}
+
+// ---------- shared viewer hooks ----------
+
+// upgrade the overlay to a higher-res srcset candidate once it's decoded
+function useHiRes(item: Item, sizes: string) {
+  const [hiRes, setHiRes] = useState<string | null>(null)
+  useEffect(() => {
+    setHiRes(null)
+    const source = item.img
+    if (!source.srcset) return
+    let cancelled = false
+    const probe = new Image()
+    probe.srcset = source.srcset
+    probe.sizes = sizes
+    probe
+      .decode()
+      .then(() => {
+        if (
+          !cancelled &&
+          probe.currentSrc &&
+          probe.currentSrc !== srcOf(source)
+        ) {
+          setHiRes(probe.currentSrc)
+        }
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [item])
+  return hiRes
+}
+
+// move focus into the dialog, restore on close
+function useDialogFocus(rootRef: RefObject<HTMLDivElement>) {
+  useEffect(() => {
+    const prev = document.activeElement as HTMLElement | null
+    rootRef.current?.focus()
+    return () => prev?.focus?.()
+  }, [])
+}
+
+// keyboard: Escape closes, ←/→ step (and close past the group edge)
+function useViewerKeys(handlers: {
+  step: (d: number) => void
+  close: () => void
+}) {
+  const ref = useRef(handlers)
+  ref.current = handlers
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return
+      if (e.key === 'Escape') ref.current.close()
+      else if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        ref.current.step(-1)
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        ref.current.step(1)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+}
+
+// refit the image when the viewport changes
+function useViewportRefit() {
+  const [, bump] = useState(0)
+  useEffect(() => {
+    const onResize = () => bump((n) => n + 1)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 }
 
 // ---------- chrome ----------
@@ -146,14 +303,14 @@ function Chevron({ dir }: { dir: 'left' | 'right' }) {
   )
 }
 
-function XIcon() {
+function XIcon({ class: className = 'h-6 w-6' }: { class?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       stroke-width="2"
-      class="h-6 w-6"
+      class={className}
     >
       <path
         stroke-linecap="round"
@@ -181,7 +338,7 @@ function NavButton(props: {
             ? 'Previous image'
             : 'Next image'
       }
-      class={`absolute top-1/2 -translate-y-1/2 ${pos} rounded-full p-2.5 transition-opacity duration-150 bg-card/85 text-foreground border border-border/60 shadow-md hover:bg-card`}
+      class={`absolute z-20 top-1/2 -translate-y-1/2 ${pos} rounded-full p-2.5 transition-opacity duration-150 bg-card/85 text-foreground border border-border/60 shadow-md hover:bg-card`}
       onClick={(e) => {
         e.stopPropagation()
         props.onClick()
@@ -192,7 +349,59 @@ function NavButton(props: {
   )
 }
 
-// ---------- viewer ----------
+// top-right corner: external link (url-wrapped images) + ✕ for solo groups
+function CornerActions(props: {
+  item: Item
+  solo: boolean
+  onClose: () => void
+}) {
+  if (!props.item.url && !props.solo) return null
+  return (
+    <div
+      data-chrome
+      class="absolute z-20 top-4 right-4 flex items-center gap-2 transition-opacity duration-150"
+    >
+      {props.item.url && (
+        <a
+          href={props.item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open linked page"
+          class="rounded-full p-2.5 bg-card/85 text-foreground border border-border/60 shadow-md hover:bg-card"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            class="h-5 w-5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+        </a>
+      )}
+      {props.solo && (
+        <button
+          aria-label="Close"
+          class="rounded-full p-2.5 bg-card/85 text-foreground border border-border/60 shadow-md hover:bg-card"
+          onClick={(e) => {
+            e.stopPropagation()
+            props.onClose()
+          }}
+        >
+          <XIcon class="h-5 w-5" />
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ---------- viewers ----------
 
 type ViewerProps = {
   group: Item[]
@@ -229,12 +438,9 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
     }
   }, [item])
 
-  // move focus into the dialog, restore on close
-  useEffect(() => {
-    const prev = document.activeElement as HTMLElement | null
-    rootRef.current?.focus()
-    return () => prev?.focus?.()
-  }, [])
+  useDialogFocus(rootRef)
+  const hiRes = useHiRes(item, '92vw')
+  useViewportRefit()
 
   // entrance: FLIP up from the clicked image's spot
   useLayoutEffect(() => {
@@ -250,39 +456,31 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
   // centered: closing then lands at the photo you were viewing, and the
   // close FLIP never flies to an off-screen rect. rAF-driven because the
   // overflow lock disables native scrolling and we need to cancel cleanly.
-  const scrollAnim = useRef<number | null>(null)
+  const scrollAnim = useRef<(() => void) | null>(null)
   const cancelScroll = () => {
-    if (scrollAnim.current !== null) {
-      cancelAnimationFrame(scrollAnim.current)
-      scrollAnim.current = null
-    }
+    scrollAnim.current?.()
+    scrollAnim.current = null
   }
   const scrollPhotoToCenter = (img: HTMLImageElement) => {
     cancelScroll()
-    const scroller = document.scrollingElement
-    if (!scroller) return
-    const start = scroller.scrollTop
-    const r = img.getBoundingClientRect()
-    const max = scroller.scrollHeight - window.innerHeight
-    const target = Math.max(
-      0,
-      Math.min(max, start + r.top + r.height / 2 - window.innerHeight / 2),
-    )
-    const delta = target - start
+    const scroll = centerScrollTarget(img)
+    if (!scroll) return
+    const delta = scroll.target - scroll.start
     if (Math.abs(delta) < 1) return
     if (reducedMotion()) {
-      scroller.scrollTop = target
+      scroll.scroller.scrollTop = scroll.target
       return
     }
     const duration = Math.min(550, 250 + Math.abs(delta) * 0.15)
-    const t0 = performance.now()
-    const tick = (now: number) => {
-      const p = Math.min(1, (now - t0) / duration)
-      const e = 1 - Math.pow(1 - p, 3)
-      scroller.scrollTop = start + delta * e
-      scrollAnim.current = p < 1 ? requestAnimationFrame(tick) : null
-    }
-    scrollAnim.current = requestAnimationFrame(tick)
+    scrollAnim.current = driveFrames(
+      duration,
+      (e) => {
+        scroll.scroller.scrollTop = scroll.start + delta * e
+      },
+      () => {
+        scrollAnim.current = null
+      },
+    )
   }
   useEffect(() => cancelScroll, [])
 
@@ -303,41 +501,6 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
     )
     scrollPhotoToCenter(group[index].img)
   }, [index])
-
-  // upgrade the overlay to a higher-res srcset candidate once it's decoded
-  const [hiRes, setHiRes] = useState<string | null>(null)
-  useEffect(() => {
-    setHiRes(null)
-    const source = item.img
-    if (!source.srcset) return
-    let cancelled = false
-    const probe = new Image()
-    probe.srcset = source.srcset
-    probe.sizes = '92vw'
-    probe
-      .decode()
-      .then(() => {
-        if (
-          !cancelled &&
-          probe.currentSrc &&
-          probe.currentSrc !== srcOf(source)
-        ) {
-          setHiRes(probe.currentSrc)
-        }
-      })
-      .catch(() => {})
-    return () => {
-      cancelled = true
-    }
-  }, [item])
-
-  // refit the image when the viewport changes
-  const [, bumpViewport] = useState(0)
-  useEffect(() => {
-    const onResize = () => bumpViewport((n) => n + 1)
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
 
   const requestClose = () => {
     if (closing.current) return
@@ -366,24 +529,7 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
     else setIndex(next)
   }
 
-  // keyboard: Escape closes, ←/→ step (and close past the group edge)
-  const keys = useRef({ step, requestClose })
-  keys.current = { step, requestClose }
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey || e.altKey) return
-      if (e.key === 'Escape') keys.current.requestClose()
-      else if (e.key === 'ArrowLeft') {
-        e.preventDefault()
-        keys.current.step(-1)
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault()
-        keys.current.step(1)
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  useViewerKeys({ step, close: requestClose })
 
   const size = fitSize(item.img, 0.92, 0.85)
 
@@ -415,7 +561,7 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
         class="absolute inset-0 bg-background/75"
         onClick={requestClose}
       />
-      <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
         <img
           ref={imgRef}
           src={hiRes ?? srcOf(item.img)}
@@ -425,64 +571,14 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
           onClick={requestClose}
         />
       </div>
-      {(item.url || group.length === 1) && (
-        <div
-          data-chrome
-          class="absolute top-4 right-4 flex items-center gap-2 transition-opacity duration-150"
-        >
-          {item.url && (
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Open linked page"
-              class="rounded-full p-2.5 bg-card/85 text-foreground border border-border/60 shadow-md hover:bg-card"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                class="h-5 w-5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                />
-              </svg>
-            </a>
-          )}
-          {group.length === 1 && (
-            <button
-              aria-label="Close"
-              class="rounded-full p-2.5 bg-card/85 text-foreground border border-border/60 shadow-md hover:bg-card"
-              onClick={(e) => {
-                e.stopPropagation()
-                requestClose()
-              }}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                class="h-5 w-5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          )}
-        </div>
-      )}
+      <CornerActions
+        item={item}
+        solo={group.length === 1}
+        onClose={requestClose}
+      />
       <div
         data-chrome
-        class="absolute bottom-5 inset-x-0 flex flex-col items-center gap-1 pointer-events-none transition-opacity duration-150"
+        class="absolute z-20 bottom-5 inset-x-0 flex flex-col items-center gap-1 pointer-events-none transition-opacity duration-150"
       >
         {item.caption && (
           <p class="text-sm text-foreground/90 text-center px-4">
@@ -495,6 +591,268 @@ function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
           </p>
         )}
       </div>
+      {group.length > 1 && (
+        <>
+          <NavButton
+            side="left"
+            atEdge={index === 0}
+            onClick={() => step(-1)}
+          />
+          <NavButton
+            side="right"
+            atEdge={index === group.length - 1}
+            onClick={() => step(1)}
+          />
+        </>
+      )}
+    </div>
+  )
+}
+
+// Zoom-in-place ("Medium-style"): the article stays readable behind a faint
+// scrim. Stepping runs one shared timeline that scrolls the article to center
+// the next photo's spot while the current photo flies home and the next
+// lifts out — both flights are computed in document space each frame so they
+// stay glued to the moving page.
+function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
+  const item = group[index]
+  const rootRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
+  const scrimRef = useRef<HTMLDivElement>(null)
+  const closing = useRef(false)
+  const mounted = useRef(false)
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
+  const openedFrom = useRef<DOMRect | null>(null)
+  if (!openedFrom.current) openedFrom.current = item.img.getBoundingClientRect()
+
+  // transition handed from step() to the index layout effect
+  const pending = useRef<null | {
+    clone: HTMLImageElement
+    cloneBase: Box
+    curImg: HTMLImageElement
+    curHomeDoc: Box
+    nextSrcDoc: Box
+    scroll: { scroller: Element; start: number; target: number }
+  }>(null)
+  // cancel fn that also jumps the in-flight transition to its end state
+  const settleNav = useRef<(() => void) | null>(null)
+
+  useDialogFocus(rootRef)
+  const hiRes = useHiRes(item, '88vw')
+  useViewportRefit()
+
+  // restore every article image on unmount (covers mid-animation exits)
+  useEffect(
+    () => () => {
+      group.forEach((it) => {
+        it.img.style.visibility = ''
+      })
+    },
+    [],
+  )
+
+  // entrance on open; coordinated scroll + double-FLIP on every step
+  useLayoutEffect(() => {
+    const el = imgRef.current
+    if (!el) return
+    item.img.style.visibility = 'hidden'
+    if (!mounted.current) {
+      mounted.current = true
+      if (openedFrom.current) flipIn(el, openedFrom.current)
+      scrimRef.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: 200,
+      })
+      return
+    }
+    const t = pending.current
+    pending.current = null
+    if (!t) return
+    if (reducedMotion()) {
+      t.scroll.scroller.scrollTop = t.scroll.target
+      t.clone.remove()
+      t.curImg.style.visibility = ''
+      el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 })
+      return
+    }
+    const finalBox = el.getBoundingClientRect()
+    el.style.transformOrigin = 'top left'
+    t.clone.style.transformOrigin = 'top left'
+    // place the lifting photo over its article spot before first paint
+    el.style.transform = boxTransform(
+      boxAt(t.nextSrcDoc, t.scroll.start),
+      finalBox,
+    )
+    const settle = () => {
+      t.scroll.scroller.scrollTop = t.scroll.target
+      t.clone.remove()
+      t.curImg.style.visibility = ''
+      el.style.transform = ''
+      settleNav.current = null
+    }
+    const cancel = driveFrames(
+      380,
+      (e) => {
+        const s = t.scroll.start + (t.scroll.target - t.scroll.start) * e
+        t.scroll.scroller.scrollTop = s
+        t.clone.style.transform = boxTransform(
+          lerpBox(t.cloneBase, boxAt(t.curHomeDoc, s), e),
+          t.cloneBase,
+        )
+        el.style.transform = boxTransform(
+          lerpBox(boxAt(t.nextSrcDoc, s), finalBox, e),
+          finalBox,
+        )
+      },
+      settle,
+    )
+    settleNav.current = () => {
+      cancel()
+      settle()
+    }
+  }, [index])
+
+  const step = (delta: number) => {
+    if (closing.current) return
+    const next = index + delta
+    if (next < 0 || next >= group.length) {
+      requestClose()
+      return
+    }
+    const el = imgRef.current
+    const scroll = centerScrollTarget(group[next].img)
+    if (!el || !scroll) {
+      setIndex(next)
+      return
+    }
+    settleNav.current?.()
+    // snapshot the on-screen photo; it flies home while the next lifts up
+    const base = el.getBoundingClientRect()
+    const clone = el.cloneNode(true) as HTMLImageElement
+    Object.assign(clone.style, {
+      position: 'fixed',
+      left: `${base.left}px`,
+      top: `${base.top}px`,
+      width: `${base.width}px`,
+      height: `${base.height}px`,
+      margin: '0',
+      zIndex: '5',
+      transform: 'none',
+      pointerEvents: 'none',
+    })
+    rootRef.current?.appendChild(clone)
+    pending.current = {
+      clone,
+      cloneBase: base,
+      curImg: item.img,
+      curHomeDoc: docBox(item.img),
+      nextSrcDoc: docBox(group[next].img),
+      scroll,
+    }
+    setIndex(next)
+  }
+
+  const requestClose = () => {
+    if (closing.current) return
+    closing.current = true
+    settleNav.current?.()
+    const el = imgRef.current
+    if (!el) return onClose()
+    scrimRef.current?.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: 220,
+      easing: 'ease-in',
+      fill: 'forwards',
+    })
+    rootRef.current
+      ?.querySelectorAll<HTMLElement>('[data-chrome]')
+      .forEach((n) => {
+        n.style.opacity = '0'
+      })
+    flipOut(el, item.img.getBoundingClientRect()).onfinish = onClose
+  }
+
+  useViewerKeys({ step, close: requestClose })
+
+  // no scroll lock here — a wheel tick or vertical touch drag closes, then
+  // the user's scroll continues naturally on the page
+  const closeRef = useRef(requestClose)
+  closeRef.current = requestClose
+  useEffect(() => {
+    const onWheel = () => closeRef.current()
+    window.addEventListener('wheel', onWheel, { passive: true })
+    return () => window.removeEventListener('wheel', onWheel)
+  }, [])
+
+  const size = fitSize(item.img, 0.88, 0.82)
+
+  return (
+    <div
+      ref={rootRef}
+      tabindex={-1}
+      class="fixed inset-0 z-[150] outline-none"
+      role="dialog"
+      aria-modal="true"
+      aria-label={item.alt}
+      onTouchStart={(e) => {
+        const t = e.touches[0]
+        touchStart.current = { x: t.clientX, y: t.clientY }
+      }}
+      onTouchMove={(e) => {
+        const start = touchStart.current
+        if (!start) return
+        const t = e.touches[0]
+        const dx = t.clientX - start.x
+        const dy = t.clientY - start.y
+        if (Math.abs(dy) > 24 && Math.abs(dy) > Math.abs(dx)) requestClose()
+      }}
+      onTouchEnd={(e) => {
+        const start = touchStart.current
+        touchStart.current = null
+        if (!start) return
+        const t = e.changedTouches[0]
+        const dx = t.clientX - start.x
+        const dy = t.clientY - start.y
+        if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5)
+          step(dx < 0 ? 1 : -1)
+      }}
+    >
+      <div
+        ref={scrimRef}
+        class="absolute inset-0 bg-background/30"
+        onClick={requestClose}
+      />
+      <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+        <img
+          key={index}
+          ref={imgRef}
+          src={hiRes ?? srcOf(item.img)}
+          alt={item.alt}
+          style={{ width: `${size.width}px`, height: `${size.height}px` }}
+          class="rounded-md shadow-2xl pointer-events-auto cursor-zoom-out"
+          onClick={requestClose}
+        />
+      </div>
+      <CornerActions
+        item={item}
+        solo={group.length === 1}
+        onClose={requestClose}
+      />
+      {(item.caption || group.length > 1) && (
+        <div
+          data-chrome
+          class="absolute z-20 bottom-6 inset-x-0 flex justify-center pointer-events-none transition-opacity duration-150"
+        >
+          <div class="flex items-center gap-2 rounded-full bg-card/90 border border-border/60 px-3 py-1.5 shadow-md">
+            {item.caption && (
+              <span class="text-xs text-foreground/90">{item.caption}</span>
+            )}
+            {group.length > 1 && (
+              <span class="text-[10px] font-mono text-muted">
+                {index + 1}/{group.length}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
       {group.length > 1 && (
         <>
           <NavButton
@@ -544,9 +902,15 @@ export default function BlogLightbox() {
   }, [])
 
   if (!open || !groups[open.g]) return null
+
+  // dev-only preview of the zoom-in-place mode; production stays spotlight
+  const zoom =
+    import.meta.env.DEV &&
+    new URLSearchParams(window.location.search).get('viewer') === 'zoom'
+  const Viewer = zoom ? ZoomViewer : SpotlightViewer
   return (
-    <SpotlightViewer
-      key={open.g}
+    <Viewer
+      key={`${zoom ? 'z' : 's'}-${open.g}`}
       group={groups[open.g]}
       index={open.i}
       setIndex={(i) => setOpen({ g: open.g, i })}
