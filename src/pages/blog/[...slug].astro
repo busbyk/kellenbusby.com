@@ -42,7 +42,7 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
       <p class="text-muted text-lg mb-4">{post.data.description}</p>
       <div class="flex flex-wrap items-center gap-4 text-sm text-muted">
         <time datetime={post.data.pubDate.toISOString()}>
-          {formattedDate}
+          <span class="opacity-70">Published</span> {formattedDate}
         </time>
         {post.data.tags.length > 0 && (
           <div class="flex flex-wrap gap-2">
