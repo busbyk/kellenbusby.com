@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Create new blog post**: `pnpm new-post "Post Title"`
 - **Generate social images**: `pnpm social-image <slug>` (or `--all`, `--force`, `--og-only`, `--instagram-only`)
 - **Convert video to GIF**: `pnpm mp4-to-gif <file.mp4>` (also `.mov`/`.webm`/etc.; `--width`, `--fps`, `--colors`, `--start`, `--duration`, `--out`). Requires system `ffmpeg`.
+- **Strava embed → native RouteMap**: `pnpm strava-route <slug>` (needs a pasted Strava embed snippet and a co-located `.gpx` in the post folder; see docs/writing-posts.md)
 - **Lint**: `npx eslint .`
 - **Format**: `npx prettier --write .`
 
