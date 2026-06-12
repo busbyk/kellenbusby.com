@@ -1,0 +1,14 @@
+{
+  "name": "mdx-image-drop",
+  "displayName": "MDX Image Drop",
+  "description": "Drop images into blog post MDX files as BlogImage, ImageRow, <img>, or markdown — with auto-managed imports",
+  "version": "0.1.0",
+  "publisher": "kellenbusby",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": ["Other"],
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"]
+}
