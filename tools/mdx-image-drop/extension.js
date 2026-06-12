@@ -1,8 +1,42 @@
 const vscode = require('vscode')
 const path = require('path')
+const { execFile } = require('child_process')
 
 const IMAGE_EXTS = new Set(['.webp', '.jpg', '.jpeg', '.png', '.gif', '.avif'])
+const VIDEO_EXTS = new Set(['.mp4', '.webm', '.mov'])
 const IMAGE_IMPORT_MARKER = '{/* --- Image imports below --- */}'
+
+// GUI-launched VS Code may not have homebrew on PATH
+const FFPROBE_CANDIDATES = ['ffprobe', '/opt/homebrew/bin/ffprobe', '/usr/local/bin/ffprobe']
+
+/** Display dimensions of a video (rotation-aware), or null if ffprobe is unavailable. */
+function probeVideoDims(file) {
+  return new Promise((resolve) => {
+    const tryNext = (i) => {
+      if (i >= FFPROBE_CANDIDATES.length) return resolve(null)
+      const args = [
+        '-v', 'error',
+        '-select_streams', 'v:0',
+        '-show_entries', 'stream=width,height:stream_side_data=rotation',
+        '-of', 'json',
+        file,
+      ]
+      execFile(FFPROBE_CANDIDATES[i], args, (err, stdout) => {
+        if (err) return err.code === 'ENOENT' ? tryNext(i + 1) : resolve(null)
+        try {
+          const s = JSON.parse(stdout).streams?.[0]
+          if (!s || !s.width || !s.height) return resolve(null)
+          const rotation = s.side_data_list?.find((d) => d.rotation != null)?.rotation ?? 0
+          const swapped = Math.abs(rotation) % 180 === 90
+          resolve(swapped ? { width: s.height, height: s.width } : { width: s.width, height: s.height })
+        } catch {
+          resolve(null)
+        }
+      })
+    }
+    tryNext(0)
+  })
+}
 
 function kebabFileName(fileName) {
   const ext = path.extname(fileName).toLowerCase()
@@ -71,7 +105,7 @@ function scanDocument(document) {
       byPath.set(importPath, name)
       usedNames.add(name)
       lastImportLine = i
-      if (/^\.\.?\/.*\.(webp|jpe?g|png|gif|avif)$/i.test(importPath)) lastImageImportLine = i
+      if (/^\.\.?\/.*\.(webp|jpe?g|png|gif|avif|mp4|webm|mov)(\?url)?$/i.test(importPath)) lastImageImportLine = i
       if (importPath.startsWith('@components/')) lastComponentImportLine = i
     }
   }
@@ -127,7 +161,10 @@ class MdxImageDropProvider {
           return []
         }
       })
-      .filter((u) => u.scheme === 'file' && IMAGE_EXTS.has(path.extname(u.fsPath).toLowerCase()))
+      .filter((u) => {
+        const ext = path.extname(u.fsPath).toLowerCase()
+        return u.scheme === 'file' && (IMAGE_EXTS.has(ext) || VIDEO_EXTS.has(ext))
+      })
     if (droppedUris.length === 0) return
 
     const postDir = path.dirname(document.uri.fsPath)
@@ -135,10 +172,12 @@ class MdxImageDropProvider {
     const scan = scanDocument(document)
 
     // Resolve each dropped file to a post-relative path, copying external files into ./images/
-    const images = []
+    const items = []
     for (const uri of droppedUris) {
       let relPath
+      let fsPath
       if (uri.fsPath.startsWith(postDir + path.sep)) {
+        fsPath = uri.fsPath
         relPath = './' + path.relative(postDir, uri.fsPath).split(path.sep).join('/')
       } else {
         await vscode.workspace.fs.createDirectory(imagesDir)
@@ -151,35 +190,60 @@ class MdxImageDropProvider {
           target = vscode.Uri.joinPath(imagesDir, targetName)
         }
         await vscode.workspace.fs.copy(uri, target)
+        fsPath = target.fsPath
         relPath = './images/' + targetName
       }
 
+      const kind = VIDEO_EXTS.has(path.extname(fsPath).toLowerCase()) ? 'video' : 'image'
       const existingName = scan.byPath.get(relPath)
-      images.push({
+      const item = {
+        kind,
         relPath,
         name: existingName ?? uniqueName(camelCaseName(relPath), scan.usedNames),
         needsImport: !existingName,
         alt: altGuess(relPath),
-      })
+      }
+
+      if (kind === 'video') {
+        // process-videos writes a sibling <name>-poster.webp; import it as a URL if present
+        const base = path.basename(fsPath, path.extname(fsPath))
+        const posterFsPath = path.join(path.dirname(fsPath), base + '-poster.webp')
+        if (await fileExists(vscode.Uri.file(posterFsPath))) {
+          // keep relPath's './' prefix — path.posix.join would normalize it away,
+          // breaking both import-reuse matching and the relative import itself
+          const posterRelPath = relPath.slice(0, relPath.lastIndexOf('/') + 1) + base + '-poster.webp?url'
+          const existingPoster = scan.byPath.get(posterRelPath)
+          item.posterRelPath = posterRelPath
+          item.posterName = existingPoster ?? uniqueName(item.name + 'Poster', scan.usedNames)
+          item.needsPosterImport = !existingPoster
+        }
+        const dims = await probeVideoDims(fsPath)
+        item.portrait = !!dims && dims.height > dims.width
+      }
+
+      items.push(item)
     }
 
+    const allImages = items.every((item) => item.kind === 'image')
     const edits = []
-    if (images.length >= 2) {
-      edits.push(this.imageRowEdit(document, images, scan))
-      edits.push(this.blogImageEdit(document, images, scan))
-    } else {
-      edits.push(this.blogImageEdit(document, images, scan))
+    if (allImages && items.length >= 2) edits.push(this.imageRowEdit(document, items, scan))
+    edits.push(this.stackedEdit(document, items, scan))
+    if (allImages) {
+      edits.push(this.imgTagEdit(document, items, scan))
+      edits.push(this.markdownEdit(items))
     }
-    edits.push(this.imgTagEdit(document, images, scan))
-    edits.push(this.markdownEdit(images))
     return edits
   }
 
-  /** WorkspaceEdit that adds missing image imports (and a component import if needed). */
-  buildImports(document, images, scan, componentName) {
+  /** WorkspaceEdit that adds missing media imports (and component imports if needed). */
+  buildImports(document, items, scan, componentNames) {
     const edit = new vscode.WorkspaceEdit()
 
-    const importLines = images.filter((img) => img.needsImport).map((img) => `import ${img.name} from '${img.relPath}'`)
+    const importLines = []
+    for (const item of items) {
+      if (item.needsImport) importLines.push(`import ${item.name} from '${item.relPath}'`)
+      if (item.needsPosterImport) importLines.push(`import ${item.posterName} from '${item.posterRelPath}'`)
+    }
     if (importLines.length > 0) {
       const afterLine =
         scan.lastImageImportLine >= 0
@@ -194,27 +258,43 @@ class MdxImageDropProvider {
       edit.insert(document.uri, insertAt, blankBefore + importLines.join('\n') + '\n')
     }
 
-    if (componentName && !scan.usedNames.has(componentName)) {
+    const missingComponents = (componentNames ?? []).filter((name) => !scan.usedNames.has(name))
+    if (missingComponents.length > 0) {
       const afterLine =
         scan.lastComponentImportLine >= 0 ? scan.lastComponentImportLine : scan.frontmatterEndLine
       const insertAt = new vscode.Position(afterLine + 1, 0)
       const blankBefore = scan.lastComponentImportLine < 0 ? '\n' : ''
-      edit.insert(document.uri, insertAt, blankBefore + `import ${componentName} from '@components/${componentName}.astro'\n`)
+      const lines = missingComponents.map((name) => `import ${name} from '@components/${name}.astro'`)
+      edit.insert(document.uri, insertAt, blankBefore + lines.join('\n') + '\n')
     }
     return edit
   }
 
-  blogImageEdit(document, images, scan) {
+  stackedEdit(document, items, scan) {
     const snippet = new vscode.SnippetString()
-    images.forEach((img, i) => {
+    items.forEach((item, i) => {
       if (i > 0) snippet.appendText('\n\n')
-      snippet.appendText(`<BlogImage src={${img.name}} alt="`)
-      snippet.appendPlaceholder(img.alt)
-      snippet.appendText('" />')
+      if (item.kind === 'video') {
+        snippet.appendText(`<BlogVideo src={${item.name}}`)
+        if (item.posterName) snippet.appendText(` poster={${item.posterName}}`)
+        if (item.portrait) snippet.appendText(' portrait')
+        snippet.appendText(' caption="')
+        snippet.appendPlaceholder(item.alt)
+        snippet.appendText('" />')
+      } else {
+        snippet.appendText(`<BlogImage src={${item.name}} alt="`)
+        snippet.appendPlaceholder(item.alt)
+        snippet.appendText('" />')
+      }
     })
-    const title = images.length > 1 ? 'Insert as BlogImage (stacked)' : 'Insert as BlogImage'
+
+    const components = [...new Set(items.map((item) => (item.kind === 'video' ? 'BlogVideo' : 'BlogImage')))]
+    const title =
+      components.length > 1
+        ? 'Insert as BlogImage + BlogVideo'
+        : `Insert as ${components[0]}${items.length > 1 ? ' (stacked)' : ''}`
     const edit = new vscode.DocumentDropEdit(snippet, title, this.baseKind.append('blogImage'))
-    edit.additionalEdit = this.buildImports(document, images, scan, 'BlogImage')
+    edit.additionalEdit = this.buildImports(document, items, scan, components)
     return edit
   }
 
@@ -235,7 +315,7 @@ class MdxImageDropProvider {
       snippet.appendText(']}\n/>')
     })
     const edit = new vscode.DocumentDropEdit(snippet, 'Insert as ImageRow', this.baseKind.append('imageRow'))
-    edit.additionalEdit = this.buildImports(document, images, scan, 'ImageRow')
+    edit.additionalEdit = this.buildImports(document, images, scan, ['ImageRow'])
     return edit
   }
 
@@ -248,7 +328,7 @@ class MdxImageDropProvider {
       snippet.appendText('" />')
     })
     const edit = new vscode.DocumentDropEdit(snippet, 'Insert as <img> tag', this.baseKind.append('imgTag'))
-    edit.additionalEdit = this.buildImports(document, images, scan, null)
+    edit.additionalEdit = this.buildImports(document, images, scan, [])
     return edit
   }
 

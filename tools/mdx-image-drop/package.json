@@ -1,8 +1,8 @@
 {
   "name": "mdx-image-drop",
   "displayName": "MDX Image Drop",
-  "description": "Drop images into blog post MDX files as BlogImage, ImageRow, <img>, or markdown — with auto-managed imports",
-  "version": "0.1.0",
+  "description": "Drop images and videos into blog post MDX files as BlogImage, ImageRow, BlogVideo, <img>, or markdown — with auto-managed imports",
+  "version": "0.2.0",
   "publisher": "kellenbusby",
   "license": "MIT",
   "engines": {
