@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
+import BlogLightbox from '../../components/BlogLightbox';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
@@ -96,5 +97,7 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
         Back to all posts
       </a>
     </footer>
+
+    <BlogLightbox client:idle />
   </article>
 </Layout>
