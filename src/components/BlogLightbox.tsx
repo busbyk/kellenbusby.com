@@ -1,22 +1,18 @@
 /**
- * Group-scoped lightbox for blog post images. Two viewer modes share the
- * group detection and animation machinery:
+ * Group-scoped zoom-in-place lightbox for blog post images.
  *
- * - "spotlight" (default): clicking a photo lifts it out of the article into
- *   a centered viewer over a translucent scrim. Stepping crossfades between
- *   photos while the article scrolls behind the scrim to keep the current
- *   photo's spot centered.
- * - "zoom" (dev preview via ?viewer=zoom): Medium-style zoom-in-place. The
- *   scrim is barely there and the article stays readable. Stepping flies the
- *   current photo back into its article spot while the next lifts out of its
- *   own, with the article scroll driven on the same timeline so both flights
- *   stay glued to the page as it moves. Scrolling (wheel / vertical touch
- *   drag) closes.
+ * Clicking a photo lifts it out of the article toward the viewport center
+ * while the article scrolls to center its spot — the page stays readable
+ * behind a faint scrim. Stepping runs the same shared timeline: the article
+ * scrolls to center the next photo's spot while the current photo flies home
+ * and the next lifts out of its own. Both flights are computed in document
+ * space each frame so they stay glued to the page as it moves. Wheel or a
+ * vertical touch drag closes, and the user's scroll continues naturally.
  *
- * Both: contiguous BlogImage/ImageRow elements with no prose between them
- * form a group; ←/→ steps within it and paging past either end closes (the
- * edge chevron renders as an ✕). Single-image groups get a corner ✕ instead
- * of chevrons.
+ * Contiguous BlogImage/ImageRow elements with no prose between them form a
+ * group; ←/→ steps within it and paging past either end closes (the edge
+ * chevron renders as an ✕). Single-image groups get a corner ✕ instead of
+ * chevrons.
  *
  * Detection contract: BlogImage renders a top-level <figure> containing an
  * <img>, ImageRow renders a top-level <div> whose children are such
@@ -93,20 +89,6 @@ function reducedMotion() {
 // transform that makes an element laid out at `base` appear at `desired`
 function boxTransform(desired: Box, base: Box) {
   return `translate(${desired.left - base.left}px, ${desired.top - base.top}px) scale(${desired.width / base.width}, ${desired.height / base.height})`
-}
-
-function flipIn(el: HTMLElement, from: Box) {
-  if (reducedMotion()) {
-    return el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 })
-  }
-  el.style.transformOrigin = 'top left'
-  return el.animate(
-    [
-      { transform: boxTransform(from, el.getBoundingClientRect()) },
-      { transform: 'none' },
-    ],
-    { duration: 320, easing: EASE },
-  )
 }
 
 function flipOut(el: HTMLElement, to: Box) {
@@ -208,7 +190,7 @@ function driveFrames(
   return () => cancelAnimationFrame(raf)
 }
 
-// ---------- shared viewer hooks ----------
+// ---------- viewer hooks ----------
 
 // upgrade the overlay to a higher-res srcset candidate once it's decoded
 function useHiRes(item: Item, sizes: string) {
@@ -401,7 +383,7 @@ function CornerActions(props: {
   )
 }
 
-// ---------- viewers ----------
+// ---------- viewer ----------
 
 type ViewerProps = {
   group: Item[]
@@ -410,210 +392,6 @@ type ViewerProps = {
   onClose: () => void
 }
 
-function SpotlightViewer({ group, index, setIndex, onClose }: ViewerProps) {
-  const item = group[index]
-  const rootRef = useRef<HTMLDivElement>(null)
-  const imgRef = useRef<HTMLImageElement>(null)
-  const scrimRef = useRef<HTMLDivElement>(null)
-  const closing = useRef(false)
-  const prevIndex = useRef(index)
-  const touchStart = useRef<{ x: number; y: number } | null>(null)
-  const openedFrom = useRef<DOMRect | null>(null)
-  if (!openedFrom.current) openedFrom.current = item.img.getBoundingClientRect()
-
-  // lock page scroll while open
-  useEffect(() => {
-    const prev = document.documentElement.style.overflow
-    document.documentElement.style.overflow = 'hidden'
-    return () => {
-      document.documentElement.style.overflow = prev
-    }
-  }, [])
-
-  // the photo "lifts out" — keep its article spot empty while viewing
-  useEffect(() => {
-    item.img.style.visibility = 'hidden'
-    return () => {
-      item.img.style.visibility = ''
-    }
-  }, [item])
-
-  useDialogFocus(rootRef)
-  const hiRes = useHiRes(item, '92vw')
-  useViewportRefit()
-
-  // entrance: FLIP up from the clicked image's spot
-  useLayoutEffect(() => {
-    if (imgRef.current && openedFrom.current)
-      flipIn(imgRef.current, openedFrom.current)
-    scrimRef.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
-      duration: 240,
-      easing: 'ease-out',
-    })
-  }, [])
-
-  // scroll the article behind the scrim so the current photo's spot is
-  // centered: closing then lands at the photo you were viewing, and the
-  // close FLIP never flies to an off-screen rect. rAF-driven because the
-  // overflow lock disables native scrolling and we need to cancel cleanly.
-  const scrollAnim = useRef<(() => void) | null>(null)
-  const cancelScroll = () => {
-    scrollAnim.current?.()
-    scrollAnim.current = null
-  }
-  const scrollPhotoToCenter = (img: HTMLImageElement) => {
-    cancelScroll()
-    const scroll = centerScrollTarget(img)
-    if (!scroll) return
-    const delta = scroll.target - scroll.start
-    if (Math.abs(delta) < 1) return
-    if (reducedMotion()) {
-      scroll.scroller.scrollTop = scroll.target
-      return
-    }
-    const duration = Math.min(550, 250 + Math.abs(delta) * 0.15)
-    scrollAnim.current = driveFrames(
-      duration,
-      (e) => {
-        scroll.scroller.scrollTop = scroll.start + delta * e
-      },
-      () => {
-        scrollAnim.current = null
-      },
-    )
-  }
-  useEffect(() => cancelScroll, [])
-
-  // directional crossfade when stepping within the group
-  useLayoutEffect(() => {
-    if (prevIndex.current === index) return
-    const dir = index > prevIndex.current ? 1 : -1
-    prevIndex.current = index
-    const slide = reducedMotion()
-      ? 'none'
-      : `translateX(${dir * 32}px) scale(0.985)`
-    imgRef.current?.animate(
-      [
-        { opacity: 0, transform: slide },
-        { opacity: 1, transform: 'none' },
-      ],
-      { duration: 240, easing: EASE },
-    )
-    scrollPhotoToCenter(group[index].img)
-  }, [index])
-
-  const requestClose = () => {
-    if (closing.current) return
-    closing.current = true
-    // stop any in-flight centering so the close FLIP targets a settled rect
-    cancelScroll()
-    const el = imgRef.current
-    if (!el) return onClose()
-    scrimRef.current?.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: 240,
-      easing: 'ease-in',
-      fill: 'forwards',
-    })
-    rootRef.current
-      ?.querySelectorAll<HTMLElement>('[data-chrome]')
-      .forEach((n) => {
-        n.style.opacity = '0'
-      })
-    flipOut(el, item.img.getBoundingClientRect()).onfinish = onClose
-  }
-
-  const step = (delta: number) => {
-    if (closing.current) return
-    const next = index + delta
-    if (next < 0 || next >= group.length) requestClose()
-    else setIndex(next)
-  }
-
-  useViewerKeys({ step, close: requestClose })
-
-  const size = fitSize(item.img, 0.92, 0.85)
-
-  return (
-    <div
-      ref={rootRef}
-      tabindex={-1}
-      class="fixed inset-0 z-[150] outline-none"
-      role="dialog"
-      aria-modal="true"
-      aria-label={item.alt}
-      onTouchStart={(e) => {
-        const t = e.touches[0]
-        touchStart.current = { x: t.clientX, y: t.clientY }
-      }}
-      onTouchEnd={(e) => {
-        const start = touchStart.current
-        touchStart.current = null
-        if (!start) return
-        const t = e.changedTouches[0]
-        const dx = t.clientX - start.x
-        const dy = t.clientY - start.y
-        if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5)
-          step(dx < 0 ? 1 : -1)
-      }}
-    >
-      <div
-        ref={scrimRef}
-        class="absolute inset-0 bg-background/75"
-        onClick={requestClose}
-      />
-      <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-        <img
-          ref={imgRef}
-          src={hiRes ?? srcOf(item.img)}
-          alt={item.alt}
-          style={{ width: `${size.width}px`, height: `${size.height}px` }}
-          class="rounded-md shadow-2xl pointer-events-auto cursor-zoom-out"
-          onClick={requestClose}
-        />
-      </div>
-      <CornerActions
-        item={item}
-        solo={group.length === 1}
-        onClose={requestClose}
-      />
-      <div
-        data-chrome
-        class="absolute z-20 bottom-5 inset-x-0 flex flex-col items-center gap-1 pointer-events-none transition-opacity duration-150"
-      >
-        {item.caption && (
-          <p class="text-sm text-foreground/90 text-center px-4">
-            {item.caption}
-          </p>
-        )}
-        {group.length > 1 && (
-          <p class="text-xs text-muted font-mono">
-            {index + 1} / {group.length}
-          </p>
-        )}
-      </div>
-      {group.length > 1 && (
-        <>
-          <NavButton
-            side="left"
-            atEdge={index === 0}
-            onClick={() => step(-1)}
-          />
-          <NavButton
-            side="right"
-            atEdge={index === group.length - 1}
-            onClick={() => step(1)}
-          />
-        </>
-      )}
-    </div>
-  )
-}
-
-// Zoom-in-place ("Medium-style"): the article stays readable behind a faint
-// scrim. Stepping runs one shared timeline that scrolls the article to center
-// the next photo's spot while the current photo flies home and the next
-// lifts out — both flights are computed in document space each frame so they
-// stay glued to the moving page.
 function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
   const item = group[index]
   const rootRef = useRef<HTMLDivElement>(null)
@@ -622,8 +400,6 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
   const closing = useRef(false)
   const mounted = useRef(false)
   const touchStart = useRef<{ x: number; y: number } | null>(null)
-  const openedFrom = useRef<DOMRect | null>(null)
-  if (!openedFrom.current) openedFrom.current = item.img.getBoundingClientRect()
 
   // transition handed from step() to the index layout effect
   const pending = useRef<null | {
@@ -634,7 +410,7 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     nextSrcDoc: Box
     scroll: { scroller: Element; start: number; target: number }
   }>(null)
-  // cancel fn that also jumps the in-flight transition to its end state
+  // cancel fn that also jumps the in-flight animation to its end state
   const settleNav = useRef<(() => void) | null>(null)
 
   useDialogFocus(rootRef)
@@ -651,19 +427,54 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     [],
   )
 
-  // entrance on open; coordinated scroll + double-FLIP on every step
+  // open and step share the coordinated treatment: the article scrolls to
+  // center the photo's spot on the same timeline as the photo's flight(s)
   useLayoutEffect(() => {
     const el = imgRef.current
     if (!el) return
     item.img.style.visibility = 'hidden'
+
     if (!mounted.current) {
+      // open: lift the clicked photo out of its spot while centering it
       mounted.current = true
-      if (openedFrom.current) flipIn(el, openedFrom.current)
+      const scroll = centerScrollTarget(item.img)
+      const srcDoc = docBox(item.img)
       scrimRef.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
         duration: 200,
       })
+      if (reducedMotion() || !scroll) {
+        if (scroll) scroll.scroller.scrollTop = scroll.target
+        el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 })
+        return
+      }
+      const finalBox = el.getBoundingClientRect()
+      el.style.transformOrigin = 'top left'
+      el.style.transform = boxTransform(boxAt(srcDoc, scroll.start), finalBox)
+      const settle = () => {
+        scroll.scroller.scrollTop = scroll.target
+        el.style.transform = ''
+        settleNav.current = null
+      }
+      const cancel = driveFrames(
+        380,
+        (e) => {
+          const s = scroll.start + (scroll.target - scroll.start) * e
+          scroll.scroller.scrollTop = s
+          el.style.transform = boxTransform(
+            lerpBox(boxAt(srcDoc, s), finalBox, e),
+            finalBox,
+          )
+        },
+        settle,
+      )
+      settleNav.current = () => {
+        cancel()
+        settle()
+      }
       return
     }
+
+    // step: current photo flies home while the next lifts out of its spot
     const t = pending.current
     pending.current = null
     if (!t) return
@@ -902,15 +713,9 @@ export default function BlogLightbox() {
   }, [])
 
   if (!open || !groups[open.g]) return null
-
-  // dev-only preview of the zoom-in-place mode; production stays spotlight
-  const zoom =
-    import.meta.env.DEV &&
-    new URLSearchParams(window.location.search).get('viewer') === 'zoom'
-  const Viewer = zoom ? ZoomViewer : SpotlightViewer
   return (
-    <Viewer
-      key={`${zoom ? 'z' : 's'}-${open.g}`}
+    <ZoomViewer
+      key={open.g}
       group={groups[open.g]}
       index={open.i}
       setIndex={(i) => setOpen({ g: open.g, i })}
