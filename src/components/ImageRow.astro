@@ -12,24 +12,42 @@ interface Props {
 
 const { images, alts = [], captions = [], urls = [], class: className } = Astro.props;
 
-// Each image occupies ~1/N of the 896px content column. Widths reach ~2x the
-// widest single-column render (≈460px for a 2-up) so hi-DPI screens stay sharp.
+// Flex-grow proportional to aspect ratio renders every photo in the row at
+// the same height (widths vary instead) so mixed orientations sit flush with
+// even gaps. Each column also caps its width at what its photo can use when
+// the global viewport-height cap on .blog img binds (short landscape
+// viewports) — paired with justify-center the row then centers as a group
+// instead of leaving photos floating in oversized columns.
+const ratios = images.map((img) => img.width / img.height);
+const ratioSum = ratios.reduce((a, b) => a + b, 0);
+const figureStyle = (i: number) =>
+  `flex: ${(ratios[i] / ratioSum).toFixed(4)} 1 0%; max-width: calc(${ratios[i].toFixed(4)} * (100vh - 57px - 2rem));`;
+
+// Each image occupies its ratio's share of the 896px content column. The
+// sizes attr must match that share: with srcset, the sizes value becomes the
+// image's intrinsic CSS width, and an undersized one stops the photo from
+// filling its column. Widths reach ~2x the widest single-column render so
+// hi-DPI screens stay sharp.
 const rowWidths = [300, 480, 720, 960];
-const rowSizes = `(max-width: 896px) ${Math.round(100 / images.length)}vw, ${Math.round(896 / images.length)}px`;
+const rowSizes = (i: number) => {
+  const frac = ratios[i] / ratioSum;
+  return `(max-width: 896px) ${Math.round(100 * frac)}vw, ${Math.round(896 * frac)}px`;
+};
 const rowQuality = 85;
 ---
 
-<div class:list={["flex gap-2 md:gap-4 not-prose my-6", className]}>
+<div class:list={["flex justify-center gap-2 md:gap-4 not-prose my-6", className]}>
   {images.map((img, i) => (
-    <figure class="flex-1 min-w-0">
+    <figure class="min-w-0" style={figureStyle(i)}>
       {urls[i] ? (
         <a href={urls[i]} target="_blank" rel="noopener noreferrer" class="group relative block">
           <Image
             src={img}
             alt={alts[i] || ''}
-            class="max-w-full h-auto rounded-md shadow-lg max-h-[calc(100vh-57px-2rem)] mx-auto block"
+            class="max-w-full h-auto rounded-md shadow-lg mx-auto block"
+            style="width: 100%"
             widths={rowWidths}
-            sizes={rowSizes}
+            sizes={rowSizes(i)}
             quality={rowQuality}
           />
           <div class="absolute top-2 right-2 -translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none group-hover:pointer-events-auto">
@@ -44,9 +62,10 @@ const rowQuality = 85;
         <Image
           src={img}
           alt={alts[i] || ''}
-          class="max-w-full h-auto rounded-md shadow-lg max-h-[calc(100vh-57px-2rem)] mx-auto block"
+          class="max-w-full h-auto rounded-md shadow-lg mx-auto block"
+          style="width: 100%"
           widths={rowWidths}
-          sizes={rowSizes}
+          sizes={rowSizes(i)}
           quality={rowQuality}
         />
       )}

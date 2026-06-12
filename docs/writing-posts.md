@@ -8,7 +8,7 @@
 4. `pnpm process-videos <slug>` — compresses raw videos → web-ready `.mp4` + `-poster.webp`, prints import/usage snippets
 5. `/rename-post-images <slug>` — descriptive kebab-case names, chronological `NN-` prefixes
 6. `/new-trip-report <slug>` — scaffolds TripStats + photo layout + section headers
-7. Write the prose, fill frontmatter, set `published: true`
+7. Write the prose, fill frontmatter, set `published: true` (trip reports also set `tripReport: true` — enables the "View as story" mode)
 8. `pnpm social-image <slug>` — OG + Instagram images
 9. `pnpm dev` — preview
 

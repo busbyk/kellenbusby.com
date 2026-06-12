@@ -17,7 +17,7 @@ function isActive(href: string) {
 
 <div class="h-[57px]" />
 <header class="fixed top-0 inset-x-0 bg-background border-b border-border py-3 px-4 z-50">
-  <div class="flex gap-8 items-center justify-between w-full max-w-4xl mx-auto">
+  <div class="flex gap-3 sm:gap-8 items-center justify-between w-full max-w-4xl mx-auto">
     <a href="/" class="font-extrabold text-xl">
       KB
     </a>
@@ -25,7 +25,7 @@ function isActive(href: string) {
       {links.map(link => (
         <a
           href={link.href}
-          class="group relative px-2 sm:px-4 py-1 font-medium transition-colors duration-200"
+          class="group relative px-1.5 sm:px-4 py-1 text-sm sm:text-base font-medium transition-colors duration-200"
         >
           {link.label}
           <span

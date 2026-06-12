@@ -1,82 +1,38 @@
 /**
- * Group-scoped zoom-in-place lightbox for blog post images.
+ * Group-scoped photo lightbox for blog post images.
  *
- * Clicking a photo lifts it out of the article toward the viewport center
- * while the article scrolls to center its spot — the page stays readable
- * behind a faint scrim. Stepping runs the same shared timeline: the article
- * scrolls to center the next photo's spot while the current photo flies home
- * and the next lifts out of its own. Both flights are computed in document
- * space each frame so they stay glued to the page as it moves. Wheel or a
- * vertical touch drag closes, and the user's scroll continues naturally.
+ * Clicking a photo opens a viewer chosen by pointer type: fine pointers
+ * (desktop) get the zoom-in-place viewer below; coarse pointers (phones,
+ * tablets) get the immersive carousel (see lightbox/CarouselViewer).
+ *
+ * Zoom-in-place: the photo lifts out of the article toward the viewport
+ * center while the article scrolls to center its spot — the page stays
+ * readable behind a faint scrim. Stepping runs the same shared timeline:
+ * the article scrolls to center the next photo's spot while the current
+ * photo flies home and the next lifts out of its own. Both flights are
+ * computed in document space each frame so they stay glued to the page as
+ * it moves. Wheel or a vertical touch drag closes, and the user's scroll
+ * continues naturally.
  *
  * Contiguous BlogImage/ImageRow elements with no prose between them form a
  * group; ←/→ steps within it and paging past either end closes (the edge
  * chevron renders as an ✕). Single-image groups get a corner ✕ instead of
- * chevrons.
- *
- * Detection contract: BlogImage renders a top-level <figure> containing an
- * <img>, ImageRow renders a top-level <div> whose children are such
- * <figure>s, both as direct children of the `.blog` prose container. Any
- * other element (paragraph, heading, BlogVideo, TripStats) breaks a group.
- * Plain markdown images (<p><img></p>) are intentionally not included.
+ * chevrons. Group detection lives in lightbox/shared.
  */
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
 import type { RefObject } from 'preact'
-
-type Item = {
-  img: HTMLImageElement
-  caption?: string
-  alt: string
-  url?: string
-}
-
-const EASE = 'cubic-bezier(0.2, 0.8, 0.2, 1)'
-
-// ---------- group detection ----------
-
-function itemsIn(el: Element): Item[] {
-  const figures =
-    el.tagName === 'FIGURE'
-      ? [el]
-      : el.tagName === 'DIV'
-        ? Array.from(el.children).filter((c) => c.tagName === 'FIGURE')
-        : []
-  if (figures.length === 0) return []
-  const items: Item[] = []
-  for (const fig of figures) {
-    const img = fig.querySelector('img')
-    if (!img) return []
-    const link = img.closest('a')
-    items.push({
-      img,
-      caption:
-        fig.querySelector('figcaption')?.textContent?.trim() || undefined,
-      alt: img.alt,
-      url: link && fig.contains(link) ? link.href : undefined,
-    })
-  }
-  return items
-}
-
-function detectGroups(): Item[][] {
-  const container = document.querySelector('.blog')
-  if (!container) return []
-  const groups: Item[][] = []
-  let current: Item[] | null = null
-  for (const child of Array.from(container.children)) {
-    const items = itemsIn(child)
-    if (items.length > 0) {
-      if (!current) {
-        current = []
-        groups.push(current)
-      }
-      current.push(...items)
-    } else {
-      current = null
-    }
-  }
-  return groups
-}
+import {
+  EASE,
+  Chevron,
+  XIcon,
+  type Item,
+  type ViewerProps,
+  detectGroups,
+  isTouch,
+  srcOf,
+  useViewerKeys,
+} from './lightbox/shared'
+import CarouselViewer from './lightbox/CarouselViewer'
 
 // ---------- geometry / animation helpers ----------
 
@@ -117,10 +73,6 @@ function fitSize(img: HTMLImageElement, wFrac: number, hFrac: number) {
     (window.innerHeight * hFrac) / nh,
   )
   return { width: Math.round(nw * s), height: Math.round(nh * s) }
-}
-
-function srcOf(img: HTMLImageElement) {
-  return img.currentSrc || img.src
 }
 
 function easeOutCubic(p: number) {
@@ -231,30 +183,6 @@ function useDialogFocus(rootRef: RefObject<HTMLDivElement>) {
   }, [])
 }
 
-// keyboard: Escape closes, ←/→ step (and close past the group edge)
-function useViewerKeys(handlers: {
-  step: (d: number) => void
-  close: () => void
-}) {
-  const ref = useRef(handlers)
-  ref.current = handlers
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey || e.altKey) return
-      if (e.key === 'Escape') ref.current.close()
-      else if (e.key === 'ArrowLeft') {
-        e.preventDefault()
-        ref.current.step(-1)
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault()
-        ref.current.step(1)
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [])
-}
-
 // refit the image when the viewport changes
 function useViewportRefit() {
   const [, bump] = useState(0)
@@ -266,42 +194,6 @@ function useViewportRefit() {
 }
 
 // ---------- chrome ----------
-
-function Chevron({ dir }: { dir: 'left' | 'right' }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      class="h-6 w-6"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d={dir === 'left' ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'}
-      />
-    </svg>
-  )
-}
-
-function XIcon({ class: className = 'h-6 w-6' }: { class?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      class={className}
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="M6 18L18 6M6 6l12 12"
-      />
-    </svg>
-  )
-}
 
 // At the group edge the chevron becomes an ✕ — paging past the end closes
 function NavButton(props: {
@@ -326,7 +218,7 @@ function NavButton(props: {
         props.onClick()
       }}
     >
-      {props.atEdge ? <XIcon /> : <Chevron dir={props.side} />}
+      {props.atEdge ? <XIcon class="h-6 w-6" /> : <Chevron dir={props.side} />}
     </button>
   )
 }
@@ -383,14 +275,7 @@ function CornerActions(props: {
   )
 }
 
-// ---------- viewer ----------
-
-type ViewerProps = {
-  group: Item[]
-  index: number
-  setIndex: (i: number) => void
-  onClose: () => void
-}
+// ---------- zoom-in-place viewer (desktop) ----------
 
 function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
   const item = group[index]
@@ -713,8 +598,11 @@ export default function BlogLightbox() {
   }, [])
 
   if (!open || !groups[open.g]) return null
+  // coarse pointers get the immersive carousel; fine pointers keep the
+  // zoom-in-place treatment
+  const Viewer = isTouch() ? CarouselViewer : ZoomViewer
   return (
-    <ZoomViewer
+    <Viewer
       key={open.g}
       group={groups[open.g]}
       index={open.i}
