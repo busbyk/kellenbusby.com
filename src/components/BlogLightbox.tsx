@@ -575,9 +575,17 @@ export default function BlogLightbox() {
 
   useEffect(() => {
     const detected = detectGroups()
-    setGroups(detected)
+    // Trip-report hero lives outside the .blog container, so detectGroups
+    // never sees it; prepend it as its own solo group when marked.
+    const hero = document.querySelector<HTMLImageElement>(
+      'img[data-hero-lightbox]',
+    )
+    const all = hero
+      ? [[{ img: hero, alt: hero.alt } satisfies Item], ...detected]
+      : detected
+    setGroups(all)
     const cleanups: (() => void)[] = []
-    detected.forEach((group, g) => {
+    all.forEach((group, g) => {
       group.forEach((item, i) => {
         // capture clicks even when BlogImage wraps the img in an external
         // link (the url stays reachable via the button inside the viewer)
