@@ -86,9 +86,10 @@ async function main() {
     return CONVERTIBLE.has(ext) || HEIC_FORMATS.has(ext) || PASSTHROUGH.has(ext)
   })
 
-  // If --file specified, filter to only those
+  // If --file specified, filter to only those. Match on basename so a
+  // tab-completed path (./images/raw/IMG_7039.jpg) works as well as a bare name.
   if (values.file) {
-    const requested = new Set(values.file)
+    const requested = new Set(values.file.map((f) => basename(f)))
     files = files.filter((f) => requested.has(f))
   }
 
