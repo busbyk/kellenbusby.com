@@ -1,3 +1,4 @@
+import type { StyleSpecification } from 'maplibre-gl'
 import { useEffect, useRef } from 'preact/hooks'
 
 const LIGHT_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
@@ -5,11 +6,37 @@ const DARK_STYLE = 'https://tiles.openfreemap.org/styles/fiord'
 const DEM_TILES =
   'https://elevation-tiles-prod.s3.amazonaws.com/terrarium/{z}/{x}/{y}.png'
 
-interface Props {
-  coords: [number, number][]
+// Topographic basemap — contours, trails, and hillshade baked in. Far more
+// legible than the street basemap in remote mountain terrain (the Alps in
+// particular). Raster, global, no API key. It has no dark variant, so it
+// renders light in both themes (topo maps are conventionally light anyway).
+const TOPO_STYLE: StyleSpecification = {
+  version: 8,
+  sources: {
+    opentopomap: {
+      type: 'raster',
+      tiles: [
+        'https://a.tile.opentopomap.org/{z}/{x}/{y}.png',
+        'https://b.tile.opentopomap.org/{z}/{x}/{y}.png',
+        'https://c.tile.opentopomap.org/{z}/{x}/{y}.png',
+      ],
+      tileSize: 256,
+      maxzoom: 17,
+      attribution:
+        'Map data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Style: © <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)',
+    },
+  },
+  layers: [{ id: 'opentopomap', type: 'raster', source: 'opentopomap' }],
 }
 
-export default function RouteMapCanvas({ coords }: Props) {
+type Basemap = 'default' | 'topo'
+
+interface Props {
+  coords: [number, number][]
+  basemap?: Basemap
+}
+
+export default function RouteMapCanvas({ coords, basemap = 'default' }: Props) {
   const mapEl = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -29,10 +56,15 @@ export default function RouteMapCanvas({ coords }: Props) {
         [Math.max(...lons), Math.max(...lats)],
       ]
       const isDark = () => document.documentElement.classList.contains('dark')
+      // topo has no dark variant, so its key ignores the theme — that keeps
+      // the observer from reloading raster tiles on every dark/light toggle
+      const styleKey = () => (basemap === 'topo' ? 'topo' : isDark() ? 'dark' : 'light')
+      const styleFor = () =>
+        basemap === 'topo' ? TOPO_STYLE : isDark() ? DARK_STYLE : LIGHT_STYLE
 
       map = new maplibregl.Map({
         container: mapEl.current,
-        style: isDark() ? DARK_STYLE : LIGHT_STYLE,
+        style: styleFor(),
         bounds,
         fitBoundsOptions: { padding: 48 },
         attributionControl: false,
@@ -51,31 +83,35 @@ export default function RouteMapCanvas({ coords }: Props) {
       // setStyle wipes custom sources/layers — so everything is added here
       map.on('style.load', () => {
         if (!map) return
-        map.addSource('dem', {
-          type: 'raster-dem',
-          tiles: [DEM_TILES],
-          encoding: 'terrarium',
-          tileSize: 256,
-          maxzoom: 15,
-          attribution:
-            'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/">Mapzen/AWS</a>',
-        })
-        const firstSymbol = map
-          .getStyle()
-          .layers.find((l) => l.type === 'symbol')?.id
-        map.addLayer(
-          {
-            id: 'hillshade',
-            type: 'hillshade',
-            source: 'dem',
-            paint: {
-              'hillshade-exaggeration': 0.35,
-              'hillshade-shadow-color': isDark() ? '#000000' : '#473B24',
-              'hillshade-highlight-color': isDark() ? '#33415555' : '#ffffff',
+        // OpenTopoMap already bakes in hillshade + contours, so only the
+        // street basemap needs our own DEM-derived hillshade layer
+        if (basemap !== 'topo') {
+          map.addSource('dem', {
+            type: 'raster-dem',
+            tiles: [DEM_TILES],
+            encoding: 'terrarium',
+            tileSize: 256,
+            maxzoom: 15,
+            attribution:
+              'Terrain: <a href="https://registry.opendata.aws/terrain-tiles/">Mapzen/AWS</a>',
+          })
+          const firstSymbol = map
+            .getStyle()
+            .layers.find((l) => l.type === 'symbol')?.id
+          map.addLayer(
+            {
+              id: 'hillshade',
+              type: 'hillshade',
+              source: 'dem',
+              paint: {
+                'hillshade-exaggeration': 0.35,
+                'hillshade-shadow-color': isDark() ? '#000000' : '#473B24',
+                'hillshade-highlight-color': isDark() ? '#33415555' : '#ffffff',
+              },
             },
-          },
-          firstSymbol,
-        )
+            firstSymbol,
+          )
+        }
         map.addSource('route', {
           type: 'geojson',
           data: {
@@ -142,8 +178,12 @@ export default function RouteMapCanvas({ coords }: Props) {
         })
       })
 
+      let currentKey = styleKey()
       observer = new MutationObserver(() => {
-        map?.setStyle(isDark() ? DARK_STYLE : LIGHT_STYLE)
+        const next = styleKey()
+        if (next === currentKey) return
+        currentKey = next
+        map?.setStyle(styleFor())
       })
       observer.observe(document.documentElement, {
         attributes: true,

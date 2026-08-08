@@ -21,6 +21,9 @@ interface Props {
    * fetch on the client; without it the build-time `kudos` value is static */
   embedToken?: string
   stats?: Stat[]
+  /** Basemap style: 'default' street tiles, or 'topo' (OpenTopoMap) —
+   * contour/trail-rich, much clearer in mountains like the Alps */
+  basemap?: 'default' | 'topo'
   class?: string
 }
 
@@ -34,6 +37,7 @@ const {
   kudos,
   embedToken,
   stats,
+  basemap = 'default',
   class: className,
 } = Astro.props
 
@@ -108,7 +112,7 @@ const colsClass =
     )
   }
 
-  <RouteMapCanvas client:visible coords={line} />
+  <RouteMapCanvas client:visible coords={line} basemap={basemap} />
 
   <div
     class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-3 sm:px-6"
