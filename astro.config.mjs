@@ -3,10 +3,18 @@ import { defineConfig } from 'astro/config'
 import tailwindcss from '@tailwindcss/vite'
 import preact from '@astrojs/preact'
 import mdx from '@astrojs/mdx'
+import rehypeExternalLinks from 'rehype-external-links'
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [preact(), mdx()],
+  markdown: {
+    // external links from post prose open in a new tab; internal links
+    // (same host, relative) keep default same-tab navigation
+    rehypePlugins: [
+      [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
+    ],
+  },
   vite: {
     plugins: [tailwindcss()],
     server: {

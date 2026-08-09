@@ -23,6 +23,7 @@
     "clsx": "^2.1.1",
     "maplibre-gl": "^5.24.0",
     "preact": "^10.27.2",
+    "rehype-external-links": "^3.0.0",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17"
