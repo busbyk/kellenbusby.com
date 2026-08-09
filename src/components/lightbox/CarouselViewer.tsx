@@ -18,6 +18,7 @@ import {
   type ViewerProps,
   fitTo,
   isTouch,
+  naturalSize,
   srcOf,
   useResizeBump,
   useScrollLock,
@@ -74,7 +75,7 @@ export default function CarouselViewer({
 
   const clampZoom = (z: { s: number; x: number; y: number }) => {
     const { w: vw, h: vh } = viewportSize()
-    const size = fitTo(item.img, vw, vh)
+    const size = fitTo(item.el, vw, vh)
     const maxX = Math.max(0, (size.width * z.s - vw) / 2)
     const maxY = Math.max(0, (size.height * z.s - vh) / 2)
     return {
@@ -165,6 +166,8 @@ export default function CarouselViewer({
   }
 
   const onTouchStart = (e: TouchEvent) => {
+    // let native video controls own touches that land on a video
+    if ((e.target as Element | null)?.closest('video')) return
     if (e.touches.length === 2) {
       // pinch begins: cancel any swipe in progress so it can't dismiss
       gesture.current = null
@@ -207,6 +210,7 @@ export default function CarouselViewer({
       dx: 0,
       dy: 0,
       onPhoto: (e.target as Element | null)?.tagName === 'IMG',
+      // note: touches on <video> return early above, so onPhoto covers imgs
     }
     setDragging(true)
   }
@@ -363,48 +367,64 @@ export default function CarouselViewer({
           transition: dragging ? 'none' : `transform 300ms ${EASE}`,
         }}
       >
-        {group.map((it, i) => (
-          <div class="w-full h-full shrink-0 flex items-center justify-center overflow-hidden">
-            <img
-              src={srcOf(it.img)}
-              srcset={it.img.srcset}
-              sizes="100vw"
-              alt={it.alt}
-              class="max-w-full max-h-full object-contain"
-              draggable={false}
-              style={{
-                // explicit ratio: iOS Safari squishes flex images that are
-                // capped by both max-width and max-height without it
-                ...(it.img.naturalWidth > 0
-                  ? {
-                      aspectRatio: `${it.img.naturalWidth} / ${it.img.naturalHeight}`,
-                    }
-                  : null),
-                ...(i === index
-                  ? {
-                      transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.s})`,
-                      transition: zoomAnim ? `transform 250ms ${EASE}` : 'none',
-                    }
-                  : null),
-              }}
-              onClick={(e) => {
-                e.stopPropagation()
-                if (performance.now() - lastTouch.current < 500) return
-                // desktop: single click toggles chrome unless a double-click
-                // (zoom) lands within the window
-                if (chromeTimer.current) cancelChromeToggle()
-                else scheduleChromeToggle()
-              }}
-              onDblClick={(e) => {
-                e.stopPropagation()
-                if (performance.now() - lastTouch.current < 500) return
-                cancelChromeToggle()
-                if (zoomRef.current.s > 1) resetZoom()
-                else zoomInAt(e.clientX, e.clientY)
-              }}
-            />
-          </div>
-        ))}
+        {group.map((it, i) => {
+          const { w: nw, h: nh } = naturalSize(it.el)
+          const ratio = nw > 0 ? { aspectRatio: `${nw} / ${nh}` } : undefined
+          if (it.kind === 'video') {
+            return (
+              <div class="w-full h-full shrink-0 flex items-center justify-center overflow-hidden">
+                <video
+                  src={srcOf(it.el)}
+                  poster={(it.el as HTMLVideoElement).poster || undefined}
+                  controls
+                  playsinline
+                  autoplay={i === index}
+                  muted={i === index}
+                  class="max-w-full max-h-full object-contain bg-black"
+                  style={ratio}
+                />
+              </div>
+            )
+          }
+          return (
+            <div class="w-full h-full shrink-0 flex items-center justify-center overflow-hidden">
+              <img
+                src={srcOf(it.el)}
+                srcset={(it.el as HTMLImageElement).srcset}
+                sizes="100vw"
+                alt={it.alt}
+                class="max-w-full max-h-full object-contain"
+                draggable={false}
+                style={{
+                  // explicit ratio: iOS Safari squishes flex images that are
+                  // capped by both max-width and max-height without it
+                  ...ratio,
+                  ...(i === index
+                    ? {
+                        transform: `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.s})`,
+                        transition: zoomAnim ? `transform 250ms ${EASE}` : 'none',
+                      }
+                    : null),
+                }}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (performance.now() - lastTouch.current < 500) return
+                  // desktop: single click toggles chrome unless a double-click
+                  // (zoom) lands within the window
+                  if (chromeTimer.current) cancelChromeToggle()
+                  else scheduleChromeToggle()
+                }}
+                onDblClick={(e) => {
+                  e.stopPropagation()
+                  if (performance.now() - lastTouch.current < 500) return
+                  cancelChromeToggle()
+                  if (zoomRef.current.s > 1) resetZoom()
+                  else zoomInAt(e.clientX, e.clientY)
+                }}
+              />
+            </div>
+          )
+        })}
       </div>
       <div
         class={`absolute top-0 inset-x-0 z-20 flex items-center justify-between px-4 pt-[max(env(safe-area-inset-top),0.75rem)] pb-8 bg-gradient-to-b from-black/60 to-transparent transition-opacity duration-200 ${chrome ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}

@@ -95,10 +95,11 @@ export function buildStorySlides(): StorySlide[] {
     proseBuf = []
   }
   for (const child of Array.from(container.children)) {
-    const items = itemsIn(child)
-    if (items.length > 0) {
+    // videos are skipped in story mode; only image items become slides
+    const imgs = itemsIn(child).filter((it) => it.kind === 'image')
+    if (imgs.length > 0) {
       flush()
-      items.forEach((item) => slides.push({ kind: 'image', item }))
+      imgs.forEach((item) => slides.push({ kind: 'image', item }))
     } else if (PROSE_TAGS.has(child.tagName)) {
       proseBuf.push(child)
     } else {
@@ -157,7 +158,7 @@ export default function StoryViewer({
   const clampZoom = (z: { s: number; x: number; y: number }) => {
     if (slide.kind !== 'image') return z
     const { w: vw, h: vh } = viewportSize()
-    const size = fitTo(slide.item.img, vw, vh)
+    const size = fitTo(slide.item.el, vw, vh)
     const maxX = Math.max(0, (size.width * z.s - vw) / 2)
     const maxY = Math.max(0, (size.height * z.s - vh) / 2)
     return {
@@ -341,8 +342,8 @@ export default function StoryViewer({
         {slide.kind === 'image' ? (
           <img
             key={index}
-            src={srcOf(slide.item.img)}
-            srcset={slide.item.img.srcset}
+            src={srcOf(slide.item.el)}
+            srcset={(slide.item.el as HTMLImageElement).srcset}
             sizes="100vw"
             alt={slide.item.alt}
             class="max-w-full max-h-full object-contain"
@@ -350,9 +351,9 @@ export default function StoryViewer({
             style={{
               // explicit ratio: iOS Safari squishes flex images that are
               // capped by both max-width and max-height without it
-              ...(slide.item.img.naturalWidth > 0
+              ...((slide.item.el as HTMLImageElement).naturalWidth > 0
                 ? {
-                    aspectRatio: `${slide.item.img.naturalWidth} / ${slide.item.img.naturalHeight}`,
+                    aspectRatio: `${(slide.item.el as HTMLImageElement).naturalWidth} / ${(slide.item.el as HTMLImageElement).naturalHeight}`,
                   }
                 : null),
               transform: `translate(${zoomT.x}px, ${zoomT.y}px) scale(${zoomT.s})`,

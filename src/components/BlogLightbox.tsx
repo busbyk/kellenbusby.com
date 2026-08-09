@@ -26,9 +26,11 @@ import {
   Chevron,
   XIcon,
   type Item,
+  type Media,
   type ViewerProps,
   detectGroups,
   isTouch,
+  naturalSize,
   srcOf,
   useViewerKeys,
 } from './lightbox/shared'
@@ -64,10 +66,9 @@ function flipOut(el: HTMLElement, to: Box) {
   )
 }
 
-// Explicit pixel size so the overlay <img> has a known rect before load
-function fitSize(img: HTMLImageElement, wFrac: number, hFrac: number) {
-  const nw = img.naturalWidth || img.width || 1
-  const nh = img.naturalHeight || img.height || 1
+// Explicit pixel size so the overlay media has a known rect before load
+function fitSize(el: Media, wFrac: number, hFrac: number) {
+  const { w: nw, h: nh } = naturalSize(el)
   const s = Math.min(
     (window.innerWidth * wFrac) / nw,
     (window.innerHeight * hFrac) / nh,
@@ -106,10 +107,10 @@ function boxAt(doc: Box, scrollTop: number): Box {
 }
 
 // scroll position that centers an element's spot in the viewport (clamped)
-function centerScrollTarget(img: HTMLImageElement) {
+function centerScrollTarget(el: Media) {
   const scroller = document.scrollingElement
   if (!scroller) return null
-  const r = img.getBoundingClientRect()
+  const r = el.getBoundingClientRect()
   const max = scroller.scrollHeight - window.innerHeight
   return {
     scroller,
@@ -149,7 +150,8 @@ function useHiRes(item: Item, sizes: string) {
   const [hiRes, setHiRes] = useState<string | null>(null)
   useEffect(() => {
     setHiRes(null)
-    const source = item.img
+    if (item.kind !== 'image') return
+    const source = item.el as HTMLImageElement
     if (!source.srcset) return
     let cancelled = false
     const probe = new Image()
@@ -223,18 +225,25 @@ function NavButton(props: {
   )
 }
 
-// top-right corner: external link (url-wrapped images) + ✕ for solo groups
+// top-right corner: photo counter + external link (url-wrapped images) + ✕
 function CornerActions(props: {
   item: Item
-  solo: boolean
+  index: number
+  total: number
   onClose: () => void
 }) {
-  if (!props.item.url && !props.solo) return null
   return (
     <div
       data-chrome
       class="absolute z-20 top-4 right-4 flex items-center gap-2 transition-opacity duration-150"
     >
+      {props.total > 1 && (
+        <div class="rounded-full bg-card/85 border border-border/60 px-2.5 py-1 shadow-md">
+          <span class="text-[10px] font-mono text-muted">
+            {props.index + 1}/{props.total}
+          </span>
+        </div>
+      )}
       {props.item.url && (
         <a
           href={props.item.url}
@@ -259,18 +268,16 @@ function CornerActions(props: {
           </svg>
         </a>
       )}
-      {props.solo && (
-        <button
-          aria-label="Close"
-          class="rounded-full p-2.5 bg-card/85 text-foreground border border-border/60 shadow-md hover:bg-card"
-          onClick={(e) => {
-            e.stopPropagation()
-            props.onClose()
-          }}
-        >
-          <XIcon class="h-5 w-5" />
-        </button>
-      )}
+      <button
+        aria-label="Close"
+        class="rounded-full p-2.5 bg-card/85 text-foreground border border-border/60 shadow-md hover:bg-card"
+        onClick={(e) => {
+          e.stopPropagation()
+          props.onClose()
+        }}
+      >
+        <XIcon class="h-5 w-5" />
+      </button>
     </div>
   )
 }
@@ -280,7 +287,7 @@ function CornerActions(props: {
 function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
   const item = group[index]
   const rootRef = useRef<HTMLDivElement>(null)
-  const imgRef = useRef<HTMLImageElement>(null)
+  const imgRef = useRef<Media>(null)
   const scrimRef = useRef<HTMLDivElement>(null)
   const closing = useRef(false)
   const mounted = useRef(false)
@@ -288,9 +295,9 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
 
   // transition handed from step() to the index layout effect
   const pending = useRef<null | {
-    clone: HTMLImageElement
+    clone: HTMLElement
     cloneBase: Box
-    curImg: HTMLImageElement
+    curImg: Media
     curHomeDoc: Box
     nextSrcDoc: Box
     scroll: { scroller: Element; start: number; target: number }
@@ -299,31 +306,34 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
   const settleNav = useRef<(() => void) | null>(null)
 
   useDialogFocus(rootRef)
-  const hiRes = useHiRes(item, '88vw')
+  const hiRes = useHiRes(item, '97vw')
   useViewportRefit()
 
-  // restore every article image on unmount (covers mid-animation exits)
-  useEffect(
-    () => () => {
+  // pause any in-article videos while the lightbox owns them, and restore
+  // every article element's visibility on unmount (covers mid-animation exits)
+  useEffect(() => {
+    group.forEach((it) => {
+      if (it.kind === 'video') (it.el as HTMLVideoElement).pause()
+    })
+    return () => {
       group.forEach((it) => {
-        it.img.style.visibility = ''
+        it.el.style.visibility = ''
       })
-    },
-    [],
-  )
+    }
+  }, [])
 
   // open and step share the coordinated treatment: the article scrolls to
   // center the photo's spot on the same timeline as the photo's flight(s)
   useLayoutEffect(() => {
     const el = imgRef.current
     if (!el) return
-    item.img.style.visibility = 'hidden'
+    item.el.style.visibility = 'hidden'
 
     if (!mounted.current) {
       // open: lift the clicked photo out of its spot while centering it
       mounted.current = true
-      const scroll = centerScrollTarget(item.img)
-      const srcDoc = docBox(item.img)
+      const scroll = centerScrollTarget(item.el)
+      const srcDoc = docBox(item.el)
       scrimRef.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
         duration: 200,
       })
@@ -415,7 +425,7 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
       return
     }
     const el = imgRef.current
-    const scroll = centerScrollTarget(group[next].img)
+    const scroll = centerScrollTarget(group[next].el)
     if (!el || !scroll) {
       setIndex(next)
       return
@@ -439,9 +449,9 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     pending.current = {
       clone,
       cloneBase: base,
-      curImg: item.img,
-      curHomeDoc: docBox(item.img),
-      nextSrcDoc: docBox(group[next].img),
+      curImg: item.el,
+      curHomeDoc: docBox(item.el),
+      nextSrcDoc: docBox(group[next].el),
       scroll,
     }
     setIndex(next)
@@ -463,7 +473,7 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
       .forEach((n) => {
         n.style.opacity = '0'
       })
-    flipOut(el, item.img.getBoundingClientRect()).onfinish = onClose
+    flipOut(el, item.el.getBoundingClientRect()).onfinish = onClose
   }
 
   useViewerKeys({ step, close: requestClose })
@@ -478,7 +488,7 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     return () => window.removeEventListener('wheel', onWheel)
   }, [])
 
-  const size = fitSize(item.img, 0.88, 0.82)
+  const size = fitSize(item.el, 0.97, 0.97)
 
   return (
     <div
@@ -517,35 +527,43 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
         onClick={requestClose}
       />
       <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-        <img
-          key={index}
-          ref={imgRef}
-          src={hiRes ?? srcOf(item.img)}
-          alt={item.alt}
-          style={{ width: `${size.width}px`, height: `${size.height}px` }}
-          class="rounded-md shadow-2xl pointer-events-auto cursor-zoom-out"
-          onClick={requestClose}
-        />
+        {item.kind === 'video' ? (
+          <video
+            key={index}
+            ref={imgRef as RefObject<HTMLVideoElement>}
+            src={srcOf(item.el)}
+            poster={(item.el as HTMLVideoElement).poster || undefined}
+            controls
+            autoplay
+            playsinline
+            style={{ width: `${size.width}px`, height: `${size.height}px` }}
+            class="rounded-md shadow-2xl pointer-events-auto bg-black"
+          />
+        ) : (
+          <img
+            key={index}
+            ref={imgRef as RefObject<HTMLImageElement>}
+            src={hiRes ?? srcOf(item.el)}
+            alt={item.alt}
+            style={{ width: `${size.width}px`, height: `${size.height}px` }}
+            class="rounded-md shadow-2xl pointer-events-auto cursor-zoom-out"
+            onClick={requestClose}
+          />
+        )}
       </div>
       <CornerActions
         item={item}
-        solo={group.length === 1}
+        index={index}
+        total={group.length}
         onClose={requestClose}
       />
-      {(item.caption || group.length > 1) && (
+      {item.caption && (
         <div
           data-chrome
           class="absolute z-20 bottom-6 inset-x-0 flex justify-center pointer-events-none transition-opacity duration-150"
         >
-          <div class="flex items-center gap-2 rounded-full bg-card/90 border border-border/60 px-3 py-1.5 shadow-md">
-            {item.caption && (
-              <span class="text-xs text-foreground/90">{item.caption}</span>
-            )}
-            {group.length > 1 && (
-              <span class="text-[10px] font-mono text-muted">
-                {index + 1}/{group.length}
-              </span>
-            )}
+          <div class="flex items-center rounded-full bg-card/90 border border-border/60 px-3 py-1.5 shadow-md">
+            <span class="text-xs text-foreground/90">{item.caption}</span>
           </div>
         </div>
       )}
@@ -581,12 +599,15 @@ export default function BlogLightbox() {
       'img[data-hero-lightbox]',
     )
     const all = hero
-      ? [[{ img: hero, alt: hero.alt } satisfies Item], ...detected]
+      ? [[{ el: hero, kind: 'image', alt: hero.alt } satisfies Item], ...detected]
       : detected
     setGroups(all)
     const cleanups: (() => void)[] = []
     all.forEach((group, g) => {
       group.forEach((item, i) => {
+        // videos keep their native controls and play inline; they're reached
+        // by stepping within a group, not by clicking to open
+        if (item.kind === 'video') return
         // capture clicks even when BlogImage wraps the img in an external
         // link (the url stays reachable via the button inside the viewer)
         const onClick = (e: Event) => {
@@ -594,11 +615,11 @@ export default function BlogLightbox() {
           e.stopPropagation()
           setOpen({ g, i })
         }
-        item.img.style.cursor = 'zoom-in'
-        item.img.addEventListener('click', onClick)
+        item.el.style.cursor = 'zoom-in'
+        item.el.addEventListener('click', onClick)
         cleanups.push(() => {
-          item.img.style.cursor = ''
-          item.img.removeEventListener('click', onClick)
+          item.el.style.cursor = ''
+          item.el.removeEventListener('click', onClick)
         })
       })
     })

@@ -5,14 +5,19 @@
  *
  * Detection contract: BlogImage renders a top-level <figure> containing an
  * <img>, ImageRow renders a top-level <div> whose children are such
- * <figure>s, both as direct children of the `.blog` prose container. Any
- * other element (paragraph, heading, BlogVideo, TripStats) breaks a group.
+ * <figure>s, BlogVideo a top-level <figure> containing a native <video> —
+ * all direct children of the `.blog` prose container. Any other element
+ * (paragraph, heading, TripStats, a BlogVideo iframe embed) breaks a group.
  * Plain markdown images (<p><img></p>) are intentionally not included.
  */
 import { useEffect, useRef, useState } from 'preact/hooks'
 
+export type Media = HTMLImageElement | HTMLVideoElement
+
 export type Item = {
-  img: HTMLImageElement
+  // the in-article element; source of truth for geometry and media src
+  el: Media
+  kind: 'image' | 'video'
   caption?: string
   alt: string
   url?: string
@@ -29,6 +34,25 @@ export const EASE = 'cubic-bezier(0.2, 0.8, 0.2, 1)'
 
 // ---------- group detection ----------
 
+// One item from a <figure>, or null if it holds no native media (e.g. a
+// BlogVideo iframe embed) — such a figure breaks the surrounding group.
+function figureItem(fig: Element): Item | null {
+  const media = fig.querySelector<Media>('img, video')
+  if (!media) return null
+  const kind = media.tagName === 'VIDEO' ? 'video' : 'image'
+  const link = media.closest('a')
+  return {
+    el: media,
+    kind,
+    caption: fig.querySelector('figcaption')?.textContent?.trim() || undefined,
+    alt:
+      kind === 'video'
+        ? media.getAttribute('aria-label') || media.getAttribute('title') || ''
+        : (media as HTMLImageElement).alt,
+    url: link && fig.contains(link) ? link.href : undefined,
+  }
+}
+
 export function itemsIn(el: Element): Item[] {
   const figures =
     el.tagName === 'FIGURE'
@@ -36,19 +60,10 @@ export function itemsIn(el: Element): Item[] {
       : el.tagName === 'DIV'
         ? Array.from(el.children).filter((c) => c.tagName === 'FIGURE')
         : []
-  if (figures.length === 0) return []
   const items: Item[] = []
   for (const fig of figures) {
-    const img = fig.querySelector('img')
-    if (!img) return []
-    const link = img.closest('a')
-    items.push({
-      img,
-      caption:
-        fig.querySelector('figcaption')?.textContent?.trim() || undefined,
-      alt: img.alt,
-      url: link && fig.contains(link) ? link.href : undefined,
-    })
+    const item = figureItem(fig)
+    if (item) items.push(item)
   }
   return items
 }
@@ -75,8 +90,22 @@ export function detectGroups(): Item[][] {
 
 // ---------- viewport / sizing helpers ----------
 
-export function srcOf(img: HTMLImageElement) {
-  return img.currentSrc || img.src
+export function srcOf(el: Media) {
+  return el.currentSrc || el.src
+}
+
+// intrinsic media dimensions, falling back to the rendered rect before the
+// image decodes / video metadata loads
+export function naturalSize(el: Media) {
+  if (el.tagName === 'VIDEO') {
+    const v = el as HTMLVideoElement
+    if (v.videoWidth > 0) return { w: v.videoWidth, h: v.videoHeight }
+  } else {
+    const im = el as HTMLImageElement
+    if (im.naturalWidth > 0) return { w: im.naturalWidth, h: im.naturalHeight }
+  }
+  const r = el.getBoundingClientRect()
+  return { w: r.width || 1, h: r.height || 1 }
 }
 
 export function viewportSize() {
@@ -90,9 +119,8 @@ export function isTouch() {
   return window.matchMedia('(pointer: coarse)').matches
 }
 
-export function fitTo(img: HTMLImageElement, maxW: number, maxH: number) {
-  const nw = img.naturalWidth || img.width || 1
-  const nh = img.naturalHeight || img.height || 1
+export function fitTo(el: Media, maxW: number, maxH: number) {
+  const { w: nw, h: nh } = naturalSize(el)
   const s = Math.min(maxW / nw, maxH / nh)
   return { width: Math.round(nw * s), height: Math.round(nh * s) }
 }
