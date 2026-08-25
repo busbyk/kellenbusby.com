@@ -24,6 +24,14 @@ interface Props {
   /** Basemap style: 'default' street tiles, or 'topo' (OpenTopoMap) —
    * contour/trail-rich, much clearer in mountains like the Alps */
   basemap?: 'default' | 'topo'
+  /** Start in 3D: DEM-driven terrain relief with a pitched camera, plus a
+   * 3D/2D toggle that eases camera and terrain together */
+  terrain?: boolean
+  /** Camera tilt in 3D mode, degrees from overhead (default 55) — lower
+   * shows more of the route */
+  pitch?: number
+  /** Map rotation, degrees clockwise from north — frame diagonal routes */
+  bearing?: number
   class?: string
 }
 
@@ -38,6 +46,9 @@ const {
   embedToken,
   stats,
   basemap = 'default',
+  terrain = false,
+  pitch,
+  bearing,
   class: className,
 } = Astro.props
 
@@ -78,7 +89,7 @@ const colsClass =
 
 <div
   class:list={[
-    'not-prose my-8 overflow-hidden rounded-xl border border-border bg-card shadow-md',
+    'route-map not-prose my-8 overflow-hidden rounded-xl border border-border bg-card shadow-md',
     className,
   ]}
 >
@@ -112,7 +123,14 @@ const colsClass =
     )
   }
 
-  <RouteMapCanvas client:visible coords={line} basemap={basemap} />
+  <RouteMapCanvas
+    client:visible
+    coords={line}
+    basemap={basemap}
+    terrain={terrain}
+    pitch={pitch}
+    bearing={bearing}
+  />
 
   <div
     class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-3 sm:px-6"
@@ -164,3 +182,32 @@ const colsClass =
     </div>
   </div>
 </div>
+
+<style is:global>
+  /* Restyle maplibre's stock controls to match the site: card surface,
+     token borders, and the page font for the 3D/2D text toggle */
+  .route-map .maplibregl-ctrl.maplibregl-ctrl-group {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+    overflow: hidden;
+  }
+  .route-map .maplibregl-ctrl-group button {
+    color: var(--color-foreground);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .route-map .maplibregl-ctrl-group button + button {
+    border-top: 1px solid var(--color-border);
+  }
+  .route-map .maplibregl-ctrl-group button:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+  /* maplibre's icons are dark SVG background-images — flip them light in
+     dark mode (hue-rotate keeps the compass needle red) */
+  .dark .route-map .maplibregl-ctrl-icon {
+    filter: invert(1) hue-rotate(180deg);
+  }
+</style>
