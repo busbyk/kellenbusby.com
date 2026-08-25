@@ -27,6 +27,8 @@
 
 ## Components (in MDX)
 
+Quick reference — full props + examples in [trip-report-components.md](trip-report-components.md).
+
 - `BlogImage` — single full-column image; best for heroes + panoramas
 - `ImageRow` — 2-3 images side by side (portrait or landscape)
 - `BlogVideo` — native `<video>` for self-hosted clips: `src` (imported `.mp4`), `poster` (imported `-poster.webp?url`), `portrait` for vertical clips. ImageKit `/player/embed/` URLs still render as an iframe (legacy posts).
