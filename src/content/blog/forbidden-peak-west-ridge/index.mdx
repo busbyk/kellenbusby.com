@@ -1,0 +1,505 @@
+---
+title: 'Forbidden Peak West Ridge'
+description: "Matt, Sean, and I climbed the West Ridge of Forbidden Peak car to car on a beautiful day for Sean's big return post knee surgery. Boston Basin is as beautiful as ever, wildlife was out in full force, and ridge climbing is way too fun."
+pubDate: 2026-08-25
+tags:
+  [
+    rock-climbing,
+    trad-climbing,
+    alpine-climbing,
+    north-cascades,
+    forbidden-peak,
+  ]
+tripReport: true
+storyMode: true
+heroImage: ./images/31-arms-out-on-the-gendarme.webp
+heroImageAlt: 'Climber standing with arms spread wide on top of a gendarme on the West Ridge of Forbidden Peak, rope trailing to a second climber below'
+---
+
+import BlogImage from '@components/BlogImage.astro'
+import ImageRow from '@components/ImageRow.astro'
+import BlogVideo from '@components/BlogVideo.astro'
+import TripStats from '@components/TripStats.astro'
+import RouteMap from '@components/RouteMap.astro'
+import forbiddenPeakWestRidgeGpx from './forbidden-peak-west-ridge.gpx?raw'
+import forbiddenPeakWestRidgeGpxUrl from './forbidden-peak-west-ridge.gpx?url'
+
+{/* --- Image imports below --- */}
+import img02CreekCrossingCascades from './images/02-creek-crossing-cascades.webp'
+import img04WaveFromTheClimbersTrail from './images/04-wave-from-the-climbers-trail.webp'
+import img03FirstViewOfForbidden from './images/03-first-view-of-forbidden.webp'
+import img05MorningSunOverBostonBasin from './images/05-morning-sun-over-boston-basin.webp'
+import img07BostonBasinBenchTrail from './images/07-boston-basin-bench-trail.webp'
+import img08MarmotOverlook from './images/08-marmot-overlook.webp'
+import img06LeaningSnagOnTheApproach from './images/06-leaning-snag-on-the-approach.webp'
+import img10BoulderHoppingWithWildflowers from './images/10-boulder-hopping-with-wildflowers.webp'
+import img09MarmotInTheGrass from './images/09-marmot-in-the-grass.webp'
+import img12SlabsBelowTheRidge from './images/12-slabs-below-the-ridge.webp'
+import img11StreamCrossingInTheMeadow from './images/11-stream-crossing-in-the-meadow.webp'
+import img14RedAlgaePool2 from './images/14-red-algae-pool-2.webp'
+import img16GraniteDikesOnTheSlabs from './images/16-granite-dikes-on-the-slabs.webp'
+import img18GreenStreakedQuartz from './images/18-green-streaked-quartz.webp'
+import img15BoulderFieldBelowTheCouloir from './images/15-boulder-field-below-the-couloir.webp'
+import img17ScramblingPastTheWaterfall from './images/17-scrambling-past-the-waterfall.webp'
+import img20BelowTheHeadwall from './images/20-below-the-headwall.webp'
+import img19QuienSabeGlacierView from './images/19-quien-sabe-glacier-view.webp'
+import img22PolishedSlabsAboveTheBasin from './images/22-polished-slabs-above-the-basin.webp'
+import annotated from './images/annotated.png'
+import vid20260824112638 from './images/vid20260824112638.mp4'
+import vid20260824112638Poster from './images/vid20260824112638-poster.webp?url'
+import img21ApproachingTheCouloir from './images/21-approaching-the-couloir.webp'
+import img23BelowTheCouloirHeadwall from './images/23-below-the-couloir-headwall.webp'
+import img24CouloirSnowFinger from './images/24-couloir-snow-finger.webp'
+import img25ForbiddenGlacierRemnant from './images/25-forbidden-glacier-remnant.webp'
+import img26ScramblingTowardTheNotch from './images/26-scrambling-toward-the-notch.webp'
+import img27BelayingInTheCouloir from './images/27-belaying-in-the-couloir.webp'
+import img28RackingUpAtTheNotch from './images/28-racking-up-at-the-notch.webp'
+import img29RidgeCrestOverMoraineLake from './images/29-ridge-crest-over-moraine-lake.webp'
+import img30LookingBackDownTheRidge from './images/30-looking-back-down-the-ridge.webp'
+import img32ScramblingTheGendarme from './images/32-scrambling-the-gendarme.webp'
+import img31ArmsOutOnTheGendarme from './images/31-arms-out-on-the-gendarme.webp'
+import img33HornsOnTheGendarme from './images/33-horns-on-the-gendarme.webp'
+import img34BostonGlacierFromTheSummit from './images/34-boston-glacier-from-the-summit.webp'
+import img36SummitSelfie from './images/36-summit-selfie.webp'
+import img37SummitSelfie2 from './images/37-summit-selfie-2.webp'
+import img38DownclimbingTheRidge from './images/38-downclimbing-the-ridge.webp'
+import img39DescendingTheCrest from './images/39-descending-the-crest.webp'
+import img41LaughsAtTheRapAnchor from './images/41-laughs-at-the-rap-anchor.webp'
+import vid20260824124927 from './images/vid20260824124927.mp4'
+import vid20260824124927Poster from './images/vid20260824124927-poster.webp?url'
+import img75TrioSelfieOnTheDescentSlabs from './images/75-trio-selfie-on-the-descent-slabs.webp'
+import img44DescendingTheSlabs from './images/44-descending-the-slabs.webp'
+import img45SlabWalkingTowardTheValley from './images/45-slab-walking-toward-the-valley.webp'
+import vid20260824170914 from './images/vid20260824170914.mp4'
+import vid20260824170914Poster from './images/vid20260824170914-poster.webp?url'
+import img74TwoClimbersOnTheMorningSlabs from './images/74-two-climbers-on-the-morning-slabs.webp'
+import img47MonkeyflowerStreamCrossing from './images/47-monkeyflower-stream-crossing.webp'
+import img49CascadingSnowmelt from './images/49-cascading-snowmelt.webp'
+import vid20260824175510 from './images/vid20260824175510.mp4'
+import vid20260824175510Poster from './images/vid20260824175510-poster.webp?url'
+import vid20260824174159 from './images/vid20260824174159.mp4'
+import vid20260824174159Poster from './images/vid20260824174159-poster.webp?url'
+import img46WaterOverGranite from './images/46-water-over-granite.webp'
+import img48MonkeyflowerCreek from './images/48-monkeyflower-creek.webp'
+import img50EveningShadowInTheBasin from './images/50-evening-shadow-in-the-basin.webp'
+import img53SlabDescentBelowTheCirque from './images/53-slab-descent-below-the-cirque.webp'
+import img51QuienSabeGlacierEvening from './images/51-quien-sabe-glacier-evening.webp'
+import img54FloppedByTheStream from './images/54-flopped-by-the-stream.webp'
+import img56MonkeyflowerGarden2 from './images/56-monkeyflower-garden-2.webp'
+import img58SmokyValleyLight from './images/58-smoky-valley-light.webp'
+import img57RepackingBelowTheCirque from './images/57-repacking-below-the-cirque.webp'
+import vid20260824182547 from './images/vid20260824182547.mp4'
+import vid20260824182547Poster from './images/vid20260824182547-poster.webp?url'
+import img60MarmotFloppedCloseUp from './images/60-marmot-flopped-close-up.webp'
+import img62EveningLightInTheMeadows from './images/62-evening-light-in-the-meadows.webp'
+import vid20260824183624 from './images/vid20260824183624.mp4'
+import vid20260824183624Poster from './images/vid20260824183624-poster.webp?url'
+import vid20260824184421 from './images/vid20260824184421.mp4'
+import vid20260824184421Poster from './images/vid20260824184421-poster.webp?url'
+import img64BearGrazing from './images/64-bear-grazing.webp'
+import img67BearInTheBrush from './images/67-bear-in-the-brush.webp'
+import vid20260824184947 from './images/vid20260824184947.mp4'
+import vid20260824184947Poster from './images/vid20260824184947-poster.webp?url'
+import img69SunsetRidgeWalkOut from './images/69-sunset-ridge-walk-out.webp'
+import img71DuskOverTheValley from './images/71-dusk-over-the-valley.webp'
+import img72HeadlampSnail from './images/72-headlamp-snail.webp'
+import img73HeadlampFrog from './images/73-headlamp-frog.webp'
+import img76GoldenHourDescentInTheBasin from './images/76-golden-hour-descent-in-the-basin.webp'
+
+<TripStats
+  date="August 24, 2026"
+  route="Forbidden Peak — West Ridge (5.6), car to car"
+  distance="11.8 mi"
+  elevation="9,258 ft"
+  time="13h 42m"
+  group="The Bonk Bois: Me, Matt, Sean"
+/>
+
+Matt, Sean, and I climbed the [West Ridge of Forbidden Peak](https://www.mountainproject.com/route/106450596/west-ridge) car to car on a beautiful day for Sean's big return post knee surgery. Boston Basin is as beautiful as ever, wildlife was out in full force, and ridge climbing is way too fun.
+
+<RouteMap
+  title={'Forbidden Peak West Ridge'}
+  date="August 24, 2026"
+  gpx={forbiddenPeakWestRidgeGpx}
+  gpxUrl={forbiddenPeakWestRidgeGpxUrl}
+  gpxFilename="forbidden-peak-west-ridge.gpx"
+  basemap="topo"
+  terrain
+  stravaUrl="https://www.strava.com/activities/19898757328"
+  embedToken="lOX7mEAzOPTJJe9OFeVbQmTb-bCtZ_nOE7j-rkuBgNg"
+  kudos={2}
+  stats={[
+    { label: 'Distance', value: '11.8 mi' },
+    { label: 'Elev Gain', value: '9,258 ft' },
+    { label: 'Time', value: '13h 42m' },
+  ]}
+/>
+
+## Key Beta
+
+- Car to car was really nice but I wouldn't hate spending a night at the Boston Basin high camp
+- There's water everywhere. You don't need to carry much for most of the approach. But I did bring a liter and a half on route from the last fill up before we crossed snow.
+- This time of year we probably could have avoided snow completely. Definitely didn't need axe and crampons.
+- Simuling is the way to go
+- We all just wore approach shoes and felt secure
+- The cat scratch gullys are indeed chossy. It was nice to simul the first part of them and then unrope for the top bit. Try to descend without anyone above you - lots of small rocks to kick loose.
+- A single rack from .3 - 2 and some nuts with 10 alpines was a perfect rack for us
+- Apparently, you should check for bridge closures before going down Cascade River Rd
+
+## The return of the bonk bois
+
+Sean's been out for big adventures, rebuilding knee #3. Turns out he's been doing a great job at PT cuz it survived a proper day in the mountains.
+
+Originally, it was Addison and Mel's idea to climb forbidden and Sean and I would join them. They've been eyeing it up for a while but sadly Mel had a bad crash on the mountain bike on Saturday. I look forward to their glorious summit photo someday.
+
+Weather was bad on Saturday so we pivoted to a Monday ascent which is, honestly, my preference. Week days are clutch for classics. When Matt heard we could re-unite the bonk bois, he finagled a day off work.
+
+We opted for car to car. Hiking up the Boston Basin trail with a light pack is _so_ much better than with an overnight pack.
+
+## Into Boston Basin
+
+This was my third time up to Boston Basin in a relatively short time so I feel like I know the trail well. The start of the trail to when you pop out of the woods to the sweeping view of Boston Basin feels like it goes really quick on the way up and then drags on forever on the way down.
+
+<BlogImage
+  src={img02CreekCrossingCascades}
+  alt="02 creek crossing cascades"
+  caption="Johannesburg views early on"
+/>
+<BlogImage
+  src={img04WaveFromTheClimbersTrail}
+  alt="04 wave from the climbers trail"
+  caption="Out of the forest"
+/>
+<BlogImage
+  src={img03FirstViewOfForbidden}
+  alt="03 first view of forbidden"
+  caption="And into the gorgeous Boston Basin"
+/>
+
+The approach up to Boston Basin high camp from where you pop out of the woods pretty cruiser because you're on a pretty nice trail the whole way. I especially liked how it squiggles up a vegetated moraine. We saw some marmots, bendy trees, and just generally basked in the beautiful landscape. Wait - we did that last part all day.
+
+<BlogImage
+  src={img05MorningSunOverBostonBasin}
+  alt="05 morning sun over boston basin"
+/>
+<BlogImage src={img07BostonBasinBenchTrail} alt="07 boston basin bench trail" />
+<ImageRow
+  images={[img08MarmotOverlook, img06LeaningSnagOnTheApproach]}
+  alts={['08 marmot overlook', '06 leaning snag on the approach']}
+  captions={['Marmots everywhere', 'Squiggly tree - fun']}
+/>
+<ImageRow
+  images={[
+    img10BoulderHoppingWithWildflowers,
+    img09MarmotInTheGrass,
+    img12SlabsBelowTheRidge,
+  ]}
+  alts={[
+    '10 boulder hopping with wildflowers',
+    '09 marmot in the grass',
+    '12 slabs below the ridge',
+  ]}
+/>
+<BlogImage
+  src={img11StreamCrossingInTheMeadow}
+  alt="11 stream crossing in the meadow"
+  caption="Made it to high camp"
+/>
+
+## Approach to the Cat Scratch Gullys
+
+After high camp is a sea of slabs. Earlier in the summer, you'd end up spending a decent bit of time on snow but we really only had to cross a small patch of low angle snow. I love slabs like these. It's such cool terrain to be in. The features the water has carved, darker colored dikes in the rock, streaks, mini ridges, and just fun little features to play on the whole way. And the scale is just cool.
+
+<ImageRow
+  images={[
+    img14RedAlgaePool2,
+    img16GraniteDikesOnTheSlabs,
+    img18GreenStreakedQuartz,
+  ]}
+  alts={[
+    '14 red algae pool 2',
+    '16 granite dikes on the slabs',
+    '18 green streaked quartz',
+  ]}
+  captions={[
+    'Glacier algae got caught in a pool??',
+    'Fun streaks',
+    'Mandatory cool rock photo for Amy',
+  ]}
+/>
+
+The fun terrain features to navigate through:
+
+<BlogImage
+  src={img15BoulderFieldBelowTheCouloir}
+  alt="15 boulder field below the couloir"
+/>
+<BlogImage
+  src={img17ScramblingPastTheWaterfall}
+  alt="17 scrambling past the waterfall"
+/>
+<BlogImage
+  src={img74TwoClimbersOnTheMorningSlabs}
+  alt="74 two climbers on the morning slabs"
+/>
+<BlogImage
+  src={img20BelowTheHeadwall}
+  alt="20 below the headwall"
+  caption="Cool dike"
+/>
+<BlogImage
+  src={img19QuienSabeGlacierView}
+  alt="19 quien sabe glacier view"
+  caption="The Quien Sabe looks a little different than it did a month and a half ago!"
+/>
+<BlogImage
+  src={img22PolishedSlabsAboveTheBasin}
+  alt="22 polished slabs above the basin"
+  caption="Above the short snow patch crossing"
+/>
+
+You can choose your own adventure up through the slabs but you're shooting for the buttress below the snow gully.
+
+<BlogImage src={annotated} alt="annotated" />
+<BlogImage src={img21ApproachingTheCouloir} alt="21 approaching the couloir" />
+Don't go too far right here though because the last remaining ice/snow chunks
+from that old glacier do release this time of year...
+
+<BlogVideo
+  src={vid20260824112638}
+  poster={vid20260824112638Poster}
+  portrait
+  caption="The answer to our question about the stability of those chunks became clear very suddenly"
+/>
+<BlogImage
+  src={img23BelowTheCouloirHeadwall}
+  alt="23 below the couloir headwall"
+  caption="We, uh, moved quickly through this bit"
+/>
+
+We moved around the looker's right side of that buttress and got on top of it to get to the bottom of the cat scratch gullys.
+
+<BlogImage
+  src={img25ForbiddenGlacierRemnant}
+  alt="25 forbidden glacier remnant"
+  caption="Epic view from the top of that buttress"
+/>
+
+## The Cat Scratch Gullys
+
+Earlier in the year it sounds like it's possible to ascend the snowy couloir to the right of the cat scratch gullys. That sounds pretty nice because it's def a little chossy/loose in these things.
+
+It became apparently why they're called cat scratch gullys once we got closer - you've got a few to pick from.
+
+<BlogImage
+  src={img24CouloirSnowFinger}
+  alt="24 couloir snow finger"
+  caption="We went up this one. It worked out well enough."
+/>
+
+<ImageRow
+  images={[img26ScramblingTowardTheNotch, img27BelayingInTheCouloir]}
+  alts={['26 scrambling toward the notch', '27 belaying in the couloir']}
+  captions={[
+    'Scrambling to the base of our chosen gully. We started simuling shortly after this photo.',
+    'There were plenty of rap stations along the way for the descent, which was quite nice',
+  ]}
+/>
+
+Then we made it to the notch and had a snack.
+
+<BlogVideo
+  src={vid20260824124927}
+  poster={vid20260824124927Poster}
+  caption="Silliness and sadly the new Thunder Creek fire"
+/>
+
+<ImageRow
+  images={[img28RackingUpAtTheNotch, img29RidgeCrestOverMoraineLake]}
+  alts={['28 racking up at the notch', '29 ridge crest over moraine lake']}
+/>
+
+## The West Ridge to summit
+
+We ended up just scrambling along the ridge for a while until the terrain got a little bit more difficult.
+
+Simuling as a party of three was chill and worked well. We just staggered the followers.
+
+<ImageRow
+  images={[img30LookingBackDownTheRidge, img32ScramblingTheGendarme]}
+  alts={['30 looking back down the ridge', '32 scrambling the gendarme']}
+/>
+
+This ridge was insane. The position is wild, big drop offs on either side. The rock is super high quality. The climbing was easy but fun and a couple cruxier sections made for fun climbing. And cruising it in approach shoes felt great.
+
+<ImageRow
+  images={[img31ArmsOutOnTheGendarme, img33HornsOnTheGendarme]}
+  alts={['31 arms out on the gendarme', '33 horns on the gendarme']}
+/>
+
+We found a couple parties above us toward the end of the ridge and largely avoided the traffic jam.
+
+<BlogImage
+  src={img34BostonGlacierFromTheSummit}
+  alt="34 boston glacier from the summit"
+  caption="The epic Boston Glacier"
+/>
+
+<ImageRow
+  images={[img36SummitSelfie, img37SummitSelfie2]}
+  alts={['36 summit selfie', '37 summit selfie 2']}
+  caption={['Hey, Sean', "Ope, where's Matt"]}
+/>
+
+Hot tip: do not try to rap the whole ridge. Rap the two cruxy bits for sure but reversing makes way more sense. There was a team trying to rap the whole ridge who I think ended up being on route for quite a long time...
+
+<ImageRow
+  images={[img38DownclimbingTheRidge, img39DescendingTheCrest]}
+  alts={['38 downclimbing the ridge', '39 descending the crest']}
+  captions={['Rappelling the cruxy bit', 'Reversing the ridge']}
+/>
+
+## Descending the Cat Scratch Gullys
+
+We were most nervous for this descent to be totally honest. It ended up not being that bad, especially because we beat the other parties back to the descent and they weren't above us for most of our time in the gullys. But we still had some small rock fall come down. Thankfully, our 50m rope was enough to rap the whole gully with 5 raps.
+
+<BlogImage
+  src={img41LaughsAtTheRapAnchor}
+  alt="41 laughs at the rap anchor"
+  caption="It's for ventilation"
+/>
+<BlogImage
+  src={img75TrioSelfieOnTheDescentSlabs}
+  alt="75 trio selfie on the descent slabs"
+  caption="Stoked to be down the gullys"
+/>
+
+## Back down the slabs
+
+After a short boot ski on that snow patch, we started cruisin slabs down.
+
+<BlogImage src={img44DescendingTheSlabs} alt="44 descending the slabs" />
+<BlogImage
+  src={img45SlabWalkingTowardTheValley}
+  alt="45 slab walking toward the valley"
+/>
+
+This part was rough on Sean's knee so he employed some technical inverting.
+
+<BlogVideo src={vid20260824170914} poster={vid20260824170914Poster} portrait />
+
+The light was getting pretty cool and I was getting mesmerized by water features and the views. I really, really enjoyed this part of the day. Enjoy:
+
+<BlogImage
+  src={img47MonkeyflowerStreamCrossing}
+  alt="47 monkeyflower stream crossing"
+/>
+<BlogImage src={img49CascadingSnowmelt} alt="49 cascading snowmelt" />
+<BlogVideo src={vid20260824175510} poster={vid20260824175510Poster} />
+<BlogVideo src={vid20260824174159} poster={vid20260824174159Poster} portrait />
+<ImageRow
+  images={[
+    img46WaterOverGranite,
+    img48MonkeyflowerCreek,
+    img50EveningShadowInTheBasin,
+  ]}
+  alts={[
+    '46 water over granite',
+    '48 monkeyflower creek',
+    '50 evening shadow in the basin',
+  ]}
+/>
+<BlogImage
+  src={img53SlabDescentBelowTheCirque}
+  alt="53 slab descent below the cirque"
+/>
+<BlogImage
+  src={img51QuienSabeGlacierEvening}
+  alt="51 quien sabe glacier evening"
+  caption="Matt, stoked out of his gourd about the Quien Sabe view"
+/>
+
+We got down to high camp and got some water and chilled for a bit. Matt took a micro nap. I put my feet in the water. It was a great little break before it was about to become a National Geographic nature documentary.
+
+<BlogImage src={img54FloppedByTheStream} alt="54 flopped by the stream" />
+<BlogImage src={img56MonkeyflowerGarden2} alt="56 monkeyflower garden 2" />
+<BlogImage
+  src={img57RepackingBelowTheCirque}
+  alt="57 repacking below the cirque"
+/>
+<BlogImage src={img58SmokyValleyLight} alt="58 smoky valley light" />
+
+## The nature documentary
+
+The amount of wildlife...
+
+Walking from the Boston Basin high camp back to the forest was absolutely magical. I was kind of freaking out about how pretty it was. We talked about how nice it would be to just spend the night.
+
+<BlogVideo
+  src={vid20260824182547}
+  poster={vid20260824182547Poster}
+  caption="vid20260824182547"
+/>
+<BlogImage src={img60MarmotFloppedCloseUp} alt="60 marmot flopped close up" />
+<BlogImage
+  src={img62EveningLightInTheMeadows}
+  alt="62 evening light in the meadows"
+/>
+<BlogVideo
+  src={vid20260824183624}
+  poster={vid20260824183624Poster}
+  portrait
+  caption="vid20260824183624"
+/>
+
+And then we ran into a bear!
+
+<BlogVideo
+  src={vid20260824184421}
+  poster={vid20260824184421Poster}
+  caption="Bear was snackin' on blueberries just like us 😄"
+/>
+<BlogImage src={img64BearGrazing} alt="64 bear grazing" />
+<BlogImage
+  src={img67BearInTheBrush}
+  alt="67 bear in the brush"
+  caption="Saw another one on the other side of the moraine gully"
+/>
+<BlogVideo src={vid20260824184947} poster={vid20260824184947Poster} portrait />
+
+So cool. They're so cute. So deadly. Thankfully, very focused on eating berries.
+
+<BlogImage src={img69SunsetRidgeWalkOut} alt="69 sunset ridge walk out" />
+<BlogImage src={img71DuskOverTheValley} alt="71 dusk over the valley" />
+
+## Back into the forest for the trail tax
+
+The descent back down through the forest was really nice at first. Once it got dark, the trail seemed to drag on and we were getting tired.
+
+We cam across some surprising wildlife, though! So that was fun.
+
+<ImageRow
+  images={[img72HeadlampSnail, img73HeadlampFrog]}
+  alts={['72 headlamp snail', '73 headlamp frog']}
+/>
+
+## The real tax
+
+Sometimes you learn a new way to epic. And after a stellar, smooth day, we thought we were in the clear.
+
+When we'd gotten to the summit and ran into those other parties, they'd told us that the Cascade River Bridge was going to be closed from 8pm to 4am that night. We knew we weren't going to make it there by 8pm so that was problematic.
+
+We were in disbelief about this because how can you close a bridge where there is no other way across and is where many full day mountain adventures happen on a daily basis?
+
+Matt was able to get an inReach text out to his wife, Elsa and she told us that there was another road that we could take to get to a different bridge to get across. Perfect! So we descended thinking our adventure tax would simply be a long, dirt road.
+
+Welp, turns out that road got washed out this December along with the rest of Washington.
+
+So we came to the very sad realization that we would be sleeping three very tired, very sweaty dudes in Matt's Subaru until 4am. We feel a little wronged by Skagit County for not putting a sign up when we crossed that morning (we swear there was no sign telling us the bridge would be closed). But, owell.
+
+## The end
+
+<BlogImage
+  src={img76GoldenHourDescentInTheBasin}
+  alt="76 golden hour descent in the basin"
+/>
