@@ -174,9 +174,9 @@ export default function HomeContent() {
           </div>
         </a>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="mt-12 md:mt-8 flex flex-col gap-2">
         <h2 className="text-xs uppercase">Profiles</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <ProfileContainer
             href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
             tooltip="Contra | kellenbusby"
