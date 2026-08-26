@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets'
 import { cn } from '../lib/utils'
-import type { Project } from '../data/projects'
+import type { Project } from '../lib/projects'
 import StatusBadge from './StatusBadge.astro'
 import InterestCta from './InterestCta.astro'
 
@@ -54,12 +54,18 @@ const { project, reverse = false, class: className } = Astro.props
           <InterestCta slug={project.slug} name={project.name} />
         )
       }
+      <a
+        href={`/projects/${project.slug}`}
+        class="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+      >
+        Details →
+      </a>
     </div>
   </div>
   {
     project.image && (
       <a
-        href={project.url}
+        href={`/projects/${project.slug}`}
         class="group block flex-1 overflow-hidden rounded-lg border border-border shadow-lg"
       >
         <Image

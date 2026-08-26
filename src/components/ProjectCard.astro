@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets'
 import { cn } from '../lib/utils'
-import type { Project } from '../data/projects'
+import type { Project } from '../lib/projects'
 import StatusBadge from './StatusBadge.astro'
 import InterestCta from './InterestCta.astro'
 
@@ -12,20 +12,27 @@ interface Props {
 }
 
 const { project, showImage = true, class: className } = Astro.props
-const Tag = project.url ? 'a' : 'div'
+// The interest CTA is its own <a>; nesting it inside a link is invalid HTML,
+// so cards with a CTA use a plain wrapper and link from the title instead.
+const isLink = !project.cta
+const Tag = isLink ? 'a' : 'div'
 ---
 
 <Tag
-  href={project.url}
+  href={isLink ? `/projects/${project.slug}` : undefined}
   class={cn(
-    'group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow',
-    project.url && 'hover:shadow-lg',
+    'group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg',
     className,
   )}
 >
   {
     showImage && project.image && (
-      <div class="h-40 overflow-hidden border-b border-border">
+      <div
+        class={cn(
+          'h-40 overflow-hidden border-b border-border',
+          project.status === 'archived' && 'opacity-60',
+        )}
+      >
         <Image
           src={project.image}
           alt={project.imageAlt || ''}
@@ -38,11 +45,23 @@ const Tag = project.url ? 'a' : 'div'
   <div class="flex flex-1 flex-col gap-2 p-4">
     <div class="flex items-center justify-between gap-2">
       <h3 class="text-lg font-bold group-hover:text-primary transition-colors">
-        {project.name}
+        {
+          isLink ? (
+            project.name
+          ) : (
+            <a
+              href={`/projects/${project.slug}`}
+              class="transition-colors hover:text-primary"
+            >
+              {project.name}
+            </a>
+          )
+        }
       </h3>
       <StatusBadge status={project.status} label={project.statusLabel} />
     </div>
     <p class="text-sm text-muted">{project.oneLiner}</p>
+    {project.note && <p class="text-xs italic text-muted">{project.note}</p>}
     {
       project.stack && (
         <div class="flex flex-wrap gap-1">

@@ -10,8 +10,10 @@ import StatusBadge from '../components/StatusBadge.astro'
 import InterestCta from '../components/InterestCta.astro'
 import SocialLinks from '../components/SocialLinks.astro'
 import VariantSwitcher from '../components/proto/VariantSwitcher.astro'
-import { featuredProjects } from '../data/projects'
+import { getProjects } from '../lib/projects'
 import softwareHeadshot from '../assets/software-headshot.webp'
+
+const featuredProjects = (await getProjects()).filter((p) => p.featured)
 
 const tripReports = (
   await getCollection('blog', ({ data }) => data.published && data.tripReport)

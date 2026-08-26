@@ -1,107 +1,31 @@
 ---
+import { Image } from 'astro:assets'
 import Layout from '../layouts/Layout.astro'
 import PageLayout from '../components/PageLayout.astro'
 import ProjectCard from '../components/ProjectCard.astro'
-import ProjectSpotlight from '../components/ProjectSpotlight.astro'
 import StatusBadge from '../components/StatusBadge.astro'
 import InterestCta from '../components/InterestCta.astro'
 import ProjectIndexRow from '../components/ProjectIndexRow.astro'
 import VariantSwitcher from '../components/proto/VariantSwitcher.astro'
-import {
-  projects,
-  liveProjects,
-  inProgressProjects,
-  archivedProjects,
-  featuredProjects,
-} from '../data/projects'
+import { getProjects, byStatus } from '../lib/projects'
 
-const spotlit = featuredProjects
-const liveRest = liveProjects.filter((p) => !p.featured)
-const inProgressRest = inProgressProjects.filter((p) => !p.featured)
+const projects = await getProjects()
+const live = byStatus(projects, 'live')
+const inProgress = byStatus(projects, 'in-progress')
+const archived = byStatus(projects, 'archived')
 ---
 
 <Layout title="Kellen Busby's Indie Projects">
   <VariantSwitcher
     labels={{
-      a: 'Spotlight + status sections',
-      b: 'Card grid',
-      c: 'Editorial index',
+      a: 'Cards by status',
+      b: 'Index by status',
+      c: 'Hybrid rows + cards',
     }}
   />
 
-  {/* ============ Variant A — featured spotlights, then status sections ============ */}
+  {/* ============ Variant A — status sections with cards ============ */}
   <div data-proto="a">
-    <PageLayout heading="Indie Projects">
-      <div class="flex flex-col gap-1">
-        <p>Things I've built and things I'm building.</p>
-        <p>
-          For client work, check out my
-          <a
-            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
-            class="text-primary hover:underline">Contra portfolio</a
-          >.
-        </p>
-      </div>
-
-      <div class="flex flex-col gap-12 py-4">
-        {spotlit.map((p, i) => <ProjectSpotlight project={p} reverse={i % 2 === 1} />)}
-      </div>
-
-      {
-        liveRest.length > 0 && (
-          <section class="flex flex-col gap-4">
-            <h2 class="text-2xl font-bold">Live</h2>
-            <div class="grid gap-4 sm:grid-cols-2">
-              {liveRest.map((p) => (
-                <ProjectCard project={p} />
-              ))}
-            </div>
-          </section>
-        )
-      }
-
-      <section class="flex flex-col gap-4">
-        <h2 class="text-2xl font-bold">In the works</h2>
-        <div class="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
-          {
-            inProgressRest.map((p) => (
-              <div class="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div class="flex flex-col gap-1">
-                  <div class="flex items-center gap-2.5">
-                    <h3 class="text-lg font-bold">{p.name}</h3>
-                    <StatusBadge status={p.status} label={p.statusLabel} />
-                  </div>
-                  <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
-                </div>
-                {p.cta && <InterestCta slug={p.slug} name={p.name} class="shrink-0" />}
-              </div>
-            ))
-          }
-        </div>
-      </section>
-      {
-        archivedProjects.length > 0 && (
-          <section class="flex flex-col gap-4">
-            <h2 class="text-2xl font-bold">Retired</h2>
-            <div class="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
-              {archivedProjects.map((p) => (
-                <div class="flex flex-col gap-1 p-4">
-                  <div class="flex items-center gap-2.5">
-                    <h3 class="text-lg font-bold">{p.name}</h3>
-                    <StatusBadge status={p.status} label={p.statusLabel} />
-                  </div>
-                  <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )
-      }
-    </PageLayout>
-  </div>
-
-  {/* ============ Variant B — uniform card grid by status ============ */}
-  <div data-proto="b">
     <PageLayout heading="Indie Projects">
       <div class="flex flex-col gap-1">
         <p>Things I've built and things I'm building.</p>
@@ -117,12 +41,187 @@ const inProgressRest = inProgressProjects.filter((p) => !p.featured)
       <section class="flex flex-col gap-4">
         <h2 class="text-2xl font-bold">Live</h2>
         <div class="grid gap-4 sm:grid-cols-2">
+          {live.map((p) => <ProjectCard project={p} />)}
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-4">
+        <h2 class="text-2xl font-bold">In the works</h2>
+        <div class="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
           {
-            liveProjects.map((p) => (
-              <ProjectCard
-                project={p}
-                class={p.featured ? 'sm:col-span-2' : ''}
-              />
+            inProgress.map((p) => (
+              <div class="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-col gap-1">
+                  <div class="flex items-center gap-2.5">
+                    <a
+                      href={`/projects/${p.slug}`}
+                      class="text-lg font-bold transition-colors hover:text-primary"
+                    >
+                      {p.name}
+                    </a>
+                    <StatusBadge status={p.status} label={p.statusLabel} />
+                  </div>
+                  <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
+                </div>
+                {p.cta && (
+                  <InterestCta slug={p.slug} name={p.name} class="shrink-0" />
+                )}
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      {
+        archived.length > 0 && (
+          <section class="flex flex-col gap-4">
+            <h2 class="text-2xl font-bold">Retired</h2>
+            <div class="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
+              {archived.map((p) => (
+                <div class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-2.5">
+                      <a
+                        href={`/projects/${p.slug}`}
+                        class="text-lg font-bold transition-colors hover:text-primary"
+                      >
+                        {p.name}
+                      </a>
+                      <StatusBadge status={p.status} label={p.statusLabel} />
+                    </div>
+                    <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
+                    {p.note && (
+                      <p class="max-w-prose text-xs italic text-muted">
+                        {p.note}
+                      </p>
+                    )}
+                  </div>
+                  {p.image && (
+                    <div class="h-24 w-40 shrink-0 overflow-hidden rounded-md border border-border opacity-60">
+                      <Image
+                        src={p.image}
+                        alt={p.imageAlt || ''}
+                        class="h-full w-full object-cover object-top"
+                        widths={[320]}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </PageLayout>
+  </div>
+
+  {/* ============ Variant B — editorial index grouped by status ============ */}
+  <div data-proto="b">
+    <PageLayout heading="Indie Projects">
+      <div class="flex flex-col gap-1">
+        <p>
+          {live.length} live · {inProgress.length} in the works · client work on
+          <a
+            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
+            class="text-primary hover:underline">Contra</a
+          >
+        </p>
+      </div>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-sm font-semibold uppercase tracking-widest text-muted">
+          Live
+        </h2>
+        <div class="flex flex-col">
+          {live.map((p, i) => <ProjectIndexRow project={p} index={i} />)}
+        </div>
+      </section>
+
+      <section class="flex flex-col gap-2">
+        <h2 class="text-sm font-semibold uppercase tracking-widest text-muted">
+          In the works
+        </h2>
+        <div class="flex flex-col">
+          {
+            inProgress.map((p, i) => (
+              <ProjectIndexRow project={p} index={i + live.length} />
+            ))
+          }
+        </div>
+      </section>
+
+      {
+        archived.length > 0 && (
+          <section class="flex flex-col gap-2">
+            <h2 class="text-sm font-semibold uppercase tracking-widest text-muted">
+              Retired
+            </h2>
+            <div class="flex flex-col">
+              {archived.map((p, i) => (
+                <ProjectIndexRow
+                  project={p}
+                  index={i + live.length + inProgress.length}
+                />
+              ))}
+            </div>
+          </section>
+        )
+      }
+    </PageLayout>
+  </div>
+
+  {/* ============ Variant C — big rows for live, cards for the rest ============ */}
+  <div data-proto="c">
+    <PageLayout heading="Indie Projects">
+      <div class="flex flex-col gap-1">
+        <p>Things I've built and things I'm building.</p>
+        <p>
+          For client work, check out my
+          <a
+            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
+            class="text-primary hover:underline">Contra portfolio</a
+          >.
+        </p>
+      </div>
+
+      <section class="flex flex-col gap-4">
+        <h2 class="text-2xl font-bold">Live</h2>
+        <div class="flex flex-col">
+          {
+            live.map((p) => (
+              <a
+                href={`/projects/${p.slug}`}
+                class="group flex flex-col gap-4 border-t border-border py-6 last:border-b md:flex-row md:items-center md:justify-between"
+              >
+                <div class="flex flex-col gap-1.5">
+                  <div class="flex items-center gap-3">
+                    <h3 class="text-2xl font-bold transition-colors group-hover:text-primary md:text-3xl">
+                      {p.name}
+                    </h3>
+                    <StatusBadge status={p.status} label={p.statusLabel} />
+                  </div>
+                  <p class="max-w-prose text-muted">{p.oneLiner}</p>
+                  {p.stack && (
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                      {p.stack.map((tech) => (
+                        <span class="rounded bg-border px-2 py-0.5 text-xs whitespace-nowrap">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {p.image && (
+                  <div class="shrink-0 overflow-hidden rounded-md border border-border md:h-32 md:w-52">
+                    <Image
+                      src={p.image}
+                      alt={p.imageAlt || ''}
+                      class="h-full w-full object-cover object-top"
+                      widths={[416, 640]}
+                    />
+                  </div>
+                )}
+              </a>
             ))
           }
         </div>
@@ -132,44 +231,53 @@ const inProgressRest = inProgressProjects.filter((p) => !p.featured)
         <h2 class="text-2xl font-bold">In the works</h2>
         <div class="grid gap-4 sm:grid-cols-2">
           {
-            inProgressProjects.map((p) => (
+            inProgress.map((p) => (
               <ProjectCard project={p} showImage={false} class="border-dashed" />
             ))
           }
         </div>
       </section>
+
       {
-        archivedProjects.length > 0 && (
+        archived.length > 0 && (
           <section class="flex flex-col gap-4">
             <h2 class="text-2xl font-bold">Retired</h2>
-            <div class="grid gap-4 sm:grid-cols-2">
-              {archivedProjects.map((p) => (
-                <ProjectCard project={p} />
+            <div class="flex flex-col">
+              {archived.map((p) => (
+                <a
+                  href={`/projects/${p.slug}`}
+                  class="group flex flex-col gap-3 border-t border-border py-5 last:border-b sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-2.5">
+                      <h3 class="text-lg font-bold transition-colors group-hover:text-primary">
+                        {p.name}
+                      </h3>
+                      <StatusBadge status={p.status} label={p.statusLabel} />
+                    </div>
+                    <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
+                    {p.note && (
+                      <p class="max-w-prose text-xs italic text-muted">
+                        {p.note}
+                      </p>
+                    )}
+                  </div>
+                  {p.image && (
+                    <div class="h-20 w-32 shrink-0 overflow-hidden rounded-md border border-border opacity-60">
+                      <Image
+                        src={p.image}
+                        alt={p.imageAlt || ''}
+                        class="h-full w-full object-cover object-top"
+                        widths={[256]}
+                      />
+                    </div>
+                  )}
+                </a>
               ))}
             </div>
           </section>
         )
       }
-    </PageLayout>
-  </div>
-
-  {/* ============ Variant C — editorial index list ============ */}
-  <div data-proto="c">
-    <PageLayout heading="Indie Projects">
-      <div class="flex flex-col gap-1">
-        <p>
-          {liveProjects.length} live · {inProgressProjects.length} in the works ·
-          client work on
-          <a
-            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
-            class="text-primary hover:underline">Contra</a
-          >
-        </p>
-      </div>
-
-      <div class="flex flex-col">
-        {projects.map((p, i) => <ProjectIndexRow project={p} index={i} />)}
-      </div>
     </PageLayout>
   </div>
 </Layout>
