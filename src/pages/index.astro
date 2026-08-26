@@ -16,6 +16,10 @@ const tripReports = (
 ---
 
 <Layout>
+  <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10">
+    <div class="home-bg-software absolute inset-0"></div>
+    <div class="home-bg-outdoors absolute inset-0"></div>
+  </div>
   <div class="mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
     <div class="flex justify-center">
       <HomeContent client:load />
@@ -86,9 +90,33 @@ const tripReports = (
 </Layout>
 
 <style is:global>
-  /* Hover-reactive columns, driven by html[data-profile] set from HomeContent.
-     Desktop only — mobile is static after the intro. */
+  /* Hover-reactive columns and background tint, driven by html[data-profile]
+     set from HomeContent. Desktop only — mobile is static after the intro. */
   @media (min-width: 768px) {
+    .home-bg-software,
+    .home-bg-outdoors {
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    .home-bg-software {
+      background: radial-gradient(
+        60% 55% at 28% 18%,
+        color-mix(in srgb, var(--color-primary) 13%, transparent),
+        transparent 70%
+      );
+    }
+    .home-bg-outdoors {
+      background: radial-gradient(
+        60% 55% at 72% 18%,
+        color-mix(in srgb, var(--color-accent) 11%, transparent),
+        transparent 70%
+      );
+    }
+    html[data-profile='software'] .home-bg-software,
+    html[data-profile='outdoors'] .home-bg-outdoors {
+      opacity: 1;
+    }
+
     [data-col] {
       transition:
         opacity 0.4s ease,

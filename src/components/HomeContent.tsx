@@ -40,6 +40,32 @@ export default function HomeContent() {
     }
   }, [])
 
+  // On desktop the page's vertical halves are also a context trigger: dwell
+  // on a side for a beat to switch. Armed after the intro so parked cursors
+  // and pass-through movement don't hijack the landing state.
+  useEffect(() => {
+    if (!window.matchMedia('(min-width: 768px)').matches) return
+    let dwell: ReturnType<typeof setTimeout> | undefined
+    let pending: Mode | null = null
+    const onMove = (e: MouseEvent) => {
+      const mode: Mode =
+        e.clientX < window.innerWidth / 2 ? 'software' : 'outdoors'
+      if (mode === pending) return
+      pending = mode
+      clearTimeout(dwell)
+      dwell = setTimeout(() => activate(mode), 350)
+    }
+    const arm = setTimeout(
+      () => document.addEventListener('mousemove', onMove),
+      1400,
+    )
+    return () => {
+      clearTimeout(arm)
+      clearTimeout(dwell)
+      document.removeEventListener('mousemove', onMove)
+    }
+  }, [])
+
   // Hovering the content sections below the hero also switches context
   useEffect(() => {
     const cols = Array.from(document.querySelectorAll('[data-col]'))
@@ -92,11 +118,11 @@ export default function HomeContent() {
           style={{ transformOrigin: '50% 300px' }}
         />
       </figure>
-      <div className="flex flex-col items-center md:flex-row md:items-center md:justify-center md:gap-8">
+      <div className="flex w-full flex-col items-center md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-8">
         <a
           href="/software"
           className={cn(
-            'flex flex-row items-center justify-center gap-5 md:flex-col md:items-end md:gap-0.5 rounded-md p-4 transition-opacity duration-500',
+            'flex flex-row items-center justify-center gap-5 md:flex-col md:items-end md:justify-self-end md:gap-0.5 rounded-md p-4 transition-opacity duration-500',
             hovered === 'outdoors' && 'md:opacity-40',
           )}
           onMouseEnter={() => activate('software')}
@@ -135,7 +161,7 @@ export default function HomeContent() {
         <a
           href="/life"
           className={cn(
-            'flex flex-row-reverse items-center justify-center gap-5 md:flex-col md:items-start md:gap-0.5 rounded-md p-4 transition-opacity duration-500',
+            'flex flex-row-reverse items-center justify-center gap-5 md:flex-col md:items-start md:justify-self-start md:gap-0.5 rounded-md p-4 transition-opacity duration-500',
             hovered === 'software' && 'md:opacity-40',
           )}
           onMouseEnter={() => activate('outdoors')}
