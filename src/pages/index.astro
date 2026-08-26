@@ -99,18 +99,24 @@ const tripReports = (
       transition: opacity 1.2s ease;
     }
     .home-bg-software {
+      --tint: 24%;
       background: radial-gradient(
         60% 55% at 28% 18%,
-        color-mix(in srgb, var(--color-primary) 24%, transparent),
+        color-mix(in srgb, var(--color-primary) var(--tint), transparent),
         transparent 75%
       );
     }
+    /* The orange sinks into the dark navy, so it needs a harder mix there */
     .home-bg-outdoors {
+      --tint: 20%;
       background: radial-gradient(
         60% 55% at 72% 18%,
-        color-mix(in srgb, var(--color-accent) 20%, transparent),
+        color-mix(in srgb, var(--color-accent) var(--tint), transparent),
         transparent 75%
       );
+    }
+    .dark .home-bg-outdoors {
+      --tint: 38%;
     }
     html[data-profile='software'] .home-bg-software,
     html[data-profile='outdoors'] .home-bg-outdoors {
