@@ -40,29 +40,17 @@ export default function HomeContent() {
     }
   }, [])
 
-  // On desktop the page's vertical halves are also a context trigger. Armed
-  // once the intro settle has finished, and only the FIRST switch requires a
-  // 350ms dwell (so the cursor's parked position doesn't hijack the landing
-  // state) — after that, crossing halves switches instantly.
+  // On desktop the page's vertical halves are also a context trigger,
+  // armed once the intro settle has finished.
   useEffect(() => {
     if (!window.matchMedia('(min-width: 768px)').matches) return
-    let dwell: ReturnType<typeof setTimeout> | undefined
     let pending: Mode | null = null
-    let first = true
     const onMove = (e: MouseEvent) => {
       const mode: Mode =
         e.clientX < window.innerWidth / 2 ? 'software' : 'outdoors'
       if (mode === pending) return
       pending = mode
-      clearTimeout(dwell)
-      if (first) {
-        dwell = setTimeout(() => {
-          first = false
-          activate(mode)
-        }, 350)
-      } else {
-        activate(mode)
-      }
+      activate(mode)
     }
     const arm = setTimeout(
       () => document.addEventListener('mousemove', onMove),
@@ -70,7 +58,6 @@ export default function HomeContent() {
     )
     return () => {
       clearTimeout(arm)
-      clearTimeout(dwell)
       document.removeEventListener('mousemove', onMove)
     }
   }, [])
