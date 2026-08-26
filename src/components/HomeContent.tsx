@@ -83,7 +83,7 @@ export default function HomeContent() {
           className={cn(
             'hidden md:block absolute inset-0 z-10 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
             stage === 'hidden' && 'rotate-90 opacity-0',
-            stage === 'enter' && '-rotate-6 opacity-100',
+            stage === 'enter' && '-rotate-12 opacity-100',
             stage === 'done' &&
               (profile === 'outdoors'
                 ? 'rotate-0 opacity-100'
