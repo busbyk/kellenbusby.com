@@ -70,8 +70,23 @@ export default function CarouselViewer({
   }>(null)
   const lastTap = useRef(0)
   const chromeTimer = useRef<number | null>(null)
+  const vidRefs = useRef<(HTMLVideoElement | null)[]>([])
   useScrollLock()
   useResizeBump()
+
+  // play the current video (unmuted — a user gesture opened/stepped here,
+  // falling back to muted if the browser objects) and pause the rest
+  useEffect(() => {
+    vidRefs.current.forEach((v, i) => {
+      if (!v) return
+      if (i === index) {
+        v.play().catch(() => {
+          v.muted = true
+          v.play().catch(() => {})
+        })
+      } else v.pause()
+    })
+  }, [index])
 
   const clampZoom = (z: { s: number; x: number; y: number }) => {
     const { w: vw, h: vh } = viewportSize()
@@ -374,12 +389,13 @@ export default function CarouselViewer({
             return (
               <div class="w-full h-full shrink-0 flex items-center justify-center overflow-hidden">
                 <video
+                  ref={(v) => {
+                    vidRefs.current[i] = v
+                  }}
                   src={srcOf(it.el)}
                   poster={(it.el as HTMLVideoElement).poster || undefined}
                   controls
                   playsinline
-                  autoplay={i === index}
-                  muted={i === index}
                   class="max-w-full max-h-full object-contain bg-black"
                   style={ratio}
                 />

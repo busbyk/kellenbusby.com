@@ -36,15 +36,36 @@ const videoClasses = [
       />
     </div>
   ) : (
-    <video
-      class:list={videoClasses}
-      src={src}
-      poster={poster}
-      controls
-      preload="metadata"
-      playsinline
-      aria-label={title}
-    />
+    <div class="relative w-full" data-video-wrap>
+      {/* w-full keeps this wrapper spanning the portrait figure (flex
+          items-center would shrink-wrap it and break the max-w percentages) */}
+      <video
+        class:list={videoClasses}
+        src={src}
+        poster={poster}
+        controls
+        preload="metadata"
+        playsinline
+        aria-label={title}
+      />
+      {/* No-JS gets the native controls above; BlogLightbox strips them,
+          reveals this overlay, and wires it to open the viewer playing */}
+      <button
+        type="button"
+        data-video-play
+        hidden
+        class="absolute inset-0 items-center justify-center cursor-pointer group"
+        aria-label={`Play video: ${title}`}
+      >
+        <span class="flex items-center justify-center rounded-full bg-black/55 text-white p-4 shadow-lg backdrop-blur-sm transition-transform duration-150 group-hover:scale-110">
+          {/* triangle sits left-of-center in its viewBox; the small shift
+              optically centers it in the circle */}
+          <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7">
+            <path d="M7 5.14v13.72c0 .81.87 1.31 1.57.9l11.06-6.86a1.05 1.05 0 0 0 0-1.8L8.57 4.24A1.05 1.05 0 0 0 7 5.14z" />
+          </svg>
+        </span>
+      </button>
+    </div>
   )}
   {caption && (
     <figcaption class="mt-2 text-sm text-muted text-center">
