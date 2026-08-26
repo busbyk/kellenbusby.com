@@ -1,88 +1,144 @@
 ---
-import { Image } from 'astro:assets';
-import Layout from '../layouts/Layout.astro';
-import PageLayout from '../components/PageLayout.astro';
-import avyobs from '../assets/avyobs.png';
-import backcountrychecklist from '../assets/backcountrychecklist.png';
-import myfirstinstapost from '../assets/myfirstinstapost.png';
+import Layout from '../layouts/Layout.astro'
+import PageLayout from '../components/PageLayout.astro'
+import ProjectCard from '../components/ProjectCard.astro'
+import ProjectSpotlight from '../components/ProjectSpotlight.astro'
+import StatusBadge from '../components/StatusBadge.astro'
+import InterestCta from '../components/InterestCta.astro'
+import ProjectIndexRow from '../components/ProjectIndexRow.astro'
+import VariantSwitcher from '../components/proto/VariantSwitcher.astro'
+import {
+  projects,
+  liveProjects,
+  inProgressProjects,
+  featuredProjects,
+} from '../data/projects'
+
+const spotlit = featuredProjects
+const liveRest = liveProjects.filter((p) => !p.featured)
+const inProgressRest = inProgressProjects.filter((p) => !p.featured)
 ---
 
 <Layout title="Kellen Busby's Indie Projects">
-  <PageLayout heading="Indie Projects">
-    <div class="flex flex-col gap-4">
+  <VariantSwitcher
+    labels={{
+      a: 'Spotlight + status sections',
+      b: 'Card grid',
+      c: 'Editorial index',
+    }}
+  />
+
+  {/* ============ Variant A — featured spotlights, then status sections ============ */}
+  <div data-proto="a">
+    <PageLayout heading="Indie Projects">
       <div class="flex flex-col gap-1">
-        <p>These are my independent projects.</p>
+        <p>Things I've built and things I'm building.</p>
         <p>
-          For client projects, check out my
+          For client work, check out my
           <a
             href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
-            class="ml-1 hover:underline"
-          >
-            Contra portfolio
-          </a>.
+            class="text-primary hover:underline">Contra portfolio</a
+          >.
         </p>
       </div>
-    </div>
-    <div class="flex flex-col gap-6">
-      <a
-        href="https://www.avyobs.com/?utm_source=kellenbusby.com"
-        class="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col gap-1 justify-center rounded-md p-4 max-w-max"
-      >
-        <h2 class="text-xl font-bold">AvyObs</h2>
-        <div class="flex flex-col">
-          <p class="max-w-[400px]">
-            A snow and avalanche observations notification service. Always
-            know what's going on in the mountains.
-          </p>
+
+      <div class="flex flex-col gap-12 py-4">
+        {spotlit.map((p, i) => <ProjectSpotlight project={p} reverse={i % 2 === 1} />)}
+      </div>
+
+      {
+        liveRest.length > 0 && (
+          <section class="flex flex-col gap-4">
+            <h2 class="text-2xl font-bold">Live</h2>
+            <div class="grid gap-4 sm:grid-cols-2">
+              {liveRest.map((p) => (
+                <ProjectCard project={p} />
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <section class="flex flex-col gap-4">
+        <h2 class="text-2xl font-bold">In the works</h2>
+        <div class="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
+          {
+            inProgressRest.map((p) => (
+              <div class="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-col gap-1">
+                  <div class="flex items-center gap-2.5">
+                    <h3 class="text-lg font-bold">{p.name}</h3>
+                    <StatusBadge status={p.status} label={p.statusLabel} />
+                  </div>
+                  <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
+                </div>
+                {p.cta && <InterestCta slug={p.slug} name={p.name} class="shrink-0" />}
+              </div>
+            ))
+          }
         </div>
-        <Image
-          src={avyobs}
-          alt="AvyObs screenshot"
-          class="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
-          widths={[250, 300, 400]}
-        />
-        <p class="text-sm">https://www.avyobs.com</p>
-      </a>
-    </div>
-    <div class="flex flex-col gap-6">
-      <a
-        href="https://www.backcountrychecklist.com/?utm_source=kellenbusby.com"
-        class="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col gap-1 justify-center rounded-md p-4 max-w-max"
-      >
-        <h2 class="text-xl font-bold">BackcountryChecklist</h2>
-        <div class="flex flex-col">
-          <p class="max-w-[400px]">
-            A lighthearted checklist for a fun and safe day of skiing,
-            snowboarding, or snowmobiling in the backcountry.
-          </p>
+      </section>
+    </PageLayout>
+  </div>
+
+  {/* ============ Variant B — uniform card grid by status ============ */}
+  <div data-proto="b">
+    <PageLayout heading="Indie Projects">
+      <div class="flex flex-col gap-1">
+        <p>Things I've built and things I'm building.</p>
+        <p>
+          For client work, check out my
+          <a
+            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
+            class="text-primary hover:underline">Contra portfolio</a
+          >.
+        </p>
+      </div>
+
+      <section class="flex flex-col gap-4">
+        <h2 class="text-2xl font-bold">Live</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {
+            liveProjects.map((p) => (
+              <ProjectCard
+                project={p}
+                class={p.featured ? 'sm:col-span-2' : ''}
+              />
+            ))
+          }
         </div>
-        <Image
-          src={backcountrychecklist}
-          alt="Backcountry checklist screenshot"
-          class="w-[150px] sm:w-[200px] md:w-[250px] rounded-md shadow-lg"
-          widths={[150, 200, 250]}
-        />
-        <p class="text-sm">https://www.backcountrychecklist.com</p>
-      </a>
-    </div>
-    <div class="flex flex-col gap-6">
-      <a
-        href="https://www.myfirstinstapost.com/?utm_source=kellenbusby.com"
-        class="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col gap-1 justify-center rounded-md p-4 max-w-max"
-      >
-        <h2 class="text-xl font-bold">MyFirstInstaPost</h2>
-        <div class="flex flex-col">
-          <p>A silly website that shows you your first Instagram post.</p>
-          <p>It's a fun stroll down memory lane.</p>
+      </section>
+
+      <section class="flex flex-col gap-4">
+        <h2 class="text-2xl font-bold">In the works</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {
+            inProgressProjects.map((p) => (
+              <ProjectCard project={p} showImage={false} class="border-dashed" />
+            ))
+          }
         </div>
-        <Image
-          src={myfirstinstapost}
-          alt="MyFirstInstaPost screenshot"
-          class="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
-          widths={[250, 300, 400]}
-        />
-        <p class="text-sm">https://www.myfirstinstapost.com</p>
-      </a>
-    </div>
-  </PageLayout>
+      </section>
+    </PageLayout>
+  </div>
+
+  {/* ============ Variant C — editorial index list ============ */}
+  <div data-proto="c">
+    <PageLayout heading="Indie Projects">
+      <div class="flex flex-col gap-1">
+        <p>
+          {liveProjects.length} live · {inProgressProjects.length} in the works ·
+          client work on
+          <a
+            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
+            class="text-primary hover:underline">Contra</a
+          >
+        </p>
+      </div>
+
+      <div class="flex flex-col">
+        {projects.map((p, i) => <ProjectIndexRow project={p} index={i} />)}
+      </div>
+    </PageLayout>
+  </div>
 </Layout>

@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets'
+import type { Project } from '../data/projects'
+import StatusBadge from './StatusBadge.astro'
+import InterestCta from './InterestCta.astro'
+
+interface Props {
+  project: Project
+  index: number
+}
+
+const { project: p, index } = Astro.props
+const Row = p.url ? 'a' : 'div'
+---
+
+<Row
+  href={p.url}
+  class="group grid gap-3 border-t border-border py-6 last:border-b md:grid-cols-[3.5rem_1fr_auto] md:items-center"
+>
+  <span class="hidden font-mono text-sm text-muted md:block">
+    {String(index + 1).padStart(2, '0')}
+  </span>
+  <div class="flex flex-col gap-1.5">
+    <div class="flex items-center gap-3">
+      <h3
+        class:list={[
+          'text-2xl font-bold md:text-3xl',
+          p.url && 'transition-colors group-hover:text-primary',
+        ]}
+      >
+        {p.name}
+      </h3>
+      <StatusBadge status={p.status} label={p.statusLabel} />
+    </div>
+    <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
+    {p.cta && <InterestCta slug={p.slug} name={p.name} compact class="mt-1" />}
+  </div>
+  {
+    p.image && (
+      <div class="hidden h-20 w-32 shrink-0 overflow-hidden rounded-md border border-border md:block">
+        <Image
+          src={p.image}
+          alt={p.imageAlt || ''}
+          class="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+          widths={[256]}
+        />
+      </div>
+    )
+  }
+</Row>

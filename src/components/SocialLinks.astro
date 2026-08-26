@@ -1,0 +1,52 @@
+---
+import { cn } from '../lib/utils'
+import ProfileContainer from './ProfileContainer.astro'
+import ContraCircleIcon from './icons/ContraCircleIcon'
+import GithubCircleIcon from './icons/GithubCircleIcon'
+import InstagramCircleIcon from './icons/InstagramCircleIcon'
+import LinkedinCircleIcon from './icons/LinkedinCircleIcon'
+import TwitterCircleIcon from './icons/TwitterCircleIcon'
+import YoutubeCircleIcon from './icons/YoutubeCircleIcon'
+
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<div class={cn('flex gap-2', className)}>
+  <ProfileContainer
+    href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
+    tooltip="Contra | kellenbusby"
+  >
+    <ContraCircleIcon />
+  </ProfileContainer>
+  <ProfileContainer href="https://github.com/busbyk" tooltip="GitHub | busbyk">
+    <GithubCircleIcon />
+  </ProfileContainer>
+  <ProfileContainer
+    href="https://www.instagram.com/kellenbusby"
+    tooltip="Instagram | kellenbusby"
+  >
+    <InstagramCircleIcon />
+  </ProfileContainer>
+  <ProfileContainer
+    href="https://www.linkedin.com/services/page/940755311278b0742a/"
+    tooltip="LinkedIn | Kellen Busby Software"
+  >
+    <LinkedinCircleIcon />
+  </ProfileContainer>
+  <ProfileContainer
+    href="https://twitter.com/kellenbusbydev"
+    tooltip="Twitter | @kellenbusbydev"
+  >
+    <TwitterCircleIcon />
+  </ProfileContainer>
+  <ProfileContainer
+    href="https://www.youtube.com/channel/UCq4RGdMw9cCuFUsVXoXMkTQ"
+    tooltip="YouTube | @kellenbusby"
+  >
+    <YoutubeCircleIcon />
+  </ProfileContainer>
+</div>

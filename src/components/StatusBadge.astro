@@ -1,0 +1,30 @@
+---
+import { cn } from '../lib/utils'
+import type { ProjectStatus } from '../data/projects'
+
+interface Props {
+  status: ProjectStatus
+  label: string
+  class?: string
+}
+
+const { status, label, class: className } = Astro.props
+---
+
+<span
+  class={cn(
+    'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap',
+    status === 'live'
+      ? 'bg-primary/20 text-foreground'
+      : 'bg-accent/15 text-foreground',
+    className,
+  )}
+>
+  <span
+    class={cn(
+      'size-1.5 rounded-full',
+      status === 'live' ? 'bg-primary' : 'bg-accent',
+    )}
+  />
+  {label}
+</span>
