@@ -101,13 +101,18 @@ export default function HomeContent() {
           )}
           onMouseEnter={() => activate('software')}
         >
-          <img
-            src={softwareHeadshot.src}
-            alt="Kellen Busby software engineer"
-            width={80}
-            height={80}
-            className="intro-side-left md:hidden w-20 rounded-full shadow-lg"
-          />
+          <div className="intro-side-left flex flex-col items-center gap-2.5 md:hidden">
+            <img
+              src={softwareHeadshot.src}
+              alt="Kellen Busby software engineer"
+              width={80}
+              height={80}
+              className="w-20 rounded-full shadow-lg"
+            />
+            <button className="pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1 text-sm">
+              Software <CaretRightIcon />
+            </button>
+          </div>
           <div className="flex flex-col items-start md:items-end md:gap-0.5">
             <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
               Software Engineer
@@ -118,9 +123,6 @@ export default function HomeContent() {
             <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
               JS|TS|React Dev
             </h2>
-            <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
-              Software <CaretRightIcon />
-            </button>
           </div>
         </a>
         <div
@@ -138,13 +140,18 @@ export default function HomeContent() {
           )}
           onMouseEnter={() => activate('outdoors')}
         >
-          <img
-            src={outdoorsHeadshot.src}
-            alt="Kellen Busby outdoors person"
-            width={80}
-            height={80}
-            className="intro-side-right md:hidden w-20 rounded-full shadow-lg"
-          />
+          <div className="intro-side-right flex flex-col items-center gap-2.5 md:hidden">
+            <img
+              src={outdoorsHeadshot.src}
+              alt="Kellen Busby outdoors person"
+              width={80}
+              height={80}
+              className="w-20 rounded-full shadow-lg"
+            />
+            <button className="pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1 text-sm">
+              Life <CaretRightIcon />
+            </button>
+          </div>
           <div className="flex flex-col items-end md:items-start md:gap-0.5">
             <h2 className="md:hidden text-lg font-bold text-right">
               Skier, Climber, Mountain Biker, Traveler, Hobbyist
@@ -164,9 +171,6 @@ export default function HomeContent() {
             <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
               Hobbyist
             </h2>
-            <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
-              Life <CaretRightIcon />
-            </button>
           </div>
         </a>
       </div>
