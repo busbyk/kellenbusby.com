@@ -86,18 +86,16 @@ const tripReports = (
 </Layout>
 
 <style is:global>
-  /* Hover-reactive columns, driven by html[data-profile] set from HomeContent.
-     Desktop only — there's no hover state to react to on touch screens. */
-  @media (min-width: 768px) {
-    [data-col] {
-      transition:
-        opacity 0.4s ease,
-        transform 0.4s ease;
-    }
-    html[data-profile='software'] [data-col='outdoors'],
-    html[data-profile='outdoors'] [data-col='software'] {
-      opacity: 0.4;
-      transform: scale(0.98);
-    }
+  /* Context-reactive columns, driven by html[data-profile] set from
+     HomeContent — hover on desktop, scroll position on stacked layouts. */
+  [data-col] {
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
+  }
+  html[data-profile='software'] [data-col='outdoors'],
+  html[data-profile='outdoors'] [data-col='software'] {
+    opacity: 0.4;
+    transform: scale(0.98);
   }
 </style>

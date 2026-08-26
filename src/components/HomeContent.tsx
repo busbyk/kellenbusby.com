@@ -40,6 +40,30 @@ export default function HomeContent() {
     }
   }, [])
 
+  // On stacked (mobile) layouts, scrolling a section into the middle of the
+  // viewport plays the role hover plays on desktop
+  useEffect(() => {
+    if (!window.matchMedia('(max-width: 767px)').matches) return
+    const cols = Array.from(document.querySelectorAll('[data-col]'))
+    if (cols.length === 0) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            activate(
+              entry.target.getAttribute('data-col') === 'outdoors'
+                ? 'outdoors'
+                : 'software',
+            )
+          }
+        })
+      },
+      { rootMargin: '-45% 0px -45% 0px' },
+    )
+    cols.forEach((col) => observer.observe(col))
+    return () => observer.disconnect()
+  }, [])
+
   // Hovering the content sections below the hero also switches context
   useEffect(() => {
     const cols = Array.from(document.querySelectorAll('[data-col]'))
@@ -66,12 +90,12 @@ export default function HomeContent() {
           height={192}
           className={cn(
             'absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
-            stage === 'hidden' && 'md:-rotate-90 md:opacity-0',
-            stage === 'enter' && 'md:rotate-6 md:opacity-100',
+            stage === 'hidden' && '-rotate-90 opacity-0',
+            stage === 'enter' && 'rotate-6 opacity-100',
             stage === 'done' &&
               (profile === 'software'
-                ? 'md:rotate-0 md:opacity-100'
-                : 'md:-rotate-90 md:opacity-0'),
+                ? 'rotate-0 opacity-100'
+                : '-rotate-90 opacity-0'),
           )}
           style={{ transformOrigin: '50% 300px' }}
         />
@@ -81,7 +105,7 @@ export default function HomeContent() {
           width={192}
           height={192}
           className={cn(
-            'hidden md:block absolute inset-0 z-10 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
+            'absolute inset-0 z-10 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
             stage === 'hidden' && 'rotate-90 opacity-0',
             stage === 'enter' && '-rotate-12 opacity-100',
             stage === 'done' &&
