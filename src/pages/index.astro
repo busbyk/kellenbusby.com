@@ -4,10 +4,6 @@ import { getCollection } from 'astro:content'
 import Layout from '../layouts/Layout.astro'
 import HomeContent from '../components/HomeContent'
 import ProjectCard from '../components/ProjectCard.astro'
-import ProjectSpotlight from '../components/ProjectSpotlight.astro'
-import StatusBadge from '../components/StatusBadge.astro'
-import InterestCta from '../components/InterestCta.astro'
-import VariantSwitcher from '../components/proto/VariantSwitcher.astro'
 import { getProjects } from '../lib/projects'
 
 const featuredProjects = (await getProjects()).filter((p) => p.featured)
@@ -20,63 +16,40 @@ const tripReports = (
 ---
 
 <Layout>
-  <VariantSwitcher
-    labels={{
-      a: 'Static sections',
-      b: 'Hover: emphasize a side',
-      c: 'Hover: swap the content',
-    }}
-  />
+  <div class="mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
+    <div class="flex justify-center pb-4 md:pb-10">
+      <HomeContent client:load />
+    </div>
 
-  {/* ============ Variant A — static sections (hero, building, outside) ============ */}
-  <div data-proto="a">
-    <div class="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
-      <div class="flex justify-center pb-4 md:pb-10">
-        <HomeContent client:load />
-      </div>
-
-      <section class="flex flex-col gap-8">
-        <div class="flex items-baseline justify-between">
-          <h2 class="text-2xl font-bold md:text-3xl">What I'm building</h2>
+    <div class="grid gap-10 md:grid-cols-2 md:gap-8">
+      <section data-col="software" class="flex flex-col gap-4">
+        <div class="flex items-baseline justify-between border-b border-border pb-2">
+          <h2 class="text-xl font-bold">What I'm building</h2>
           <a href="/projects" class="text-sm text-primary hover:underline">
             All projects →
           </a>
         </div>
-        <div class="flex flex-col gap-12">
-          {
-            featuredProjects.map((p, i) =>
-              p.image ? (
-                <ProjectSpotlight project={p} reverse={i % 2 === 1} />
-              ) : (
-                <div class="flex flex-col gap-2 rounded-lg border border-dashed border-border p-5">
-                  <div class="flex items-center gap-3">
-                    <h3 class="text-xl font-bold">{p.name}</h3>
-                    <StatusBadge status={p.status} label={p.statusLabel} />
-                  </div>
-                  <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
-                  {p.cta && (
-                    <InterestCta slug={p.slug} name={p.name} class="mt-1" />
-                  )}
-                </div>
-              ),
-            )
-          }
+        <div class="flex flex-col gap-4">
+          {featuredProjects.map((p) => <ProjectCard project={p} />)}
         </div>
       </section>
 
-      <section class="flex flex-col gap-4">
-        <div class="flex items-baseline justify-between">
-          <h2 class="text-2xl font-bold md:text-3xl">Recently, outside</h2>
+      <section data-col="outdoors" class="flex flex-col gap-4">
+        <div class="flex items-baseline justify-between border-b border-border pb-2">
+          <h2 class="text-xl font-bold">Recently, outside</h2>
           <a href="/blog" class="text-sm text-primary hover:underline">
             All posts →
           </a>
         </div>
-        <div class="grid gap-4 sm:grid-cols-3">
+        <div class="flex flex-col gap-4">
           {
             tripReports.map((post) => (
-              <a href={`/blog/${post.id}`} class="group flex flex-col gap-2">
+              <a
+                href={`/blog/${post.id}`}
+                class="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
+              >
                 {post.data.heroImage && (
-                  <div class="h-40 overflow-hidden rounded-lg border border-border">
+                  <div class="h-36 overflow-hidden border-b border-border">
                     <Image
                       src={post.data.heroImage}
                       alt={post.data.heroImageAlt || ''}
@@ -85,7 +58,7 @@ const tripReports = (
                     />
                   </div>
                 )}
-                <div class="flex flex-col gap-0.5">
+                <div class="flex flex-col gap-1 p-4">
                   <time
                     datetime={post.data.pubDate.toISOString()}
                     class="text-xs text-muted"
@@ -96,9 +69,12 @@ const tripReports = (
                       day: 'numeric',
                     })}
                   </time>
-                  <h3 class="font-bold leading-snug transition-colors group-hover:text-primary">
+                  <h3 class="font-bold transition-colors group-hover:text-primary">
                     {post.data.title}
                   </h3>
+                  <p class="line-clamp-2 text-sm text-muted">
+                    {post.data.description}
+                  </p>
                 </div>
               </a>
             ))
@@ -107,146 +83,10 @@ const tripReports = (
       </section>
     </div>
   </div>
-
-  {/* ============ Variant B — hovering Software/Life emphasizes that column ============ */}
-  <div data-proto="b">
-    <div class="mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
-      <div class="flex justify-center pb-4 md:pb-10">
-        <HomeContent client:load />
-      </div>
-
-      <div class="grid gap-10 md:grid-cols-2 md:gap-8">
-        <section data-col="software" class="flex flex-col gap-4">
-          <div class="flex items-baseline justify-between border-b border-border pb-2">
-            <h2 class="text-xl font-bold">What I'm building</h2>
-            <a href="/projects" class="text-sm text-primary hover:underline">
-              All projects →
-            </a>
-          </div>
-          <div class="flex flex-col gap-4">
-            {featuredProjects.map((p) => <ProjectCard project={p} />)}
-          </div>
-        </section>
-
-        <section data-col="outdoors" class="flex flex-col gap-4">
-          <div class="flex items-baseline justify-between border-b border-border pb-2">
-            <h2 class="text-xl font-bold">Recently, outside</h2>
-            <a href="/blog" class="text-sm text-primary hover:underline">
-              All posts →
-            </a>
-          </div>
-          <div class="flex flex-col gap-4">
-            {
-              tripReports.map((post) => (
-                <a
-                  href={`/blog/${post.id}`}
-                  class="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
-                >
-                  {post.data.heroImage && (
-                    <div class="h-36 overflow-hidden border-b border-border">
-                      <Image
-                        src={post.data.heroImage}
-                        alt={post.data.heroImageAlt || ''}
-                        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        widths={[400, 600]}
-                      />
-                    </div>
-                  )}
-                  <div class="flex flex-col gap-1 p-4">
-                    <time
-                      datetime={post.data.pubDate.toISOString()}
-                      class="text-xs text-muted"
-                    >
-                      {post.data.pubDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </time>
-                    <h3 class="font-bold transition-colors group-hover:text-primary">
-                      {post.data.title}
-                    </h3>
-                    <p class="line-clamp-2 text-sm text-muted">
-                      {post.data.description}
-                    </p>
-                  </div>
-                </a>
-              ))
-            }
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
-
-  {/* ============ Variant C — hovering Software/Life swaps the content below ============ */}
-  <div data-proto="c">
-    <div class="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
-      <div class="flex justify-center pb-4 md:pb-10">
-        <HomeContent client:load />
-      </div>
-
-      <div class="grid" data-swap-region>
-        <section data-swap="software" class="flex flex-col gap-4">
-          <div class="flex items-baseline justify-between">
-            <h2 class="text-2xl font-bold md:text-3xl">What I'm building</h2>
-            <a href="/projects" class="text-sm text-primary hover:underline">
-              All projects →
-            </a>
-          </div>
-          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredProjects.map((p) => <ProjectCard project={p} />)}
-          </div>
-        </section>
-
-        <section data-swap="outdoors" class="flex flex-col gap-4 pt-10 md:pt-0">
-          <div class="flex items-baseline justify-between">
-            <h2 class="text-2xl font-bold md:text-3xl">Recently, outside</h2>
-            <a href="/blog" class="text-sm text-primary hover:underline">
-              All posts →
-            </a>
-          </div>
-          <div class="grid gap-4 sm:grid-cols-3">
-            {
-              tripReports.map((post) => (
-                <a href={`/blog/${post.id}`} class="group flex flex-col gap-2">
-                  {post.data.heroImage && (
-                    <div class="h-40 overflow-hidden rounded-lg border border-border">
-                      <Image
-                        src={post.data.heroImage}
-                        alt={post.data.heroImageAlt || ''}
-                        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        widths={[400, 600]}
-                      />
-                    </div>
-                  )}
-                  <div class="flex flex-col gap-0.5">
-                    <time
-                      datetime={post.data.pubDate.toISOString()}
-                      class="text-xs text-muted"
-                    >
-                      {post.data.pubDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </time>
-                    <h3 class="font-bold leading-snug transition-colors group-hover:text-primary">
-                      {post.data.title}
-                    </h3>
-                  </div>
-                </a>
-              ))
-            }
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
 </Layout>
 
 <style is:global>
-  /* Hover-reactive sections, driven by html[data-profile] set from HomeContent.
+  /* Hover-reactive columns, driven by html[data-profile] set from HomeContent.
      Desktop only — there's no hover state to react to on touch screens. */
   @media (min-width: 768px) {
     [data-col] {
@@ -258,19 +98,6 @@ const tripReports = (
     html[data-profile='outdoors'] [data-col='software'] {
       opacity: 0.4;
       transform: scale(0.98);
-    }
-
-    [data-swap-region] > [data-swap] {
-      grid-area: 1 / 1;
-      transition: opacity 0.4s ease;
-    }
-    [data-swap-region] > [data-swap='outdoors'] {
-      padding-top: 0;
-    }
-    html:not([data-profile='outdoors']) [data-swap='outdoors'],
-    html[data-profile='outdoors'] [data-swap='software'] {
-      opacity: 0;
-      pointer-events: none;
     }
   }
 </style>

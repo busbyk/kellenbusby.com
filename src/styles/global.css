@@ -170,3 +170,45 @@
 .prose code::after {
   content: none;
 }
+
+/* Home hero intro: headshots slide out from behind their identity columns
+   with a spring overshoot, then the default one lands on top. */
+@media (min-width: 768px) {
+  .intro-headshot-left {
+    animation: intro-headshot-left 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s
+      both;
+  }
+  .intro-headshot-right {
+    animation: intro-headshot-right 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s
+      both;
+  }
+}
+
+@keyframes intro-headshot-left {
+  from {
+    transform: translate(-12rem, 2.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes intro-headshot-right {
+  from {
+    transform: translate(12rem, 2.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-headshot-left,
+  .intro-headshot-right {
+    animation: none;
+  }
+}
