@@ -5,7 +5,7 @@ import backcountrychecklist from '../assets/backcountrychecklist.png'
 import myfirstinstapost from '../assets/myfirstinstapost.png'
 import bhamhoods from '../assets/bhamhoods-shot.png'
 
-export type ProjectStatus = 'live' | 'in-progress'
+export type ProjectStatus = 'live' | 'in-progress' | 'archived'
 
 export interface Project {
   /** Stable id — becomes the detail-page route if projects graduate to a content collection */
@@ -71,10 +71,9 @@ export const projects: Project[] = [
     slug: 'myfirstinstapost',
     name: 'MyFirstInstaPost',
     oneLiner:
-      "A silly website that shows you your first Instagram post. It's a fun stroll down memory lane.",
-    status: 'live',
-    statusLabel: 'Live',
-    url: 'https://www.myfirstinstapost.com/?utm_source=kellenbusby.com',
+      "A silly website that showed you your first Instagram post. A fun stroll down memory lane, now retired.",
+    status: 'archived',
+    statusLabel: 'Archived',
     image: myfirstinstapost,
     imageAlt: 'MyFirstInstaPost screenshot',
     featured: false,
@@ -130,4 +129,5 @@ export const liveProjects = projects.filter((p) => p.status === 'live')
 export const inProgressProjects = projects.filter(
   (p) => p.status === 'in-progress',
 )
+export const archivedProjects = projects.filter((p) => p.status === 'archived')
 export const featuredProjects = projects.filter((p) => p.featured)

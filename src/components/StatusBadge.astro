@@ -14,16 +14,18 @@ const { status, label, class: className } = Astro.props
 <span
   class={cn(
     'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap',
-    status === 'live'
-      ? 'bg-primary/20 text-foreground'
-      : 'bg-accent/15 text-foreground',
+    status === 'live' && 'bg-primary/20 text-foreground',
+    status === 'in-progress' && 'bg-accent/15 text-foreground',
+    status === 'archived' && 'bg-border/60 text-muted',
     className,
   )}
 >
   <span
     class={cn(
       'size-1.5 rounded-full',
-      status === 'live' ? 'bg-primary' : 'bg-accent',
+      status === 'live' && 'bg-primary',
+      status === 'in-progress' && 'bg-accent',
+      status === 'archived' && 'bg-muted',
     )}
   />
   {label}

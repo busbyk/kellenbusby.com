@@ -161,26 +161,10 @@ const tripReports = (
 
   {/* ============ Variant C — content-first, spotlight rows ============ */}
   <div data-proto="c">
-    <div class="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4 py-10 md:py-14">
-      <header class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-center gap-4">
-          <img
-            src={softwareHeadshot.src}
-            alt="Kellen Busby"
-            width={64}
-            height={64}
-            class="w-16 rounded-full shadow-lg"
-          />
-          <div class="flex flex-col">
-            <h1 class="text-3xl font-extrabold md:text-4xl">Kellen Busby</h1>
-            <p class="text-sm text-muted">
-              I build web apps. Then I go
-              <a href="/life" class="text-primary hover:underline">outside</a>.
-            </p>
-          </div>
-        </div>
-        <SocialLinks />
-      </header>
+    <div class="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
+      <div class="flex justify-center">
+        <HomeContent client:load />
+      </div>
 
       <section class="flex flex-col gap-8">
         <div class="flex items-baseline justify-between">
