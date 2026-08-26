@@ -1,0 +1,48 @@
+---
+// "Interested in this?" CTA for in-progress projects.
+// Currently mailto + a Plausible custom event; swap the guts for a Loops
+// capture form later without touching the layouts that render it.
+import { cn } from '../lib/utils'
+
+interface Props {
+  slug: string
+  name: string
+  class?: string
+  compact?: boolean
+  /** External CTA target (e.g. a waitlist page); mailto when absent */
+  href?: string
+}
+
+const { slug, name, class: className, compact = false, href } = Astro.props
+
+const subject = encodeURIComponent(`Interested in ${name}`)
+const body = encodeURIComponent(
+  `Hey Kellen,\n\nI saw ${name} on your site and I'm interested. Tell me more!\n\n`,
+)
+const mailto = `mailto:kellenbusby@gmail.com?subject=${subject}&body=${body}`
+---
+
+<a
+  href={href ?? mailto}
+  data-interest-cta={slug}
+  class={cn(
+    'interest-cta inline-flex max-w-max items-center gap-1.5 rounded-md border-2 border-accent/60 font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+    compact ? 'px-2.5 py-1 text-xs' : 'px-3 py-1.5 text-sm',
+    className,
+  )}
+>
+  <span>{href ? 'Join the waitlist' : 'Interested? Let me know'}</span>
+  <span aria-hidden="true">→</span>
+</a>
+
+<script is:inline>
+  document.querySelectorAll('[data-interest-cta]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (window.plausible) {
+        window.plausible('Project Interest', {
+          props: { project: el.getAttribute('data-interest-cta') || 'unknown' },
+        })
+      }
+    })
+  })
+</script>

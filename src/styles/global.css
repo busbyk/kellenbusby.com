@@ -170,3 +170,45 @@
 .prose code::after {
   content: none;
 }
+
+/* Mobile hero intro: each headshot springs in from its outer side to land
+   beside its identity text. CSS-only, runs once on load. */
+@media (max-width: 767px) {
+  .intro-side-left {
+    animation: intro-side-left 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s
+      both;
+  }
+  .intro-side-right {
+    animation: intro-side-right 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s
+      both;
+  }
+}
+
+@keyframes intro-side-left {
+  from {
+    transform: translateX(-3.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes intro-side-right {
+  from {
+    transform: translateX(3.5rem);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-side-left,
+  .intro-side-right {
+    animation: none;
+  }
+}

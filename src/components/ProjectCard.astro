@@ -1,0 +1,84 @@
+---
+import { Image } from 'astro:assets'
+import { cn } from '../lib/utils'
+import type { Project } from '../lib/projects'
+import StatusBadge from './StatusBadge.astro'
+import InterestCta from './InterestCta.astro'
+
+interface Props {
+  project: Project
+  showImage?: boolean
+  class?: string
+}
+
+const { project, showImage = true, class: className } = Astro.props
+// The interest CTA is its own <a>; nesting it inside a link is invalid HTML,
+// so cards with a CTA use a plain wrapper and link from the title instead.
+const isLink = !project.cta
+const Tag = isLink ? 'a' : 'div'
+---
+
+<Tag
+  href={isLink ? `/projects/${project.slug}` : undefined}
+  class={cn(
+    'group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg',
+    className,
+  )}
+>
+  {
+    showImage && project.image && (
+      <div
+        class={cn(
+          'h-52 overflow-hidden border-b border-border',
+          project.status === 'archived' && 'opacity-60',
+        )}
+      >
+        <Image
+          src={project.image}
+          alt={project.imageAlt || ''}
+          class="h-full w-full object-cover object-top"
+          widths={[400, 600]}
+        />
+      </div>
+    )
+  }
+  <div class="flex flex-1 flex-col gap-2 p-4">
+    <div class="flex items-center justify-between gap-2">
+      <h3 class="text-lg font-bold group-hover:text-primary transition-colors">
+        {
+          isLink ? (
+            project.name
+          ) : (
+            <a
+              href={`/projects/${project.slug}`}
+              class="transition-colors hover:text-primary after:absolute after:inset-0 after:content-['']"
+            >
+              {project.name}
+            </a>
+          )
+        }
+      </h3>
+      <StatusBadge status={project.status} label={project.statusLabel} />
+    </div>
+    <p class="text-sm text-muted">{project.oneLiner}</p>
+    {project.note && <p class="text-xs italic text-muted">{project.note}</p>}
+    {
+      project.stack && (
+        <div class="flex flex-wrap gap-1">
+          {project.stack.map((tech) => (
+            <span class="rounded bg-border px-2 py-0.5 text-xs whitespace-nowrap">
+              {tech}
+            </span>
+          ))}
+        </div>
+      )
+    }
+    {
+      project.cta && (
+        <div class="relative z-10 mt-auto max-w-max pt-2">
+          <InterestCta slug={project.slug} name={project.name} href={project.ctaUrl} compact />
+        </div>
+      )
+    }
+  </div>
+</Tag>

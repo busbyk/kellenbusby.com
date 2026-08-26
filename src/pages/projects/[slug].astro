@@ -1,0 +1,92 @@
+---
+import { Image } from 'astro:assets'
+import { getCollection, render } from 'astro:content'
+import Layout from '../../layouts/Layout.astro'
+import PageLayout from '../../components/PageLayout.astro'
+import StatusBadge from '../../components/StatusBadge.astro'
+import InterestCta from '../../components/InterestCta.astro'
+import ArrowUpRightIcon from '../../components/icons/ArrowUpRightIcon'
+
+export async function getStaticPaths() {
+  const entries = await getCollection('projects')
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const project = entry.data
+const { Content } = await render(entry)
+---
+
+<Layout title={`${project.name} | Kellen Busby`} description={project.oneLiner}>
+  <PageLayout class="px-4">
+    <a href="/projects" class="text-sm text-primary hover:underline">
+      ← All projects
+    </a>
+
+    <header class="flex flex-col gap-3">
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-4xl font-extrabold md:text-5xl">{project.name}</h1>
+        <StatusBadge status={project.status} label={project.statusLabel} />
+      </div>
+      <p class="max-w-prose text-lg text-muted">{project.oneLiner}</p>
+      {
+        project.stack && (
+          <div class="flex flex-wrap gap-1.5">
+            {project.stack.map((tech) => (
+              <span class="rounded bg-border px-2 py-0.5 text-xs whitespace-nowrap">
+                {tech}
+              </span>
+            ))}
+          </div>
+        )
+      }
+      <div class="flex flex-wrap items-center gap-3 pt-1">
+        {
+          project.url && (
+            <a
+              href={project.url}
+              class="inline-flex max-w-max items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+            >
+              Visit site <ArrowUpRightIcon />
+            </a>
+          )
+        }
+        {
+          project.cta && (
+            <InterestCta slug={entry.id} name={project.name} href={project.ctaUrl} />
+          )
+        }
+      </div>
+      {
+        project.note && (
+          <p class="max-w-prose text-sm italic text-muted">{project.note}</p>
+        )
+      }
+    </header>
+
+    {
+      project.image && (
+        <div
+          class:list={[
+            'overflow-hidden rounded-lg border border-border shadow-lg',
+            project.status === 'archived' && 'opacity-60',
+          ]}
+        >
+          <Image
+            src={project.image}
+            alt={project.imageAlt || ''}
+            class="w-full object-cover"
+            widths={[640, 960, 1280]}
+          />
+        </div>
+      )
+    }
+
+    <div class="prose prose-slate dark:prose-invert max-w-prose prose-headings:font-bold prose-headings:text-foreground prose-a:text-primary prose-a:no-underline prose-a:hover:underline">
+      <Content />
+    </div>
+  </PageLayout>
+</Layout>
