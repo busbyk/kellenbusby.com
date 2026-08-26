@@ -4,9 +4,6 @@ import Layout from '../layouts/Layout.astro'
 import PageLayout from '../components/PageLayout.astro'
 import ProjectCard from '../components/ProjectCard.astro'
 import StatusBadge from '../components/StatusBadge.astro'
-import InterestCta from '../components/InterestCta.astro'
-import ProjectIndexRow from '../components/ProjectIndexRow.astro'
-import VariantSwitcher from '../components/proto/VariantSwitcher.astro'
 import { getProjects, byStatus } from '../lib/projects'
 
 const projects = await getProjects()
@@ -16,174 +13,19 @@ const archived = byStatus(projects, 'archived')
 ---
 
 <Layout title="Kellen Busby's Indie Projects">
-  <VariantSwitcher
-    labels={{
-      a: 'Cards by status',
-      b: 'Index by status',
-      c: 'Hybrid rows + cards',
-    }}
-  />
+  <PageLayout heading="Indie Projects">
+    <div class="flex flex-col gap-1">
+      <p>Things I've built and things I'm building.</p>
+      <p>
+        For client work, check out my
+        <a
+          href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
+          class="text-primary hover:underline">Contra portfolio</a
+        >.
+      </p>
+    </div>
 
-  {/* ============ Variant A — status sections with cards ============ */}
-  <div data-proto="a">
-    <PageLayout heading="Indie Projects">
-      <div class="flex flex-col gap-1">
-        <p>Things I've built and things I'm building.</p>
-        <p>
-          For client work, check out my
-          <a
-            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
-            class="text-primary hover:underline">Contra portfolio</a
-          >.
-        </p>
-      </div>
-
-      <section class="flex flex-col gap-4">
-        <h2 class="text-2xl font-bold">Live</h2>
-        <div class="grid gap-4 sm:grid-cols-2">
-          {live.map((p) => <ProjectCard project={p} />)}
-        </div>
-      </section>
-
-      <section class="flex flex-col gap-4">
-        <h2 class="text-2xl font-bold">In the works</h2>
-        <div class="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
-          {
-            inProgress.map((p) => (
-              <div class="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
-                <div class="flex flex-col gap-1">
-                  <div class="flex items-center gap-2.5">
-                    <a
-                      href={`/projects/${p.slug}`}
-                      class="text-lg font-bold transition-colors hover:text-primary"
-                    >
-                      {p.name}
-                    </a>
-                    <StatusBadge status={p.status} label={p.statusLabel} />
-                  </div>
-                  <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
-                </div>
-                {p.cta && (
-                  <InterestCta slug={p.slug} name={p.name} class="shrink-0" />
-                )}
-              </div>
-            ))
-          }
-        </div>
-      </section>
-
-      {
-        archived.length > 0 && (
-          <section class="flex flex-col gap-4">
-            <h2 class="text-2xl font-bold">Retired</h2>
-            <div class="flex flex-col divide-y divide-border rounded-lg border border-border bg-card">
-              {archived.map((p) => (
-                <div class="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div class="flex flex-col gap-1">
-                    <div class="flex items-center gap-2.5">
-                      <a
-                        href={`/projects/${p.slug}`}
-                        class="text-lg font-bold transition-colors hover:text-primary"
-                      >
-                        {p.name}
-                      </a>
-                      <StatusBadge status={p.status} label={p.statusLabel} />
-                    </div>
-                    <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
-                    {p.note && (
-                      <p class="max-w-prose text-xs italic text-muted">
-                        {p.note}
-                      </p>
-                    )}
-                  </div>
-                  {p.image && (
-                    <div class="h-24 w-40 shrink-0 overflow-hidden rounded-md border border-border opacity-60">
-                      <Image
-                        src={p.image}
-                        alt={p.imageAlt || ''}
-                        class="h-full w-full object-cover object-top"
-                        widths={[320]}
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )
-      }
-    </PageLayout>
-  </div>
-
-  {/* ============ Variant B — editorial index grouped by status ============ */}
-  <div data-proto="b">
-    <PageLayout heading="Indie Projects">
-      <div class="flex flex-col gap-1">
-        <p>
-          {live.length} live · {inProgress.length} in the works · client work on
-          <a
-            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
-            class="text-primary hover:underline">Contra</a
-          >
-        </p>
-      </div>
-
-      <section class="flex flex-col gap-2">
-        <h2 class="text-sm font-semibold uppercase tracking-widest text-muted">
-          Live
-        </h2>
-        <div class="flex flex-col">
-          {live.map((p, i) => <ProjectIndexRow project={p} index={i} />)}
-        </div>
-      </section>
-
-      <section class="flex flex-col gap-2">
-        <h2 class="text-sm font-semibold uppercase tracking-widest text-muted">
-          In the works
-        </h2>
-        <div class="flex flex-col">
-          {
-            inProgress.map((p, i) => (
-              <ProjectIndexRow project={p} index={i + live.length} />
-            ))
-          }
-        </div>
-      </section>
-
-      {
-        archived.length > 0 && (
-          <section class="flex flex-col gap-2">
-            <h2 class="text-sm font-semibold uppercase tracking-widest text-muted">
-              Retired
-            </h2>
-            <div class="flex flex-col">
-              {archived.map((p, i) => (
-                <ProjectIndexRow
-                  project={p}
-                  index={i + live.length + inProgress.length}
-                />
-              ))}
-            </div>
-          </section>
-        )
-      }
-    </PageLayout>
-  </div>
-
-  {/* ============ Variant C — big rows for live, cards for the rest ============ */}
-  <div data-proto="c">
-    <PageLayout heading="Indie Projects">
-      <div class="flex flex-col gap-1">
-        <p>Things I've built and things I'm building.</p>
-        <p>
-          For client work, check out my
-          <a
-            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
-            class="text-primary hover:underline">Contra portfolio</a
-          >.
-        </p>
-      </div>
-
+    <div class="flex flex-col gap-16 pt-4">
       <section class="flex flex-col gap-4">
         <h2 class="text-2xl font-bold">Live</h2>
         <div class="flex flex-col">
@@ -278,6 +120,6 @@ const archived = byStatus(projects, 'archived')
           </section>
         )
       }
-    </PageLayout>
-  </div>
+    </div>
+  </PageLayout>
 </Layout>
