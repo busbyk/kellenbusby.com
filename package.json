@@ -8,7 +8,11 @@
     "preview": "astro preview",
     "astro": "astro",
     "new-post": "node scripts/new-post.js",
-    "social-image": "node scripts/generate-social-images.js"
+    "social-image": "node scripts/generate-social-images.js",
+    "process-images": "node scripts/process-images.js",
+    "process-videos": "node scripts/process-videos.js",
+    "mp4-to-gif": "node scripts/mp4-to-gif.js",
+    "strava-route": "node scripts/strava-route.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
@@ -17,7 +21,9 @@
     "@tailwindcss/vite": "^4.1.17",
     "astro": "^5.16.15",
     "clsx": "^2.1.1",
+    "maplibre-gl": "^5.24.0",
     "preact": "^10.27.2",
+    "rehype-external-links": "^3.0.0",
     "sharp": "^0.34.5",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17"

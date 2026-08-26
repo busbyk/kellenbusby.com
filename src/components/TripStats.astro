@@ -1,0 +1,123 @@
+---
+interface Activity {
+  name: string
+  distance?: string
+  elevation?: string
+}
+
+interface Props {
+  date: string
+  distance?: string
+  elevation?: string
+  time?: string
+  route: string
+  group?: string
+  activities?: Activity[]
+  class?: string
+}
+
+const {
+  date,
+  distance,
+  elevation,
+  time,
+  route,
+  group,
+  activities,
+  class: className,
+} = Astro.props
+
+function splitUnit(value: string): { num: string; unit: string } {
+  const match = value.match(/^([\d,.]+)\s*(.*)$/)
+  if (match) return { num: match[1], unit: match[2] }
+  return { num: value, unit: '' }
+}
+
+// Distance/Vert/Time are optional so a multi-sport summary can show just a date
+// range plus the activity breakdown. Only render the headline stats provided.
+const stats = [
+  { label: 'Date', value: date },
+  ...(distance ? [{ label: 'Distance', value: distance }] : []),
+  ...(elevation ? [{ label: 'Vert', value: elevation }] : []),
+  ...(time ? [{ label: 'Time', value: time }] : []),
+]
+
+const colsClass =
+  { 1: 'sm:grid-cols-1', 2: 'sm:grid-cols-2', 3: 'sm:grid-cols-3', 4: 'sm:grid-cols-4' }[
+    stats.length
+  ] ?? 'sm:grid-cols-4'
+---
+
+<div
+  class:list={[
+    'not-prose my-8 rounded-xl border border-border bg-card shadow-md',
+    className,
+  ]}
+>
+  {/* Headline stats row */}
+  <div class:list={['grid grid-cols-2 sm:divide-x sm:divide-border', colsClass]}>
+    {stats.map((stat) => {
+      const { num, unit } = splitUnit(stat.value)
+      return (
+        <div class="px-5 py-4 sm:px-6">
+          <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-muted">
+            {stat.label}
+          </div>
+          <div class="mt-1">
+            <span class="font-mono text-2xl font-bold tracking-tight">{num}</span>
+            {unit && (
+              <span class="ml-1 text-sm text-muted">{unit}</span>
+            )}
+          </div>
+        </div>
+      )
+    })}
+  </div>
+
+  {/* Route + group section */}
+  <div class="border-t border-border px-5 py-4 sm:px-6">
+    <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-muted">Route</div>
+    <div class="mt-1 text-base font-medium">{route}</div>
+    {group && (
+      <div class="mt-3">
+        <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-muted">Group</div>
+        <div class="mt-1 text-base font-medium">{group}</div>
+      </div>
+    )}
+  </div>
+
+  {/* Activity breakdown */}
+  {activities && activities.length > 0 && (
+    <div class="border-t border-border px-5 py-4 sm:px-6">
+      <div class="mb-3 text-[10px] font-bold uppercase tracking-[0.15em] text-muted">
+        Breakdown
+      </div>
+      <div class="space-y-2">
+        {activities.map((a) => {
+          const dist = a.distance ? splitUnit(a.distance) : null
+          const elev = a.elevation ? splitUnit(a.elevation) : null
+          return (
+            <div class="flex items-baseline gap-4">
+              <span class="min-w-12 shrink-0 text-xs font-bold uppercase tracking-wider text-accent">
+                {a.name}
+              </span>
+              {dist && (
+                <span>
+                  <span class="font-mono text-base font-semibold">{dist.num}</span>
+                  <span class="ml-0.5 text-xs text-muted">{dist.unit}</span>
+                </span>
+              )}
+              {elev && (
+                <span class="text-muted">
+                  <span class="text-xs">↑</span>
+                  <span class="ml-1 font-mono text-base font-semibold text-foreground">{elev.num}</span>
+                  <span class="ml-0.5 text-xs text-muted">{elev.unit}</span>
+                </span>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )}
+</div>

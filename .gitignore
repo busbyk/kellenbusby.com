@@ -20,6 +20,15 @@ pnpm-debug.log*
 # macOS-specific files
 **/.DS_Store
 
+# raw unprocessed blog images
+**/images/raw/
+
 
 # jetbrains setting folder
 .idea/
+
+# local reference docs
+reference/
+
+# Claude Code machine-local settings
+.claude/settings.local.json

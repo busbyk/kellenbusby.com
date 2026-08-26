@@ -1,0 +1,74 @@
+{
+  "name": "mdx-image-drop",
+  "displayName": "MDX Image Drop",
+  "description": "Drop images and videos into blog post MDX files as BlogImage, ImageRow, BlogVideo, <img>, or markdown — with auto-managed imports and a Post Images thumbnail pane",
+  "version": "0.4.1",
+  "publisher": "kellenbusby",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.97.0"
+  },
+  "categories": ["Other"],
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "mdxImageDrop",
+          "title": "Post Images",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "mdxImageDrop": [
+        {
+          "type": "webview",
+          "id": "mdxImageDrop.postImages",
+          "name": "Post Images",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "mdx-image-drop.followActivePost",
+        "title": "Follow Active Post",
+        "category": "MDX Image Drop",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "mdx-image-drop.choosePostImagesFolder",
+        "title": "Choose Images Folder…",
+        "category": "MDX Image Drop",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "mdx-image-drop.refreshPostImages",
+        "title": "Refresh Post Images",
+        "category": "MDX Image Drop",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "mdx-image-drop.followActivePost",
+          "when": "view == mdxImageDrop.postImages",
+          "group": "navigation@1"
+        },
+        {
+          "command": "mdx-image-drop.choosePostImagesFolder",
+          "when": "view == mdxImageDrop.postImages",
+          "group": "navigation@2"
+        },
+        {
+          "command": "mdx-image-drop.refreshPostImages",
+          "when": "view == mdxImageDrop.postImages",
+          "group": "navigation@3"
+        }
+      ]
+    }
+  }
+}

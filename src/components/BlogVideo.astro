@@ -3,23 +3,49 @@ interface Props {
   src: string;
   caption?: string;
   title?: string;
+  poster?: string;
+  portrait?: boolean;
   class?: string;
 }
 
-const { src, caption, title = "Video player", class: className } = Astro.props;
+const { src, caption, title = "Video player", poster, portrait = false, class: className } = Astro.props;
+
+// Legacy ImageKit embeds render in an iframe; everything else is a native video
+const isEmbed = src.includes("imagekit.io/player");
+
+const videoClasses = [
+  "h-auto rounded-md shadow-xl",
+  portrait ? "w-full max-w-9/12 sm:max-w-3/4 lg:max-w-7/12" : "w-full"
+];
 ---
 
-<figure class:list={["not-prose", className]}>
-  <div class="w-full mx-auto rounded-md shadow-lg overflow-hidden h-[300px] sm:h-[550px]">
-    <iframe
-      height="100%"
-      width="100%"
+<figure class:list={[
+  "my-6 not-prose",
+  portrait && "flex flex-col items-center",
+  className
+]}>
+  {isEmbed ? (
+    <div class="w-full mx-auto rounded-md shadow-xl overflow-hidden h-[300px] sm:h-[550px]">
+      <iframe
+        height="100%"
+        width="100%"
+        src={src}
+        title={title}
+        frameborder="0"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+      />
+    </div>
+  ) : (
+    <video
+      class:list={videoClasses}
       src={src}
-      title={title}
-      frameborder="0"
-      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+      poster={poster}
+      controls
+      preload="metadata"
+      playsinline
+      aria-label={title}
     />
-  </div>
+  )}
   {caption && (
     <figcaption class="mt-2 text-sm text-muted text-center">
       {caption}

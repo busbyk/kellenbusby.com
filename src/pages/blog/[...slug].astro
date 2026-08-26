@@ -2,6 +2,8 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
+import BlogLightbox from '../../components/BlogLightbox';
+import BlogStory from '../../components/BlogStory';
 
 export async function getStaticPaths() {
   const allPosts = await getCollection('blog');
@@ -15,6 +17,10 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+
+// Trip reports get a "View as story" mode (BlogStory island hides the
+// button client-side if no photo slides materialize)
+const isTripReport = post.data.tripReport;
 
 // Use generated OG image - construct full URL for OG meta tags
 const siteUrl = import.meta.env.PROD ? 'https://www.kellenbusby.com' : `http://localhost:${import.meta.env.PORT || 4321}`;
@@ -36,14 +42,14 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
       <p class="text-muted text-lg mb-4">{post.data.description}</p>
       <div class="flex flex-wrap items-center gap-4 text-sm text-muted">
         <time datetime={post.data.pubDate.toISOString()}>
-          {formattedDate}
+          <span class="opacity-70">Published</span> {formattedDate}
         </time>
         {post.data.tags.length > 0 && (
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             {post.data.tags.map((tag) => (
               <a
                 href={`/blog/tags/${tag}`}
-                class="px-2 py-0.5 bg-card rounded text-xs hover:bg-primary hover:text-primary-foreground transition-colors"
+                class="px-2 py-0.5 bg-card rounded text-xs whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 {tag}
               </a>
@@ -59,9 +65,30 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
           src={post.data.heroImage}
           alt={post.data.heroImageAlt || ''}
           class="w-full h-full object-cover shadow-lg"
-          widths={[400, 800, 1200]}
-          sizes="(max-width: 768px) 100vw, 800px"
+          widths={[640, 896, 1344, 1792]}
+          sizes="(max-width: 896px) 100vw, 896px"
+          quality={85}
+          data-hero-lightbox={isTripReport ? '' : undefined}
         />
+      </div>
+    )}
+
+    {isTripReport && (
+      <div class="mb-8 text-center">
+        <button
+          id="view-as-story"
+          type="button"
+          class="w-full sm:w-auto inline-flex items-baseline justify-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5 self-center">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          View as story
+          <span class="text-xs font-normal opacity-60">if you're hooked on IG</span>
+        </button>
+        <p class="mt-2 text-xs text-muted">
+          keep scrolling if you like blog style
+        </p>
       </div>
     )}
 
@@ -70,7 +97,7 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
     <div
       class="blog prose prose-slate dark:prose-invert max-w-none
              prose-headings:font-bold prose-headings:text-foreground
-             prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+             prose-a:text-primary prose-a:no-underline prose-a:hover:underline
              prose-code:bg-card prose-code:px-1 prose-code:py-0.5 prose-code:rounded
              prose-pre:bg-card prose-pre:border prose-pre:border-border
              prose-img:rounded-md prose-img:shadow-xl"
@@ -96,5 +123,8 @@ const formattedDate = post.data.pubDate.toLocaleDateString('en-US', {
         Back to all posts
       </a>
     </footer>
+
+    <BlogLightbox client:idle />
+    {isTripReport && <BlogStory client:idle />}
   </article>
 </Layout>

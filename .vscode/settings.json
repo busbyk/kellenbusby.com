@@ -1,0 +1,9 @@
+{
+  "editor.dropIntoEditor.preferences": ["mdx.image"],
+  "[mdx]": {
+    "editor.wordWrap": "on"
+  },
+  "[markdown]": {
+    "editor.wordWrap": "on"
+  }
+}

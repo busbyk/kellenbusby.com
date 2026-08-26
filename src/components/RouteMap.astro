@@ -1,0 +1,213 @@
+---
+import RouteMapCanvas from '@components/RouteMapCanvas.tsx'
+import KudosCount from '@components/KudosCount.tsx'
+
+interface Stat {
+  label: string
+  value: string
+}
+
+interface Props {
+  title: string
+  date?: string
+  /** Raw GPX content — import the co-located file with `?raw` */
+  gpx: string
+  /** Asset URL for the download button — import the same file with `?url` */
+  gpxUrl?: string
+  gpxFilename?: string
+  stravaUrl?: string
+  kudos?: number
+  /** Embed token from the Strava share snippet — enables the live kudos
+   * fetch on the client; without it the build-time `kudos` value is static */
+  embedToken?: string
+  stats?: Stat[]
+  /** Basemap style: 'default' street tiles, or 'topo' (OpenTopoMap) —
+   * contour/trail-rich, much clearer in mountains like the Alps */
+  basemap?: 'default' | 'topo'
+  /** Start in 3D: DEM-driven terrain relief with a pitched camera, plus a
+   * 3D/2D toggle that eases camera and terrain together */
+  terrain?: boolean
+  /** Camera tilt in 3D mode, degrees from overhead (default 55) — lower
+   * shows more of the route */
+  pitch?: number
+  /** Map rotation, degrees clockwise from north — frame diagonal routes */
+  bearing?: number
+  class?: string
+}
+
+const {
+  title,
+  date,
+  gpx,
+  gpxUrl,
+  gpxFilename = 'route.gpx',
+  stravaUrl,
+  kudos,
+  embedToken,
+  stats,
+  basemap = 'default',
+  terrain = false,
+  pitch,
+  bearing,
+  class: className,
+} = Astro.props
+
+const embedId = stravaUrl?.match(/activities\/(\d+)/)?.[1]
+
+// Parse track points at build time so the client gets plain coordinates
+// instead of the whole GPX document. Attribute order varies by exporter.
+const coords: [number, number][] = []
+for (const match of gpx.matchAll(/<trkpt\s+([^>]*)>/g)) {
+  const lat = match[1].match(/lat="(-?[\d.]+)"/)
+  const lon = match[1].match(/lon="(-?[\d.]+)"/)
+  if (lat && lon) coords.push([Number(lon[1]), Number(lat[1])])
+}
+
+// Second-by-second recordings run to tens of thousands of points — far more
+// than a content-width overview map can show. Stride-sample, keeping the ends.
+const MAX_POINTS = 1500
+let line = coords
+if (coords.length > MAX_POINTS) {
+  const stride = Math.ceil(coords.length / MAX_POINTS)
+  line = coords.filter((_, i) => i % stride === 0)
+  if (line[line.length - 1] !== coords[coords.length - 1]) {
+    line.push(coords[coords.length - 1])
+  }
+}
+
+function splitUnit(value: string): { num: string; unit: string } {
+  const match = value.match(/^([\d,.]+)\s*(.*)$/)
+  if (match) return { num: match[1], unit: match[2] }
+  return { num: value, unit: '' }
+}
+
+const colsClass =
+  { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4' }[
+    stats?.length ?? 0
+  ] ?? 'grid-cols-3'
+---
+
+<div
+  class:list={[
+    'route-map not-prose my-8 overflow-hidden rounded-xl border border-border bg-card shadow-md',
+    className,
+  ]}
+>
+  <div
+    class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 pt-4 sm:px-6"
+  >
+    <h3 class="text-xl font-bold tracking-tight">{title}</h3>
+    {date && <span class="text-sm text-muted">{date}</span>}
+  </div>
+
+  {
+    stats && stats.length > 0 && (
+      <div class:list={['grid sm:divide-x sm:divide-border', colsClass]}>
+        {stats.map((stat) => {
+          const { num, unit } = splitUnit(stat.value)
+          return (
+            <div class="px-5 py-4 sm:px-6">
+              <div class="text-[10px] font-bold uppercase tracking-[0.15em] text-muted">
+                {stat.label}
+              </div>
+              <div class="mt-1">
+                <span class="font-mono text-2xl font-bold tracking-tight">
+                  {num}
+                </span>
+                {unit && <span class="ml-1 text-sm text-muted">{unit}</span>}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
+  <RouteMapCanvas
+    client:visible
+    coords={line}
+    basemap={basemap}
+    terrain={terrain}
+    pitch={pitch}
+    bearing={bearing}
+  />
+
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-3 sm:px-6"
+  >
+    {
+      embedId && embedToken ? (
+        <KudosCount
+          client:visible
+          embedId={embedId}
+          embedToken={embedToken}
+          initial={kudos}
+        />
+      ) : (
+        <span class="text-sm text-muted">
+          {typeof kudos === 'number' ? `${kudos} kudos` : ''}
+        </span>
+      )
+    }
+    <div class="flex items-center gap-2">
+      {
+        gpxUrl && (
+          <a
+            href={gpxUrl}
+            download={gpxFilename}
+            class="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-1.5 text-sm font-semibold transition-colors hover:bg-primary hover:text-primary-foreground"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5">
+              <path d="M13 10h5l-6 6-6-6h5V3h2v7zm-9 9h16v2H4v-2z" />
+            </svg>
+            GPX
+          </a>
+        )
+      }
+      {
+        stravaUrl && (
+          <a
+            href={stravaUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent-hover"
+          >
+            View on Strava
+            <svg viewBox="0 0 24 24" fill="currentColor" class="h-3.5 w-3.5">
+              <path d="M10 6v2H5v11h11v-5h2v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h6zm11-3v8h-2V6.413l-7.793 7.794-1.414-1.414L17.585 5H13V3h8z" />
+            </svg>
+          </a>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  /* Restyle maplibre's stock controls to match the site: card surface,
+     token borders, and the page font for the 3D/2D text toggle */
+  .route-map .maplibregl-ctrl.maplibregl-ctrl-group {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+    overflow: hidden;
+  }
+  .route-map .maplibregl-ctrl-group button {
+    color: var(--color-foreground);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .route-map .maplibregl-ctrl-group button + button {
+    border-top: 1px solid var(--color-border);
+  }
+  .route-map .maplibregl-ctrl-group button:hover {
+    background-color: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  }
+  /* maplibre's icons are dark SVG background-images — flip them light in
+     dark mode (hue-rotate keeps the compass needle red) */
+  .dark .route-map .maplibregl-ctrl-icon {
+    filter: invert(1) hue-rotate(180deg);
+  }
+</style>

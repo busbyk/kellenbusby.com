@@ -43,7 +43,7 @@ const allTags = [...new Set(posts.flatMap((post) => post.data.tags))];
             {allTags.map((tag) => (
               <a
                 href={`/blog/tags/${tag}`}
-                class="px-3 py-1 bg-card rounded-full text-sm hover:bg-primary hover:text-primary-foreground transition-colors"
+                class="px-3 py-1 bg-card rounded-full text-sm whitespace-nowrap hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 {tag}
               </a>

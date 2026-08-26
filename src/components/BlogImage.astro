@@ -19,6 +19,15 @@ const imageClasses = [
   "h-auto rounded-md shadow-xl",
   isPortrait ? "w-full max-w-9/12 sm:max-w-3/4 lg:max-w-7/12" : "w-full"
 ];
+
+// Content column is max-w-4xl (896px). Portrait images render at lg:max-w-7/12
+// (~520px) of it. Widths go up to ~2x those for crisp hi-DPI displays; the old
+// values capped at 800/1200 and under-reported sizes, so browsers upscaled.
+const imageWidths = isPortrait ? [448, 640, 896, 1120] : [640, 896, 1344, 1792];
+const imageSizes = isPortrait
+  ? "(max-width: 1024px) 75vw, 520px"
+  : "(max-width: 896px) 100vw, 896px";
+const imageQuality = 85;
 ---
 
 <figure class:list={[
@@ -32,10 +41,11 @@ const imageClasses = [
         src={src}
         alt={alt}
         class:list={imageClasses}
-        widths={isPortrait ? [400, 600, 800] : [400, 800, 1200]}
-        sizes={isPortrait ? "(max-width: 768px) 100vw, 400px" : "(max-width: 768px) 100vw, 800px"}
+        widths={imageWidths}
+        sizes={imageSizes}
+        quality={imageQuality}
       />
-      <div class="absolute top-2 right-2 -translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none">
+      <div class="absolute top-2 right-2 -translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none group-hover:pointer-events-auto">
         <div class="bg-white/90 dark:bg-zinc-800/90 rounded-md p-1.5 shadow-md">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-zinc-700 dark:text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -48,8 +58,9 @@ const imageClasses = [
       src={src}
       alt={alt}
       class:list={imageClasses}
-      widths={isPortrait ? [400, 600, 800] : [400, 800, 1200]}
-      sizes={isPortrait ? "(max-width: 768px) 100vw, 400px" : "(max-width: 768px) 100vw, 800px"}
+      widths={imageWidths}
+      sizes={imageSizes}
+      quality={imageQuality}
     />
   )}
   {caption && (

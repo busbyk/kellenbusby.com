@@ -122,6 +122,10 @@
 .blog img {
   @apply rounded-md shadow-xl mx-auto block;
   max-height: calc(100vh - 57px - 2rem);
+  /* when the max-height cap binds (short landscape viewports), width must
+     stay auto so the browser re-resolves it from the photo's aspect ratio —
+     a forced width squishes the photo instead */
+  width: auto;
 }
 
 /* Prose typography overrides for dark mode compatibility */

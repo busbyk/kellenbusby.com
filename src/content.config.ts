@@ -10,6 +10,8 @@ const blog = defineCollection({
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       published: z.boolean().default(true),
+      // trip reports get extras like the "View as story" mode
+      tripReport: z.boolean().default(false),
       tags: z.array(z.string()).default([]),
       heroImage: image().optional(),
       heroImageAlt: z.string().optional(),
