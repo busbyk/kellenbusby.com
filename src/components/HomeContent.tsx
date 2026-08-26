@@ -40,30 +40,6 @@ export default function HomeContent() {
     }
   }, [])
 
-  // On stacked (mobile) layouts, scrolling a section into the middle of the
-  // viewport plays the role hover plays on desktop
-  useEffect(() => {
-    if (!window.matchMedia('(max-width: 767px)').matches) return
-    const cols = Array.from(document.querySelectorAll('[data-col]'))
-    if (cols.length === 0) return
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            activate(
-              entry.target.getAttribute('data-col') === 'outdoors'
-                ? 'outdoors'
-                : 'software',
-            )
-          }
-        })
-      },
-      { rootMargin: '-45% 0px -45% 0px' },
-    )
-    cols.forEach((col) => observer.observe(col))
-    return () => observer.disconnect()
-  }, [])
-
   // Hovering the content sections below the hero also switches context
   useEffect(() => {
     const cols = Array.from(document.querySelectorAll('[data-col]'))
@@ -82,7 +58,7 @@ export default function HomeContent() {
       <h1 className="text-5xl md:text-7xl font-extrabold text-center">
         Kellen Busby
       </h1>
-      <figure className="relative h-36 md:h-56 w-full -mb-4 overflow-hidden">
+      <figure className="hidden md:block relative h-56 w-full -mb-4 overflow-hidden">
         <img
           src={softwareHeadshot.src}
           alt="Kellen Busby software engineer"
@@ -120,23 +96,32 @@ export default function HomeContent() {
         <a
           href="/software"
           className={cn(
-            'flex flex-col items-center md:items-end rounded-md p-4 md:gap-0.5 transition-opacity duration-500',
+            'flex flex-row items-center justify-center gap-5 md:flex-col md:items-end md:gap-0.5 rounded-md p-4 transition-opacity duration-500',
             hovered === 'outdoors' && 'md:opacity-40',
           )}
           onMouseEnter={() => activate('software')}
         >
-          <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
-            Software Engineer
-          </h2>
-          <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
-            Web App Dev
-          </h2>
-          <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
-            JS|TS|React Dev
-          </h2>
-          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
-            Software <CaretRightIcon />
-          </button>
+          <img
+            src={softwareHeadshot.src}
+            alt="Kellen Busby software engineer"
+            width={80}
+            height={80}
+            className="intro-side-left md:hidden w-20 rounded-full shadow-lg"
+          />
+          <div className="flex flex-col items-start md:items-end md:gap-0.5">
+            <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
+              Software Engineer
+            </h2>
+            <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
+              Web App Dev
+            </h2>
+            <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
+              JS|TS|React Dev
+            </h2>
+            <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
+              Software <CaretRightIcon />
+            </button>
+          </div>
         </a>
         <div
           className={cn(
@@ -148,29 +133,41 @@ export default function HomeContent() {
         <a
           href="/life"
           className={cn(
-            'flex flex-col items-center md:items-start rounded-md p-4 md:gap-0.5 transition-opacity duration-500',
+            'flex flex-row-reverse items-center justify-center gap-5 md:flex-col md:items-start md:gap-0.5 rounded-md p-4 transition-opacity duration-500',
             hovered === 'software' && 'md:opacity-40',
           )}
           onMouseEnter={() => activate('outdoors')}
         >
-          <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
-            Skier
-          </h2>
-          <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
-            Climber
-          </h2>
-          <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
-            Mountain Biker
-          </h2>
-          <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
-            Traveler
-          </h2>
-          <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
-            Hobbyist
-          </h2>
-          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
-            Life <CaretRightIcon />
-          </button>
+          <img
+            src={outdoorsHeadshot.src}
+            alt="Kellen Busby outdoors person"
+            width={80}
+            height={80}
+            className="intro-side-right md:hidden w-20 rounded-full shadow-lg"
+          />
+          <div className="flex flex-col items-end md:items-start md:gap-0.5">
+            <h2 className="md:hidden text-lg font-bold text-right">
+              Skier, Climber, Mountain Biker, Traveler, Hobbyist
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Skier
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Climber
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Mountain Biker
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Traveler
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Hobbyist
+            </h2>
+            <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
+              Life <CaretRightIcon />
+            </button>
+          </div>
         </a>
       </div>
       <div className="flex flex-col gap-2">
