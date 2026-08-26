@@ -16,9 +16,8 @@ const tripReports = (
 ---
 
 <Layout>
-  <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10">
-    <div class="home-bg-software absolute inset-0"></div>
-    <div class="home-bg-outdoors absolute inset-0"></div>
+  <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div class="home-glow"></div>
   </div>
   <div class="mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
     <div class="flex justify-center">
@@ -90,34 +89,47 @@ const tripReports = (
 </Layout>
 
 <style is:global>
-  /* Hover-reactive columns and background tint, driven by html[data-profile]
-     set from HomeContent. Desktop only — mobile is static after the intro. */
-  @media (min-width: 768px) {
-    .home-bg-software,
-    .home-bg-outdoors {
-      opacity: 0;
-      transition: opacity 1.2s ease;
-    }
-    .home-bg-software {
-      --tint: 32%;
-      background: radial-gradient(
-        60% 55% at 28% 18%,
-        color-mix(in srgb, var(--color-primary) var(--tint), transparent),
-        transparent 75%
-      );
-    }
-    .home-bg-outdoors {
-      --tint: 32%;
-      background: radial-gradient(
-        60% 55% at 72% 18%,
-        color-mix(in srgb, var(--color-primary) var(--tint), transparent),
-        transparent 75%
-      );
-    }
-    html[data-profile='software'] .home-bg-software,
-    html[data-profile='outdoors'] .home-bg-outdoors {
+  /* One background glow: fades in centered with the intro, then slides to
+     whichever side is active (html[data-profile] is only ever set on desktop,
+     so mobile keeps the centered atmosphere). */
+  .home-glow {
+    position: absolute;
+    top: -8rem;
+    left: 50%;
+    width: min(80rem, 110vw);
+    height: 42rem;
+    transform: translateX(-50%);
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--color-primary) 32%, transparent),
+      transparent
+    );
+    opacity: 0;
+    animation: home-glow-in 1.6s ease 0.4s forwards;
+    transition: transform 1.2s ease;
+  }
+  html[data-profile='software'] .home-glow {
+    transform: translateX(calc(-50% - 24vw));
+  }
+  html[data-profile='outdoors'] .home-glow {
+    transform: translateX(calc(-50% + 24vw));
+  }
+  @keyframes home-glow-in {
+    to {
       opacity: 1;
     }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-glow {
+      animation: none;
+      opacity: 1;
+      transition: none;
+    }
+  }
+
+  /* Hover-reactive columns, driven by html[data-profile] set from HomeContent.
+     Desktop only — mobile is static after the intro. */
+  @media (min-width: 768px) {
 
     [data-col] {
       transition:
