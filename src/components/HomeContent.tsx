@@ -31,7 +31,9 @@ export default function HomeContent() {
 
   useEffect(() => {
     const enter = setTimeout(() => setStage('enter'), 80)
-    const settle = setTimeout(() => setStage('done'), 1250)
+    // Fire while the swing-in is still finishing so the return redirects
+    // mid-flight instead of pausing at the crossed pose
+    const settle = setTimeout(() => setStage('done'), 950)
     return () => {
       clearTimeout(enter)
       clearTimeout(settle)
