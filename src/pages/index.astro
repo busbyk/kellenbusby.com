@@ -106,17 +106,13 @@ const tripReports = (
         transparent 75%
       );
     }
-    /* The orange sinks into the dark navy, so it needs a harder mix there */
     .home-bg-outdoors {
-      --tint: 20%;
+      --tint: 24%;
       background: radial-gradient(
         60% 55% at 72% 18%,
-        color-mix(in srgb, var(--color-accent) var(--tint), transparent),
+        color-mix(in srgb, var(--color-primary) var(--tint), transparent),
         transparent 75%
       );
-    }
-    .dark .home-bg-outdoors {
-      --tint: 38%;
     }
     html[data-profile='software'] .home-bg-software,
     html[data-profile='outdoors'] .home-bg-outdoors {
