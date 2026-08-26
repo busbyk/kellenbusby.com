@@ -127,7 +127,7 @@ export default function HomeContent() {
         </a>
         <div
           className={cn(
-            'bg-foreground/20 h-px w-42 md:h-28 md:w-1 transition-transform duration-500',
+            'hidden md:block bg-foreground/20 md:h-28 md:w-1 transition-transform duration-500',
             hovered === 'software' && 'md:translate-x-3',
             hovered === 'outdoors' && 'md:-translate-x-3',
           )}
@@ -152,8 +152,8 @@ export default function HomeContent() {
               Life <CaretRightIcon />
             </button>
           </div>
-          <div className="flex flex-col items-end md:items-start md:gap-0.5">
-            <h2 className="md:hidden text-lg font-bold text-right">
+          <div className="flex flex-col items-start md:gap-0.5">
+            <h2 className="md:hidden text-lg font-bold">
               Skier, Climber, Mountain Biker, Traveler, Hobbyist
             </h2>
             <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
