@@ -3,15 +3,12 @@ import { Image } from 'astro:assets'
 import { getCollection } from 'astro:content'
 import Layout from '../layouts/Layout.astro'
 import HomeContent from '../components/HomeContent'
-import BlogPostCard from '../components/BlogPostCard.astro'
 import ProjectCard from '../components/ProjectCard.astro'
 import ProjectSpotlight from '../components/ProjectSpotlight.astro'
 import StatusBadge from '../components/StatusBadge.astro'
 import InterestCta from '../components/InterestCta.astro'
-import SocialLinks from '../components/SocialLinks.astro'
 import VariantSwitcher from '../components/proto/VariantSwitcher.astro'
 import { getProjects } from '../lib/projects'
-import softwareHeadshot from '../assets/software-headshot.webp'
 
 const featuredProjects = (await getProjects()).filter((p) => p.featured)
 
@@ -25,146 +22,16 @@ const tripReports = (
 <Layout>
   <VariantSwitcher
     labels={{
-      a: 'Full hero + stacked sections',
-      b: 'Split columns below hero',
-      c: 'Content-first',
+      a: 'Static sections',
+      b: 'Hover: emphasize a side',
+      c: 'Hover: swap the content',
     }}
   />
 
-  {/* ============ Variant A — full hero, then stacked sections ============ */}
+  {/* ============ Variant A — static sections (hero, building, outside) ============ */}
   <div data-proto="a">
-    <div class="flex min-h-[calc(100vh-57px)] items-center justify-center">
-      <HomeContent client:load />
-    </div>
-
-    <div class="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4 py-16">
-      <section class="flex flex-col gap-4">
-        <div class="flex items-baseline justify-between">
-          <h2 class="text-2xl font-bold md:text-3xl">Building</h2>
-          <a href="/projects" class="text-sm text-primary hover:underline">
-            All projects →
-          </a>
-        </div>
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredProjects.map((p) => <ProjectCard project={p} />)}
-        </div>
-      </section>
-
-      <section class="flex flex-col gap-4">
-        <div class="flex items-baseline justify-between">
-          <h2 class="text-2xl font-bold md:text-3xl">Recent trip reports</h2>
-          <a href="/blog" class="text-sm text-primary hover:underline">
-            All posts →
-          </a>
-        </div>
-        <div class="flex flex-col gap-2">
-          {
-            tripReports.map((post) => (
-              <BlogPostCard
-                title={post.data.title}
-                description={post.data.description}
-                pubDate={post.data.pubDate}
-                tags={post.data.tags}
-                href={`/blog/${post.id}`}
-                heroImage={post.data.heroImage}
-                heroImageAlt={post.data.heroImageAlt}
-              />
-            ))
-          }
-        </div>
-      </section>
-    </div>
-  </div>
-
-  {/* ============ Variant B — compact hero, split columns mirror the identity split ============ */}
-  <div data-proto="b">
-    <div class="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-10 md:py-14">
-      <header class="flex flex-col items-center gap-4 text-center">
-        <img
-          src={softwareHeadshot.src}
-          alt="Kellen Busby"
-          width={112}
-          height={112}
-          class="w-24 rounded-full shadow-lg md:w-28"
-        />
-        <div class="flex flex-col gap-1">
-          <h1 class="text-4xl font-extrabold md:text-5xl">Kellen Busby</h1>
-          <p class="text-muted">
-            Full stack software engineer · skier, climber, mountain biker
-          </p>
-        </div>
-        <SocialLinks />
-      </header>
-
-      <div class="grid gap-10 md:grid-cols-2 md:gap-8">
-        <section class="flex flex-col gap-4">
-          <div class="flex items-baseline justify-between border-b border-border pb-2">
-            <a href="/software" class="text-xl font-bold hover:text-primary transition-colors">
-              Software
-            </a>
-            <a href="/projects" class="text-sm text-primary hover:underline">
-              All projects →
-            </a>
-          </div>
-          <div class="flex flex-col gap-4">
-            {featuredProjects.map((p) => <ProjectCard project={p} />)}
-          </div>
-        </section>
-
-        <section class="flex flex-col gap-4">
-          <div class="flex items-baseline justify-between border-b border-border pb-2">
-            <a href="/life" class="text-xl font-bold hover:text-primary transition-colors">
-              Life
-            </a>
-            <a href="/blog" class="text-sm text-primary hover:underline">
-              All posts →
-            </a>
-          </div>
-          <div class="flex flex-col gap-4">
-            {
-              tripReports.map((post) => (
-                <a href={`/blog/${post.id}`} class="group flex flex-col overflow-hidden rounded-lg border border-border bg-card hover:shadow-lg transition-shadow">
-                  {post.data.heroImage && (
-                    <div class="h-36 overflow-hidden border-b border-border">
-                      <Image
-                        src={post.data.heroImage}
-                        alt={post.data.heroImageAlt || ''}
-                        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        widths={[400, 600]}
-                      />
-                    </div>
-                  )}
-                  <div class="flex flex-col gap-1 p-4">
-                    <time
-                      datetime={post.data.pubDate.toISOString()}
-                      class="text-xs text-muted"
-                    >
-                      {post.data.pubDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </time>
-                    <h3 class="font-bold group-hover:text-primary transition-colors">
-                      {post.data.title}
-                    </h3>
-                    <p class="line-clamp-2 text-sm text-muted">
-                      {post.data.description}
-                    </p>
-                  </div>
-                </a>
-              ))
-            }
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
-
-  {/* ============ Variant C — content-first, spotlight rows ============ */}
-  <div data-proto="c">
     <div class="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
-      <div class="flex justify-center">
+      <div class="flex justify-center pb-4 md:pb-10">
         <HomeContent client:load />
       </div>
 
@@ -229,7 +96,7 @@ const tripReports = (
                       day: 'numeric',
                     })}
                   </time>
-                  <h3 class="font-bold leading-snug group-hover:text-primary transition-colors">
+                  <h3 class="font-bold leading-snug transition-colors group-hover:text-primary">
                     {post.data.title}
                   </h3>
                 </div>
@@ -240,4 +107,170 @@ const tripReports = (
       </section>
     </div>
   </div>
+
+  {/* ============ Variant B — hovering Software/Life emphasizes that column ============ */}
+  <div data-proto="b">
+    <div class="mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
+      <div class="flex justify-center pb-4 md:pb-10">
+        <HomeContent client:load />
+      </div>
+
+      <div class="grid gap-10 md:grid-cols-2 md:gap-8">
+        <section data-col="software" class="flex flex-col gap-4">
+          <div class="flex items-baseline justify-between border-b border-border pb-2">
+            <h2 class="text-xl font-bold">What I'm building</h2>
+            <a href="/projects" class="text-sm text-primary hover:underline">
+              All projects →
+            </a>
+          </div>
+          <div class="flex flex-col gap-4">
+            {featuredProjects.map((p) => <ProjectCard project={p} />)}
+          </div>
+        </section>
+
+        <section data-col="outdoors" class="flex flex-col gap-4">
+          <div class="flex items-baseline justify-between border-b border-border pb-2">
+            <h2 class="text-xl font-bold">Recently, outside</h2>
+            <a href="/blog" class="text-sm text-primary hover:underline">
+              All posts →
+            </a>
+          </div>
+          <div class="flex flex-col gap-4">
+            {
+              tripReports.map((post) => (
+                <a
+                  href={`/blog/${post.id}`}
+                  class="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
+                >
+                  {post.data.heroImage && (
+                    <div class="h-36 overflow-hidden border-b border-border">
+                      <Image
+                        src={post.data.heroImage}
+                        alt={post.data.heroImageAlt || ''}
+                        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        widths={[400, 600]}
+                      />
+                    </div>
+                  )}
+                  <div class="flex flex-col gap-1 p-4">
+                    <time
+                      datetime={post.data.pubDate.toISOString()}
+                      class="text-xs text-muted"
+                    >
+                      {post.data.pubDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </time>
+                    <h3 class="font-bold transition-colors group-hover:text-primary">
+                      {post.data.title}
+                    </h3>
+                    <p class="line-clamp-2 text-sm text-muted">
+                      {post.data.description}
+                    </p>
+                  </div>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  {/* ============ Variant C — hovering Software/Life swaps the content below ============ */}
+  <div data-proto="c">
+    <div class="mx-auto flex w-full max-w-4xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
+      <div class="flex justify-center pb-4 md:pb-10">
+        <HomeContent client:load />
+      </div>
+
+      <div class="grid" data-swap-region>
+        <section data-swap="software" class="flex flex-col gap-4">
+          <div class="flex items-baseline justify-between">
+            <h2 class="text-2xl font-bold md:text-3xl">What I'm building</h2>
+            <a href="/projects" class="text-sm text-primary hover:underline">
+              All projects →
+            </a>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {featuredProjects.map((p) => <ProjectCard project={p} />)}
+          </div>
+        </section>
+
+        <section data-swap="outdoors" class="flex flex-col gap-4 pt-10 md:pt-0">
+          <div class="flex items-baseline justify-between">
+            <h2 class="text-2xl font-bold md:text-3xl">Recently, outside</h2>
+            <a href="/blog" class="text-sm text-primary hover:underline">
+              All posts →
+            </a>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-3">
+            {
+              tripReports.map((post) => (
+                <a href={`/blog/${post.id}`} class="group flex flex-col gap-2">
+                  {post.data.heroImage && (
+                    <div class="h-40 overflow-hidden rounded-lg border border-border">
+                      <Image
+                        src={post.data.heroImage}
+                        alt={post.data.heroImageAlt || ''}
+                        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        widths={[400, 600]}
+                      />
+                    </div>
+                  )}
+                  <div class="flex flex-col gap-0.5">
+                    <time
+                      datetime={post.data.pubDate.toISOString()}
+                      class="text-xs text-muted"
+                    >
+                      {post.data.pubDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </time>
+                    <h3 class="font-bold leading-snug transition-colors group-hover:text-primary">
+                      {post.data.title}
+                    </h3>
+                  </div>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
 </Layout>
+
+<style is:global>
+  /* Hover-reactive sections, driven by html[data-profile] set from HomeContent.
+     Desktop only — there's no hover state to react to on touch screens. */
+  @media (min-width: 768px) {
+    [data-col] {
+      transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+    }
+    html[data-profile='software'] [data-col='outdoors'],
+    html[data-profile='outdoors'] [data-col='software'] {
+      opacity: 0.4;
+      transform: scale(0.98);
+    }
+
+    [data-swap-region] > [data-swap] {
+      grid-area: 1 / 1;
+      transition: opacity 0.4s ease;
+    }
+    [data-swap-region] > [data-swap='outdoors'] {
+      padding-top: 0;
+    }
+    html:not([data-profile='outdoors']) [data-swap='outdoors'],
+    html[data-profile='outdoors'] [data-swap='software'] {
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+</style>

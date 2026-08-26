@@ -23,12 +23,14 @@ export default function HomeContent() {
   useEffect(() => {
     if (softwareHovered) {
       setProfile('software')
+      document.documentElement.dataset.profile = 'software'
     }
   }, [softwareHovered])
 
   useEffect(() => {
     if (outdoorsHovered) {
       setProfile('outdoors')
+      document.documentElement.dataset.profile = 'outdoors'
     }
   }, [outdoorsHovered])
 
@@ -77,9 +79,6 @@ export default function HomeContent() {
           </h2>
           <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
             JS|TS|React Dev
-          </h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Remix.run Dev
           </h2>
           <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
             Software <CaretRightIcon />
