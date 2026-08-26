@@ -37,6 +37,8 @@ const projects = defineCollection({
       featured: z.boolean().default(false),
       // Show the "interested?" call to action (mailto + Plausible for now)
       cta: z.boolean().default(false),
+      // External CTA target (e.g. a waitlist page); mailto when absent
+      ctaUrl: z.string().optional(),
       order: z.number().default(99),
     }),
 });

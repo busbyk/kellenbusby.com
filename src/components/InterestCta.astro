@@ -9,9 +9,11 @@ interface Props {
   name: string
   class?: string
   compact?: boolean
+  /** External CTA target (e.g. a waitlist page); mailto when absent */
+  href?: string
 }
 
-const { slug, name, class: className, compact = false } = Astro.props
+const { slug, name, class: className, compact = false, href } = Astro.props
 
 const subject = encodeURIComponent(`Interested in ${name}`)
 const body = encodeURIComponent(
@@ -21,7 +23,7 @@ const mailto = `mailto:kellenbusby@gmail.com?subject=${subject}&body=${body}`
 ---
 
 <a
-  href={mailto}
+  href={href ?? mailto}
   data-interest-cta={slug}
   class={cn(
     'interest-cta inline-flex max-w-max items-center gap-1.5 rounded-md border-2 border-accent/60 font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
@@ -29,7 +31,7 @@ const mailto = `mailto:kellenbusby@gmail.com?subject=${subject}&body=${body}`
     className,
   )}
 >
-  <span>Interested? Let me know</span>
+  <span>{href ? 'Join the waitlist' : 'Interested? Let me know'}</span>
   <span aria-hidden="true">→</span>
 </a>
 

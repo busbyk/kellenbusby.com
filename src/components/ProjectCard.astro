@@ -76,7 +76,7 @@ const Tag = isLink ? 'a' : 'div'
     {
       project.cta && (
         <div class="mt-auto pt-2">
-          <InterestCta slug={project.slug} name={project.name} compact />
+          <InterestCta slug={project.slug} name={project.name} href={project.ctaUrl} compact />
         </div>
       )
     }

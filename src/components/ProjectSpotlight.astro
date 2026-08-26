@@ -3,6 +3,7 @@ import { Image } from 'astro:assets'
 import { cn } from '../lib/utils'
 import type { Project } from '../lib/projects'
 import StatusBadge from './StatusBadge.astro'
+import ArrowUpRightIcon from './icons/ArrowUpRightIcon'
 import InterestCta from './InterestCta.astro'
 
 interface Props {
@@ -45,13 +46,13 @@ const { project, reverse = false, class: className } = Astro.props
             href={project.url}
             class="inline-flex max-w-max items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
           >
-            Visit site <span aria-hidden="true">↗</span>
+            Visit site <ArrowUpRightIcon />
           </a>
         )
       }
       {
         project.cta && (
-          <InterestCta slug={project.slug} name={project.name} />
+          <InterestCta slug={project.slug} name={project.name} href={project.ctaUrl} />
         )
       }
       <a

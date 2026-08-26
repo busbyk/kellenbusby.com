@@ -5,6 +5,7 @@ import Layout from '../../layouts/Layout.astro'
 import PageLayout from '../../components/PageLayout.astro'
 import StatusBadge from '../../components/StatusBadge.astro'
 import InterestCta from '../../components/InterestCta.astro'
+import ArrowUpRightIcon from '../../components/icons/ArrowUpRightIcon'
 
 export async function getStaticPaths() {
   const entries = await getCollection('projects')
@@ -49,13 +50,13 @@ const { Content } = await render(entry)
               href={project.url}
               class="inline-flex max-w-max items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
             >
-              Visit site <span aria-hidden="true">↗</span>
+              Visit site <ArrowUpRightIcon />
             </a>
           )
         }
         {
           project.cta && (
-            <InterestCta slug={entry.id} name={project.name} />
+            <InterestCta slug={entry.id} name={project.name} href={project.ctaUrl} />
           )
         }
       </div>
