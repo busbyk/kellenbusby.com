@@ -18,18 +18,24 @@ type Mode = 'software' | 'outdoors'
 export default function HomeContent() {
   // null until the first hover so the page starts neutral
   const [hovered, setHovered] = useState<Mode | null>(null)
-  const [introDone, setIntroDone] = useState(false)
-  const profile: Mode = hovered ?? 'software'
+  // Intro rides the same swing-arc transition as the hover flip: both
+  // headshots swing in from behind their texts, cross slightly past center,
+  // then outdoors settles on top and software swings back behind its text.
+  const [stage, setStage] = useState<'hidden' | 'enter' | 'done'>('hidden')
+  const profile: Mode = hovered ?? 'outdoors'
 
   const activate = (mode: Mode) => {
     setHovered(mode)
     document.documentElement.dataset.profile = mode
   }
 
-  // Let the intro animation finish before the outdoors headshot tucks away
   useEffect(() => {
-    const timer = setTimeout(() => setIntroDone(true), 1250)
-    return () => clearTimeout(timer)
+    const enter = setTimeout(() => setStage('enter'), 80)
+    const settle = setTimeout(() => setStage('done'), 1250)
+    return () => {
+      clearTimeout(enter)
+      clearTimeout(settle)
+    }
   }, [])
 
   // Hovering the content sections below the hero also switches context
@@ -51,37 +57,38 @@ export default function HomeContent() {
         Kellen Busby
       </h1>
       <figure className="relative h-36 md:h-56 w-full -mb-4 overflow-hidden">
-        <div className="intro-headshot-left absolute inset-0 z-10 pointer-events-none">
-          <img
-            src={softwareHeadshot.src}
-            alt="Kellen Busby software engineer"
-            width={192}
-            height={192}
-            className={cn(
-              'absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
-              profile === 'outdoors' && 'md:-rotate-90 md:opacity-0',
-              profile === 'software' && 'md:rotate-0 md:opacity-100',
-            )}
-            style={{ transformOrigin: '50% 300px' }}
-          />
-        </div>
-        <div className="intro-headshot-right absolute inset-0 pointer-events-none">
-          <img
-            src={outdoorsHeadshot.src}
-            alt="Kellen Busby outdoors person"
-            width={192}
-            height={192}
-            className={cn(
-              'hidden md:block absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
-              !introDone
+        <img
+          src={softwareHeadshot.src}
+          alt="Kellen Busby software engineer"
+          width={192}
+          height={192}
+          className={cn(
+            'absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
+            stage === 'hidden' && 'md:-rotate-90 md:opacity-0',
+            stage === 'enter' && 'md:rotate-6 md:opacity-100',
+            stage === 'done' &&
+              (profile === 'software'
+                ? 'md:rotate-0 md:opacity-100'
+                : 'md:-rotate-90 md:opacity-0'),
+          )}
+          style={{ transformOrigin: '50% 300px' }}
+        />
+        <img
+          src={outdoorsHeadshot.src}
+          alt="Kellen Busby outdoors person"
+          width={192}
+          height={192}
+          className={cn(
+            'hidden md:block absolute inset-0 z-10 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
+            stage === 'hidden' && 'rotate-90 opacity-0',
+            stage === 'enter' && '-rotate-6 opacity-100',
+            stage === 'done' &&
+              (profile === 'outdoors'
                 ? 'rotate-0 opacity-100'
-                : profile === 'outdoors'
-                  ? 'rotate-0 opacity-100'
-                  : 'rotate-90 opacity-0',
-            )}
-            style={{ transformOrigin: '50% 300px' }}
-          />
-        </div>
+                : 'rotate-90 opacity-0'),
+          )}
+          style={{ transformOrigin: '50% 300px' }}
+        />
       </figure>
       <div className="flex flex-col items-center md:flex-row md:items-center md:justify-center md:gap-8">
         <a
