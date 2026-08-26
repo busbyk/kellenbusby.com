@@ -12,7 +12,13 @@
  * photo flies home and the next lifts out of its own. Both flights are
  * computed in document space each frame so they stay glued to the page as
  * it moves. Wheel or a vertical touch drag closes, and the user's scroll
- * continues naturally.
+ * continues naturally. Images can be zoomed while up (trackpad pinch /
+ * ctrl+wheel / ⌘±, overriding the browser's page zoom); while zoomed,
+ * wheel and drag pan, and a click zooms back out.
+ *
+ * Videos open from the play overlay BlogVideo renders (the root component
+ * strips their inline controls and wires the overlay) and autoplay in the
+ * viewer.
  *
  * Contiguous BlogImage/ImageRow elements with no prose between them form a
  * group; ←/→ steps within it and paging past either end closes (the edge
@@ -284,6 +290,12 @@ function CornerActions(props: {
 
 // ---------- zoom-in-place viewer (desktop) ----------
 
+// the element to hide while the viewer owns an item's spot — videos hide
+// their whole wrapper so the play overlay disappears along with them
+function homeEl(it: Item): HTMLElement {
+  return (it.el.closest('[data-video-wrap]') as HTMLElement | null) ?? it.el
+}
+
 function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
   const item = group[index]
   const rootRef = useRef<HTMLDivElement>(null)
@@ -293,11 +305,53 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
   const mounted = useRef(false)
   const touchStart = useRef<{ x: number; y: number } | null>(null)
 
+  // pinch / ctrl+wheel / ⌘± zoom on the current photo (images only); while
+  // zoomed, drag or two-finger scroll pans instead of closing
+  const [zoom, setZoom] = useState({ s: 1, x: 0, y: 0 })
+  const [zoomAnim, setZoomAnim] = useState(false)
+  const zoomRef = useRef(zoom)
+  zoomRef.current = zoom
+  const zoomWrapRef = useRef<HTMLDivElement>(null)
+  const drag = useRef<null | {
+    x0: number
+    y0: number
+    tx0: number
+    ty0: number
+    moved: boolean
+  }>(null)
+  const dragMoved = useRef(false)
+
+  const clampZoom = (z: { s: number; x: number; y: number }) => {
+    const size = fitSize(item.el, 0.97, 0.97)
+    const maxX = Math.max(0, (size.width * z.s - window.innerWidth) / 2)
+    const maxY = Math.max(0, (size.height * z.s - window.innerHeight) / 2)
+    return {
+      s: z.s,
+      x: Math.max(-maxX, Math.min(maxX, z.x)),
+      y: Math.max(-maxY, Math.min(maxY, z.y)),
+    }
+  }
+
+  // scale by `factor` keeping the point under (cx, cy) fixed
+  const zoomBy = (factor: number, cx: number, cy: number, animated: boolean) => {
+    const cur = zoomRef.current
+    const s = Math.max(1, Math.min(4, cur.s * factor))
+    const vx = cx - window.innerWidth / 2
+    const vy = cy - window.innerHeight / 2
+    const r = s / cur.s
+    setZoomAnim(animated)
+    setZoom(
+      s === 1
+        ? { s: 1, x: 0, y: 0 }
+        : clampZoom({ s, x: vx - (vx - cur.x) * r, y: vy - (vy - cur.y) * r }),
+    )
+  }
+
   // transition handed from step() to the index layout effect
   const pending = useRef<null | {
     clone: HTMLElement
     cloneBase: Box
-    curImg: Media
+    curHome: HTMLElement
     curHomeDoc: Box
     nextSrcDoc: Box
     scroll: { scroller: Element; start: number; target: number }
@@ -317,17 +371,29 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     })
     return () => {
       group.forEach((it) => {
-        it.el.style.visibility = ''
+        homeEl(it).style.visibility = ''
       })
     }
   }, [])
+
+  // start playback when the viewer lands on a video; fall back to muted if
+  // the browser blocks unmuted autoplay
+  useEffect(() => {
+    if (item.kind !== 'video') return
+    const v = imgRef.current as HTMLVideoElement | null
+    v?.play().catch(() => {
+      if (!v) return
+      v.muted = true
+      v.play().catch(() => {})
+    })
+  }, [index])
 
   // open and step share the coordinated treatment: the article scrolls to
   // center the photo's spot on the same timeline as the photo's flight(s)
   useLayoutEffect(() => {
     const el = imgRef.current
     if (!el) return
-    item.el.style.visibility = 'hidden'
+    homeEl(item).style.visibility = 'hidden'
 
     if (!mounted.current) {
       // open: lift the clicked photo out of its spot while centering it
@@ -376,7 +442,7 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     if (reducedMotion()) {
       t.scroll.scroller.scrollTop = t.scroll.target
       t.clone.remove()
-      t.curImg.style.visibility = ''
+      t.curHome.style.visibility = ''
       el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 150 })
       return
     }
@@ -391,7 +457,7 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     const settle = () => {
       t.scroll.scroller.scrollTop = t.scroll.target
       t.clone.remove()
-      t.curImg.style.visibility = ''
+      t.curHome.style.visibility = ''
       el.style.transform = ''
       settleNav.current = null
     }
@@ -449,11 +515,13 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     pending.current = {
       clone,
       cloneBase: base,
-      curImg: item.el,
+      curHome: homeEl(item),
       curHomeDoc: docBox(item.el),
       nextSrcDoc: docBox(group[next].el),
       scroll,
     }
+    setZoomAnim(false)
+    setZoom({ s: 1, x: 0, y: 0 })
     setIndex(next)
   }
 
@@ -461,6 +529,13 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     if (closing.current) return
     closing.current = true
     settleNav.current?.()
+    // drop any zoom synchronously so the exit flight measures a clean rect
+    if (zoomWrapRef.current) {
+      zoomWrapRef.current.style.transition = 'none'
+      zoomWrapRef.current.style.transform = 'none'
+    }
+    setZoomAnim(false)
+    setZoom({ s: 1, x: 0, y: 0 })
     const el = imgRef.current
     if (!el) return onClose()
     scrimRef.current?.animate([{ opacity: 1 }, { opacity: 0 }], {
@@ -479,13 +554,87 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
   useViewerKeys({ step, close: requestClose })
 
   // no scroll lock here — a wheel tick or vertical touch drag closes, then
-  // the user's scroll continues naturally on the page
-  const closeRef = useRef(requestClose)
-  closeRef.current = requestClose
+  // the user's scroll continues naturally on the page. Exceptions while an
+  // image is up: ctrl+wheel (trackpad pinch) zooms the photo instead of the
+  // page, and while zoomed a plain wheel pans instead of closing.
+  const wheelRef = useRef<(e: WheelEvent) => void>(() => {})
+  wheelRef.current = (e) => {
+    if (item.kind === 'image' && e.ctrlKey) {
+      e.preventDefault()
+      zoomBy(Math.exp(-e.deltaY / 100), e.clientX, e.clientY, false)
+      return
+    }
+    if (zoomRef.current.s > 1) {
+      e.preventDefault()
+      setZoomAnim(false)
+      setZoom(
+        clampZoom({
+          s: zoomRef.current.s,
+          x: zoomRef.current.x - e.deltaX,
+          y: zoomRef.current.y - e.deltaY,
+        }),
+      )
+      return
+    }
+    requestClose()
+  }
   useEffect(() => {
-    const onWheel = () => closeRef.current()
-    window.addEventListener('wheel', onWheel, { passive: true })
+    const onWheel = (e: WheelEvent) => wheelRef.current(e)
+    window.addEventListener('wheel', onWheel, { passive: false })
     return () => window.removeEventListener('wheel', onWheel)
+  }, [])
+
+  // Safari delivers trackpad pinches as gesture events, not ctrl+wheel
+  const pinchRef = useRef<(f: number, cx: number, cy: number) => void>(() => {})
+  pinchRef.current = (factor, cx, cy) => {
+    if (item.kind !== 'image') return
+    zoomBy(factor, cx, cy, false)
+  }
+  useEffect(() => {
+    let last = 1
+    const onStart = (e: Event) => {
+      e.preventDefault()
+      last = 1
+    }
+    const onChange = (e: Event) => {
+      e.preventDefault()
+      const g = e as Event & { scale?: number; clientX?: number; clientY?: number }
+      if (typeof g.scale !== 'number') return
+      pinchRef.current(g.scale / last, g.clientX ?? 0, g.clientY ?? 0)
+      last = g.scale
+    }
+    window.addEventListener('gesturestart', onStart)
+    window.addEventListener('gesturechange', onChange)
+    window.addEventListener('gestureend', onChange)
+    return () => {
+      window.removeEventListener('gesturestart', onStart)
+      window.removeEventListener('gesturechange', onChange)
+      window.removeEventListener('gestureend', onChange)
+    }
+  }, [])
+
+  // ⌘/Ctrl +/−/0 zoom the photo instead of the browser
+  const zoomKeysRef = useRef<(e: KeyboardEvent) => void>(() => {})
+  zoomKeysRef.current = (e) => {
+    if (item.kind !== 'image' || !(e.metaKey || e.ctrlKey) || e.altKey) return
+    const cx = window.innerWidth / 2
+    const cy = window.innerHeight / 2
+    if (e.key === '=' || e.key === '+') {
+      e.preventDefault()
+      zoomBy(1.4, cx, cy, true)
+    } else if (e.key === '-' || e.key === '_') {
+      e.preventDefault()
+      zoomBy(1 / 1.4, cx, cy, true)
+    } else if (e.key === '0') {
+      e.preventDefault()
+      setZoomAnim(true)
+      setZoom({ s: 1, x: 0, y: 0 })
+    }
+  }
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => zoomKeysRef.current(e)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
   }, [])
 
   const size = fitSize(item.el, 0.97, 0.97)
@@ -523,33 +672,90 @@ function ZoomViewer({ group, index, setIndex, onClose }: ViewerProps) {
     >
       <div
         ref={scrimRef}
-        class="absolute inset-0 bg-background/30"
+        class="absolute inset-0 bg-background/80 backdrop-blur-sm"
         onClick={requestClose}
       />
       <div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-        {item.kind === 'video' ? (
-          <video
-            key={index}
-            ref={imgRef as RefObject<HTMLVideoElement>}
-            src={srcOf(item.el)}
-            poster={(item.el as HTMLVideoElement).poster || undefined}
-            controls
-            autoplay
-            playsinline
-            style={{ width: `${size.width}px`, height: `${size.height}px` }}
-            class="rounded-md shadow-2xl pointer-events-auto bg-black"
-          />
-        ) : (
-          <img
-            key={index}
-            ref={imgRef as RefObject<HTMLImageElement>}
-            src={hiRes ?? srcOf(item.el)}
-            alt={item.alt}
-            style={{ width: `${size.width}px`, height: `${size.height}px` }}
-            class="rounded-md shadow-2xl pointer-events-auto cursor-zoom-out"
-            onClick={requestClose}
-          />
-        )}
+        <div
+          ref={zoomWrapRef}
+          style={{
+            transform:
+              zoom.s > 1
+                ? `translate(${zoom.x}px, ${zoom.y}px) scale(${zoom.s})`
+                : 'none',
+            transition: zoomAnim ? `transform 200ms ${EASE}` : 'none',
+          }}
+        >
+          {item.kind === 'video' ? (
+            <video
+              key={index}
+              ref={imgRef as RefObject<HTMLVideoElement>}
+              src={srcOf(item.el)}
+              poster={(item.el as HTMLVideoElement).poster || undefined}
+              controls
+              autoplay
+              playsinline
+              style={{ width: `${size.width}px`, height: `${size.height}px` }}
+              class="rounded-md shadow-2xl pointer-events-auto bg-black"
+            />
+          ) : (
+            <img
+              key={index}
+              ref={imgRef as RefObject<HTMLImageElement>}
+              src={hiRes ?? srcOf(item.el)}
+              alt={item.alt}
+              draggable={false}
+              style={{ width: `${size.width}px`, height: `${size.height}px` }}
+              class={`rounded-md shadow-2xl pointer-events-auto ${zoom.s > 1 ? 'cursor-grab' : 'cursor-zoom-out'}`}
+              onPointerDown={(e) => {
+                if (zoomRef.current.s <= 1 || e.button !== 0) return
+                e.preventDefault()
+                ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+                drag.current = {
+                  x0: e.clientX,
+                  y0: e.clientY,
+                  tx0: zoomRef.current.x,
+                  ty0: zoomRef.current.y,
+                  moved: false,
+                }
+              }}
+              onPointerMove={(e) => {
+                const d = drag.current
+                if (!d) return
+                const dx = e.clientX - d.x0
+                const dy = e.clientY - d.y0
+                if (Math.abs(dx) > 4 || Math.abs(dy) > 4) d.moved = true
+                setZoomAnim(false)
+                setZoom(
+                  clampZoom({
+                    s: zoomRef.current.s,
+                    x: d.tx0 + dx,
+                    y: d.ty0 + dy,
+                  }),
+                )
+              }}
+              onPointerUp={() => {
+                if (drag.current?.moved) dragMoved.current = true
+                drag.current = null
+              }}
+              onPointerCancel={() => {
+                drag.current = null
+              }}
+              onClick={() => {
+                // a drag that just ended isn't a click; while zoomed a click
+                // zooms back out instead of closing
+                if (dragMoved.current) {
+                  dragMoved.current = false
+                  return
+                }
+                if (zoomRef.current.s > 1) {
+                  setZoomAnim(true)
+                  setZoom({ s: 1, x: 0, y: 0 })
+                } else requestClose()
+              }}
+            />
+          )}
+        </div>
       </div>
       <CornerActions
         item={item}
@@ -605,16 +811,36 @@ export default function BlogLightbox() {
     const cleanups: (() => void)[] = []
     all.forEach((group, g) => {
       group.forEach((item, i) => {
-        // videos keep their native controls and play inline; they're reached
-        // by stepping within a group, not by clicking to open
-        if (item.kind === 'video') return
-        // capture clicks even when BlogImage wraps the img in an external
-        // link (the url stays reachable via the button inside the viewer)
         const onClick = (e: Event) => {
           e.preventDefault()
           e.stopPropagation()
           setOpen({ g, i })
         }
+        if (item.kind === 'video') {
+          // strip the native controls (the no-JS fallback) and reveal the
+          // play overlay; playback happens in the viewer, not inline
+          const vid = item.el as HTMLVideoElement
+          vid.removeAttribute('controls')
+          const btn = vid
+            .closest('[data-video-wrap]')
+            ?.querySelector<HTMLButtonElement>('[data-video-play]')
+          if (btn) {
+            btn.hidden = false
+            btn.classList.add('flex')
+            btn.addEventListener('click', onClick)
+          }
+          cleanups.push(() => {
+            vid.setAttribute('controls', '')
+            if (btn) {
+              btn.hidden = true
+              btn.classList.remove('flex')
+              btn.removeEventListener('click', onClick)
+            }
+          })
+          return
+        }
+        // capture clicks even when BlogImage wraps the img in an external
+        // link (the url stays reachable via the button inside the viewer)
         item.el.style.cursor = 'zoom-in'
         item.el.addEventListener('click', onClick)
         cleanups.push(() => {

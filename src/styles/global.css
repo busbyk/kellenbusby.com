@@ -128,6 +128,13 @@
   width: auto;
 }
 
+/* same viewport cap as .blog img: header (57px) + padding */
+.blog video {
+  max-height: calc(100vh - 57px - 2rem);
+  width: auto;
+  margin-inline: auto;
+}
+
 /* Prose typography overrides for dark mode compatibility */
 .prose {
   --tw-prose-body: var(--color-foreground);
