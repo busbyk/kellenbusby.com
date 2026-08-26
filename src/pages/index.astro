@@ -119,6 +119,14 @@ const tripReports = (
       opacity: 1;
     }
   }
+  /* On mobile the glow can't follow a cursor, so it settles in the seam
+     between the Software and Life rows */
+  @media (max-width: 767px) {
+    .home-glow {
+      top: 4rem;
+      height: 30rem;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .home-glow {
       animation: none;
