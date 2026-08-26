@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'preact/hooks'
-import { useHover } from '../hooks/useHover'
 import { ProfileContainer } from './ProfileContainer'
 import CaretRightIcon from './CaretRightIcon'
 import { cn } from '../lib/utils'
@@ -14,30 +13,74 @@ import InstagramCircleIcon from './icons/InstagramCircleIcon'
 import TwitterCircleIcon from './icons/TwitterCircleIcon'
 import YoutubeCircleIcon from './icons/YoutubeCircleIcon'
 
+type Mode = 'software' | 'outdoors'
+
 export default function HomeContent() {
-  const [profile, setProfile] = useState<'software' | 'outdoors'>('software')
+  // null until the first hover so the page starts neutral
+  const [hovered, setHovered] = useState<Mode | null>(null)
+  // Intro rides the same swing-arc transition as the hover flip: both
+  // headshots swing in from behind their texts, cross slightly past center,
+  // then outdoors settles on top and software swings back behind its text.
+  const [stage, setStage] = useState<'hidden' | 'enter' | 'done'>('hidden')
+  const profile: Mode = hovered ?? 'outdoors'
 
-  const [softwareLinkRef, softwareHovered] = useHover<HTMLAnchorElement>()
-  const [outdoorsLinkRef, outdoorsHovered] = useHover<HTMLAnchorElement>()
+  const activate = (mode: Mode) => {
+    setHovered(mode)
+    document.documentElement.dataset.profile = mode
+  }
 
   useEffect(() => {
-    if (softwareHovered) {
-      setProfile('software')
+    const enter = setTimeout(() => setStage('enter'), 80)
+    // Fire while the swing-in is still finishing so the return redirects
+    // mid-flight instead of pausing at the crossed pose
+    const settle = setTimeout(() => setStage('done'), 950)
+    return () => {
+      clearTimeout(enter)
+      clearTimeout(settle)
     }
-  }, [softwareHovered])
+  }, [])
 
+  // On desktop the page's vertical halves are also a context trigger,
+  // armed once the intro settle has finished.
   useEffect(() => {
-    if (outdoorsHovered) {
-      setProfile('outdoors')
+    if (!window.matchMedia('(min-width: 768px)').matches) return
+    let pending: Mode | null = null
+    const onMove = (e: MouseEvent) => {
+      const mode: Mode =
+        e.clientX < window.innerWidth / 2 ? 'software' : 'outdoors'
+      if (mode === pending) return
+      pending = mode
+      activate(mode)
     }
-  }, [outdoorsHovered])
+    const arm = setTimeout(
+      () => document.addEventListener('mousemove', onMove),
+      2000,
+    )
+    return () => {
+      clearTimeout(arm)
+      document.removeEventListener('mousemove', onMove)
+    }
+  }, [])
+
+  // Hovering the content sections below the hero also switches context
+  useEffect(() => {
+    const cols = Array.from(document.querySelectorAll('[data-col]'))
+    const cleanups = cols.map((col) => {
+      const mode: Mode =
+        col.getAttribute('data-col') === 'outdoors' ? 'outdoors' : 'software'
+      const onEnter = () => activate(mode)
+      col.addEventListener('mouseenter', onEnter)
+      return () => col.removeEventListener('mouseenter', onEnter)
+    })
+    return () => cleanups.forEach((fn) => fn())
+  }, [])
 
   return (
-    <div className="flex flex-col gap-2 md:gap-8 grow w-full justify-center items-center h-full pt-4">
-      <h1 className="text-5xl md:text-7xl font-extrabold text-center">
+    <div className="flex flex-col gap-2 md:gap-6 grow w-full justify-center items-center h-full pt-4">
+      <h1 className="whitespace-nowrap text-[clamp(2.25rem,11vw,3rem)] md:text-7xl font-extrabold text-center">
         Kellen Busby
       </h1>
-      <figure className="relative h-36 md:h-56 w-full -mb-4 overflow-hidden">
+      <figure className="hidden md:block relative h-56 w-full -mb-4 overflow-hidden">
         <img
           src={softwareHeadshot.src}
           alt="Kellen Busby software engineer"
@@ -45,8 +88,12 @@ export default function HomeContent() {
           height={192}
           className={cn(
             'absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
-            profile === 'outdoors' && 'md:-rotate-90 md:opacity-0',
-            profile === 'software' && 'md:rotate-0 md:opacity-100',
+            stage === 'hidden' && '-rotate-90 opacity-0',
+            stage === 'enter' && 'rotate-6 opacity-100',
+            stage === 'done' &&
+              (profile === 'software'
+                ? 'rotate-0 opacity-100'
+                : '-rotate-90 opacity-0'),
           )}
           style={{ transformOrigin: '50% 300px' }}
         />
@@ -56,64 +103,102 @@ export default function HomeContent() {
           width={192}
           height={192}
           className={cn(
-            'hidden md:block absolute inset-0 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
-            profile === 'software' && 'rotate-90 opacity-0',
-            profile === 'outdoors' && 'rotate-0 opacity-100',
+            'absolute inset-0 z-10 mx-auto my-auto rounded-full w-32 md:w-48 shadow-lg motion-reduce:duration-[0s] transition duration-1000',
+            stage === 'hidden' && 'rotate-90 opacity-0',
+            stage === 'enter' && '-rotate-12 opacity-100',
+            stage === 'done' &&
+              (profile === 'outdoors'
+                ? 'rotate-0 opacity-100'
+                : 'rotate-90 opacity-0'),
           )}
           style={{ transformOrigin: '50% 300px' }}
         />
       </figure>
-      <div className="flex flex-col md:min-w-[800px] md:flex-row md:items-center md:gap-8">
+      <div className="flex w-full flex-col items-center md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-8">
         <a
           href="/software"
-          className="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col grow md:gap-1 justify-center items-center md:items-end rounded-md md:h-48 p-4"
-          ref={softwareLinkRef}
+          className={cn(
+            'flex flex-row items-center justify-center gap-5 md:flex-col md:items-end md:justify-self-end md:gap-0.5 rounded-md p-4 transition-opacity duration-500',
+            hovered === 'outdoors' && 'md:opacity-40',
+          )}
+          onMouseEnter={() => activate('software')}
         >
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Software Engineer
-          </h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Web App Dev
-          </h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            JS|TS|React Dev
-          </h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Remix.run Dev
-          </h2>
-          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
-            Software <CaretRightIcon />
-          </button>
+          <div className="intro-side-left flex flex-col items-center gap-2.5 md:hidden">
+            <img
+              src={softwareHeadshot.src}
+              alt="Kellen Busby software engineer"
+              width={80}
+              height={80}
+              className="w-20 rounded-full shadow-lg"
+            />
+            <button className="pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1 text-sm">
+              Software <CaretRightIcon />
+            </button>
+          </div>
+          <div className="flex flex-col items-start md:items-end md:gap-0.5">
+            <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
+              Software Engineer
+            </h2>
+            <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
+              Web App Dev
+            </h2>
+            <h2 className="text-lg md:text-2xl font-bold whitespace-nowrap">
+              JS|TS|React Dev
+            </h2>
+          </div>
         </a>
-        <div className="bg-foreground/20 h-px w-42 md:h-44 md:w-1" />
+        <div
+          className={cn(
+            'hidden md:block bg-foreground/20 md:h-28 md:w-1 transition-transform duration-500',
+            hovered === 'software' && 'md:translate-x-3',
+            hovered === 'outdoors' && 'md:-translate-x-3',
+          )}
+        />
         <a
           href="/life"
-          className="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col grow md:gap-1 justify-center items-center md:items-start rounded-md md:h-60 p-4"
-          ref={outdoorsLinkRef}
+          className={cn(
+            'flex flex-row-reverse items-center justify-center gap-5 md:flex-col md:items-start md:justify-self-start md:gap-0.5 rounded-md p-4 transition-opacity duration-500',
+            hovered === 'software' && 'md:opacity-40',
+          )}
+          onMouseEnter={() => activate('outdoors')}
         >
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Skier
-          </h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Climber
-          </h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Mountain Biker
-          </h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Traveler
-          </h2>
-          <h2 className="text-xl md:text-4xl font-bold whitespace-nowrap">
-            Hobbyist
-          </h2>
-          <button className="md:hidden mt-3 pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1">
-            Life <CaretRightIcon />
-          </button>
+          <div className="intro-side-right flex flex-col items-center gap-2.5 md:hidden">
+            <img
+              src={outdoorsHeadshot.src}
+              alt="Kellen Busby outdoors person"
+              width={80}
+              height={80}
+              className="w-20 rounded-full shadow-lg"
+            />
+            <button className="pl-4 pr-2 py-1.5 rounded-md border-2 border-foreground/20 flex items-center gap-1 text-sm">
+              Life <CaretRightIcon />
+            </button>
+          </div>
+          <div className="flex flex-col items-start md:gap-0.5">
+            <h2 className="md:hidden text-lg font-bold text-balance">
+              Skier, Climber, Mountain Biker, Traveler, Hobbyist
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Skier
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Climber
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Mountain Biker
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Traveler
+            </h2>
+            <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
+              Hobbyist
+            </h2>
+          </div>
         </a>
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="mt-12 md:mt-8 flex flex-col gap-2">
         <h2 className="text-xs uppercase">Profiles</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <ProfileContainer
             href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
             tooltip="Contra | kellenbusby"

@@ -1,0 +1,81 @@
+---
+import { Image } from 'astro:assets'
+import { cn } from '../lib/utils'
+import type { Project } from '../lib/projects'
+import StatusBadge from './StatusBadge.astro'
+import ArrowUpRightIcon from './icons/ArrowUpRightIcon'
+import InterestCta from './InterestCta.astro'
+
+interface Props {
+  project: Project
+  reverse?: boolean
+  class?: string
+}
+
+const { project, reverse = false, class: className } = Astro.props
+---
+
+<article
+  class={cn(
+    'flex flex-col gap-6 md:items-center',
+    reverse ? 'md:flex-row-reverse' : 'md:flex-row',
+    className,
+  )}
+>
+  <div class="flex flex-1 flex-col gap-3">
+    <div class="flex items-center gap-3">
+      <h3 class="text-2xl md:text-3xl font-bold">{project.name}</h3>
+      <StatusBadge status={project.status} label={project.statusLabel} />
+    </div>
+    <p class="max-w-prose text-muted">{project.oneLiner}</p>
+    {
+      project.stack && (
+        <div class="flex flex-wrap gap-1.5">
+          {project.stack.map((tech) => (
+            <span class="rounded bg-border px-2 py-0.5 text-xs whitespace-nowrap">
+              {tech}
+            </span>
+          ))}
+        </div>
+      )
+    }
+    <div class="flex items-center gap-3 pt-1">
+      {
+        project.url && (
+          <a
+            href={project.url}
+            class="inline-flex max-w-max items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+          >
+            Visit site <ArrowUpRightIcon />
+          </a>
+        )
+      }
+      {
+        project.cta && (
+          <InterestCta slug={project.slug} name={project.name} href={project.ctaUrl} />
+        )
+      }
+      <a
+        href={`/projects/${project.slug}`}
+        class="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+      >
+        Details →
+      </a>
+    </div>
+  </div>
+  {
+    project.image && (
+      <a
+        href={`/projects/${project.slug}`}
+        class="group block flex-1 overflow-hidden rounded-lg border border-border shadow-lg"
+      >
+        <Image
+          src={project.image}
+          alt={project.imageAlt || ''}
+          class="w-full object-cover"
+          widths={[400, 600, 800]}
+        />
+      </a>
+    )
+  }
+</article>

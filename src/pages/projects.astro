@@ -1,88 +1,125 @@
 ---
-import { Image } from 'astro:assets';
-import Layout from '../layouts/Layout.astro';
-import PageLayout from '../components/PageLayout.astro';
-import avyobs from '../assets/avyobs.png';
-import backcountrychecklist from '../assets/backcountrychecklist.png';
-import myfirstinstapost from '../assets/myfirstinstapost.png';
+import { Image } from 'astro:assets'
+import Layout from '../layouts/Layout.astro'
+import PageLayout from '../components/PageLayout.astro'
+import ProjectCard from '../components/ProjectCard.astro'
+import StatusBadge from '../components/StatusBadge.astro'
+import { getProjects, byStatus } from '../lib/projects'
+
+const projects = await getProjects()
+const live = byStatus(projects, 'live')
+const inProgress = byStatus(projects, 'in-progress')
+const archived = byStatus(projects, 'archived')
 ---
 
 <Layout title="Kellen Busby's Indie Projects">
   <PageLayout heading="Indie Projects">
-    <div class="flex flex-col gap-4">
-      <div class="flex flex-col gap-1">
-        <p>These are my independent projects.</p>
-        <p>
-          For client projects, check out my
-          <a
-            href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
-            class="ml-1 hover:underline"
-          >
-            Contra portfolio
-          </a>.
-        </p>
-      </div>
+    <div class="flex flex-col gap-1">
+      <p>Things I've built and things I'm building.</p>
+      <p>
+        For client work, check out my
+        <a
+          href="https://www.contra.com/kellenbusby/?utm_source=kellenbusby.com"
+          class="text-primary hover:underline">Contra portfolio</a
+        >.
+      </p>
     </div>
-    <div class="flex flex-col gap-6">
-      <a
-        href="https://www.avyobs.com/?utm_source=kellenbusby.com"
-        class="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col gap-1 justify-center rounded-md p-4 max-w-max"
-      >
-        <h2 class="text-xl font-bold">AvyObs</h2>
+
+    <div class="flex flex-col gap-16 pt-4">
+      <section class="flex flex-col gap-4">
+        <h2 class="text-2xl font-bold">Live</h2>
         <div class="flex flex-col">
-          <p class="max-w-[400px]">
-            A snow and avalanche observations notification service. Always
-            know what's going on in the mountains.
-          </p>
+          {
+            live.map((p) => (
+              <a
+                href={`/projects/${p.slug}`}
+                class="group flex flex-col gap-4 border-t border-border py-6 last:border-b md:flex-row md:items-center md:justify-between"
+              >
+                <div class="flex flex-col gap-1.5">
+                  <div class="flex items-center gap-3">
+                    <h3 class="text-2xl font-bold transition-colors group-hover:text-primary md:text-3xl">
+                      {p.name}
+                    </h3>
+                    <StatusBadge status={p.status} label={p.statusLabel} />
+                  </div>
+                  <p class="max-w-prose text-muted">{p.oneLiner}</p>
+                  {p.stack && (
+                    <div class="flex flex-wrap gap-1.5 pt-1">
+                      {p.stack.map((tech) => (
+                        <span class="rounded bg-border px-2 py-0.5 text-xs whitespace-nowrap">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {p.image && (
+                  <div class="shrink-0 overflow-hidden rounded-md border border-border md:h-32 md:w-52">
+                    <Image
+                      src={p.image}
+                      alt={p.imageAlt || ''}
+                      class="h-full w-full object-cover object-top"
+                      widths={[416, 640]}
+                    />
+                  </div>
+                )}
+              </a>
+            ))
+          }
         </div>
-        <Image
-          src={avyobs}
-          alt="AvyObs screenshot"
-          class="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
-          widths={[250, 300, 400]}
-        />
-        <p class="text-sm">https://www.avyobs.com</p>
-      </a>
-    </div>
-    <div class="flex flex-col gap-6">
-      <a
-        href="https://www.backcountrychecklist.com/?utm_source=kellenbusby.com"
-        class="slide-in-background-from-left relative overflow-hidden flex flex-1 flex-col gap-1 justify-center rounded-md p-4 max-w-max"
-      >
-        <h2 class="text-xl font-bold">BackcountryChecklist</h2>
-        <div class="flex flex-col">
-          <p class="max-w-[400px]">
-            A lighthearted checklist for a fun and safe day of skiing,
-            snowboarding, or snowmobiling in the backcountry.
-          </p>
+      </section>
+
+      <section class="flex flex-col gap-4">
+        <h2 class="text-2xl font-bold">In the works</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {
+            inProgress.map((p) => (
+              <ProjectCard project={p} showImage={false} class="border-dashed" />
+            ))
+          }
         </div>
-        <Image
-          src={backcountrychecklist}
-          alt="Backcountry checklist screenshot"
-          class="w-[150px] sm:w-[200px] md:w-[250px] rounded-md shadow-lg"
-          widths={[150, 200, 250]}
-        />
-        <p class="text-sm">https://www.backcountrychecklist.com</p>
-      </a>
-    </div>
-    <div class="flex flex-col gap-6">
-      <a
-        href="https://www.myfirstinstapost.com/?utm_source=kellenbusby.com"
-        class="slide-in-background-from-right relative overflow-hidden flex flex-1 flex-col gap-1 justify-center rounded-md p-4 max-w-max"
-      >
-        <h2 class="text-xl font-bold">MyFirstInstaPost</h2>
-        <div class="flex flex-col">
-          <p>A silly website that shows you your first Instagram post.</p>
-          <p>It's a fun stroll down memory lane.</p>
-        </div>
-        <Image
-          src={myfirstinstapost}
-          alt="MyFirstInstaPost screenshot"
-          class="w-[250px] sm:w-[300px] md:w-[400px] rounded-md shadow-lg"
-          widths={[250, 300, 400]}
-        />
-        <p class="text-sm">https://www.myfirstinstapost.com</p>
-      </a>
+      </section>
+
+      {
+        archived.length > 0 && (
+          <section class="flex flex-col gap-4">
+            <h2 class="text-2xl font-bold">Retired</h2>
+            <div class="flex flex-col">
+              {archived.map((p) => (
+                <a
+                  href={`/projects/${p.slug}`}
+                  class="group flex flex-col gap-3 border-t border-border py-5 last:border-b sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div class="flex flex-col gap-1">
+                    <div class="flex items-center gap-2.5">
+                      <h3 class="text-lg font-bold transition-colors group-hover:text-primary">
+                        {p.name}
+                      </h3>
+                      <StatusBadge status={p.status} label={p.statusLabel} />
+                    </div>
+                    <p class="max-w-prose text-sm text-muted">{p.oneLiner}</p>
+                    {p.note && (
+                      <p class="max-w-prose text-xs italic text-muted">
+                        {p.note}
+                      </p>
+                    )}
+                  </div>
+                  {p.image && (
+                    <div class="h-20 w-32 shrink-0 overflow-hidden rounded-md border border-border opacity-60">
+                      <Image
+                        src={p.image}
+                        alt={p.imageAlt || ''}
+                        class="h-full w-full object-cover object-top"
+                        widths={[256]}
+                      />
+                    </div>
+                  )}
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
     </div>
   </PageLayout>
 </Layout>

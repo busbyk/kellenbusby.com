@@ -1,10 +1,153 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import HomeContent from '../components/HomeContent';
+import { Image } from 'astro:assets'
+import { getCollection } from 'astro:content'
+import Layout from '../layouts/Layout.astro'
+import HomeContent from '../components/HomeContent'
+import ProjectCard from '../components/ProjectCard.astro'
+import { getProjects } from '../lib/projects'
+
+const featuredProjects = (await getProjects()).filter((p) => p.featured)
+
+const tripReports = (
+  await getCollection('blog', ({ data }) => data.published && data.tripReport)
+)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3)
 ---
 
 <Layout>
-	<div class="flex flex-1 items-center justify-center">
-		<HomeContent client:load />
-	</div>
+  <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div class="home-glow"></div>
+  </div>
+  <div class="mx-auto flex w-full max-w-5xl flex-col gap-14 px-4 pb-14 pt-6 md:pt-10">
+    <div class="flex justify-center">
+      <HomeContent client:load />
+    </div>
+
+    <div class="grid gap-10 md:grid-cols-2 md:gap-8">
+      <section data-col="software" class="flex flex-col gap-4">
+        <div class="flex items-baseline justify-between border-b border-border pb-2">
+          <h2 class="text-xl font-bold">What I'm building</h2>
+          <a href="/projects" class="text-sm text-primary hover:underline">
+            All projects →
+          </a>
+        </div>
+        <div class="flex flex-col gap-4">
+          {featuredProjects.map((p) => <ProjectCard project={p} />)}
+        </div>
+      </section>
+
+      <section data-col="outdoors" class="flex flex-col gap-4">
+        <div class="flex items-baseline justify-between border-b border-border pb-2">
+          <h2 class="text-xl font-bold">Recently, outside</h2>
+          <a href="/blog" class="text-sm text-primary hover:underline">
+            All posts →
+          </a>
+        </div>
+        <div class="flex flex-col gap-4">
+          {
+            tripReports.map((post) => (
+              <a
+                href={`/blog/${post.id}`}
+                class="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
+              >
+                {post.data.heroImage && (
+                  <div class="h-52 overflow-hidden border-b border-border">
+                    <Image
+                      src={post.data.heroImage}
+                      alt={post.data.heroImageAlt || ''}
+                      class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      widths={[400, 600]}
+                    />
+                  </div>
+                )}
+                <div class="flex flex-col gap-1 p-4">
+                  <time
+                    datetime={post.data.pubDate.toISOString()}
+                    class="text-xs text-muted"
+                  >
+                    {post.data.pubDate.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </time>
+                  <h3 class="font-bold transition-colors group-hover:text-primary">
+                    {post.data.title}
+                  </h3>
+                  <p class="line-clamp-2 text-sm text-muted">
+                    {post.data.description}
+                  </p>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </div>
 </Layout>
+
+<style is:global>
+  /* One background glow: fades in centered with the intro, then slides to
+     whichever side is active (html[data-profile] is only ever set on desktop,
+     so mobile keeps the centered atmosphere). */
+  .home-glow {
+    position: absolute;
+    top: -8rem;
+    left: 50%;
+    width: min(80rem, 110vw);
+    height: 42rem;
+    transform: translateX(-50%);
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--color-primary) 32%, transparent),
+      transparent
+    );
+    opacity: 0;
+    animation: home-glow-in 1.6s ease 0.4s forwards;
+    transition: transform 1.2s ease;
+  }
+  html[data-profile='software'] .home-glow {
+    transform: translateX(calc(-50% - 24vw));
+  }
+  html[data-profile='outdoors'] .home-glow {
+    transform: translateX(calc(-50% + 24vw));
+  }
+  @keyframes home-glow-in {
+    to {
+      opacity: 1;
+    }
+  }
+  /* On mobile the glow can't follow a cursor, so it settles in the seam
+     between the Software and Life rows */
+  @media (max-width: 767px) {
+    .home-glow {
+      top: 4rem;
+      height: 30rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .home-glow {
+      animation: none;
+      opacity: 1;
+      transition: none;
+    }
+  }
+
+  /* Hover-reactive columns, driven by html[data-profile] set from HomeContent.
+     Desktop only — mobile is static after the intro. */
+  @media (min-width: 768px) {
+
+    [data-col] {
+      transition:
+        opacity 0.4s ease,
+        transform 0.4s ease;
+    }
+    html[data-profile='software'] [data-col='outdoors'],
+    html[data-profile='outdoors'] [data-col='software'] {
+      opacity: 0.4;
+      transform: scale(0.98);
+    }
+  }
+</style>

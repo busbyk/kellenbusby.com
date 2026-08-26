@@ -18,4 +18,29 @@ const blog = defineCollection({
     }),
 });
 
-export const collections = { blog };
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/projects' }),
+  schema: ({ image }) =>
+    z.object({
+      name: z.string(),
+      oneLiner: z.string(),
+      status: z.enum(['live', 'in-progress', 'archived']),
+      // Human status shown on the badge, e.g. "In development", "Early days"
+      statusLabel: z.string(),
+      url: z.string().optional(),
+      image: image().optional(),
+      imageAlt: z.string().optional(),
+      stack: z.array(z.string()).optional(),
+      // Extra context line, e.g. why an archived project was retired
+      note: z.string().optional(),
+      // Featured projects appear on the landing page
+      featured: z.boolean().default(false),
+      // Show the "interested?" call to action (mailto + Plausible for now)
+      cta: z.boolean().default(false),
+      // External CTA target (e.g. a waitlist page); mailto when absent
+      ctaUrl: z.string().optional(),
+      order: z.number().default(99),
+    }),
+});
+
+export const collections = { blog, projects };
