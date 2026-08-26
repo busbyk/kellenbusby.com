@@ -21,7 +21,7 @@ const Tag = isLink ? 'a' : 'div'
 <Tag
   href={isLink ? `/projects/${project.slug}` : undefined}
   class={cn(
-    'group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg',
+    'group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg',
     className,
   )}
 >
@@ -51,7 +51,7 @@ const Tag = isLink ? 'a' : 'div'
           ) : (
             <a
               href={`/projects/${project.slug}`}
-              class="transition-colors hover:text-primary"
+              class="transition-colors hover:text-primary after:absolute after:inset-0 after:content-['']"
             >
               {project.name}
             </a>
@@ -75,7 +75,7 @@ const Tag = isLink ? 'a' : 'div'
     }
     {
       project.cta && (
-        <div class="mt-auto pt-2">
+        <div class="relative z-10 mt-auto max-w-max pt-2">
           <InterestCta slug={project.slug} name={project.name} href={project.ctaUrl} compact />
         </div>
       )
