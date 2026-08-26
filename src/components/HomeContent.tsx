@@ -55,7 +55,7 @@ export default function HomeContent() {
 
   return (
     <div className="flex flex-col gap-2 md:gap-6 grow w-full justify-center items-center h-full pt-4">
-      <h1 className="text-5xl md:text-7xl font-extrabold text-center">
+      <h1 className="whitespace-nowrap text-[clamp(2.25rem,11vw,3rem)] md:text-7xl font-extrabold text-center">
         Kellen Busby
       </h1>
       <figure className="hidden md:block relative h-56 w-full -mb-4 overflow-hidden">
@@ -153,7 +153,7 @@ export default function HomeContent() {
             </button>
           </div>
           <div className="flex flex-col items-start md:gap-0.5">
-            <h2 className="md:hidden text-lg font-bold">
+            <h2 className="md:hidden text-lg font-bold text-balance">
               Skier, Climber, Mountain Biker, Traveler, Hobbyist
             </h2>
             <h2 className="hidden md:block text-lg md:text-2xl font-bold whitespace-nowrap">
