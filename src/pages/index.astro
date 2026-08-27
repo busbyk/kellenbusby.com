@@ -8,8 +8,13 @@ import { getProjects } from '../lib/projects'
 
 const featuredProjects = (await getProjects()).filter((p) => p.featured)
 
-const tripReports = (
-  await getCollection('blog', ({ data }) => data.published && data.tripReport)
+// The outdoors column is everything that isn't a client-project write-up —
+// trip reports plus the occasional season recap
+const outdoorPosts = (
+  await getCollection(
+    'blog',
+    ({ data }) => data.published && !data.tags.includes('client project')
+  )
 )
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3)
@@ -46,7 +51,7 @@ const tripReports = (
         </div>
         <div class="flex flex-col gap-4">
           {
-            tripReports.map((post) => (
+            outdoorPosts.map((post) => (
               <a
                 href={`/blog/${post.id}`}
                 class="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
